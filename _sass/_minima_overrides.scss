@@ -1,0 +1,11 @@
+// .post-list-heading {
+//     @include relative-font-size(1.75);
+// }
+
+
+.post-link {
+    display: block;
+    @include relative-font-size(1.2);
+}
+
+
