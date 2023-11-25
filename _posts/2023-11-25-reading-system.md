@@ -34,7 +34,9 @@ This kind of pondering has made me shift my relationship and interaction with bo
 
 This is the most interesting one. Unlike the other two, you cannot just "turn the mindset switch**, it is rather a technical and mechanical problem. The problem  is further amplified if you do syntopical reading. The major pain resides in the dilemma of having to decide whether to re-read a certain part. You did have a hazy reminiscence that you already read it. But it is hazy enough that you felt the need to read it again.
 
-**🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 WIP 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧**
+**🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧**
+
+_**THE PARTS BELOW ARE W.I.P., THEY WILL BE VERY INCOHERENCE AND FULL OF MISTAKES**_
 
 There many methods to attack the problem of inefficient reread. The two prominent ones are:
 
