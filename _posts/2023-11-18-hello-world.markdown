@@ -2,7 +2,7 @@
 layout: post
 title:  "Hello, World!"
 date:   2023-11-18 09:36:45 +0700
-permalink: hello
+permalink: /hello/
 ---
 
 _Me_: Yo, make me a kickass blog post.

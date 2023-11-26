@@ -1,0 +1,63 @@
+---
+layout: default-full
+permalink: /sketches/
+---
+
+<style>
+h3 {
+    margin-top: 2rem;
+}
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    grid-gap: 12px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gallery-item {
+  justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<div class="gallery">
+
+  <div class="gallery-item">
+    <h3>Straw hat man</h3>
+    <video muted controls width="480px">
+      <source src="{{ '/sketches/fed-up-man.mp4' | relative_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div class="gallery-item">
+    <h3>Just a Cup</h3>
+    <video muted controls width="480px">
+      <source src="{{ '/sketches/just-a-cup.mp4' | relative_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div class="gallery-item">
+    <h3>A planar face practice</h3>
+    <video muted controls width="480px">
+      <source src="{{ '/sketches/face-planes.mp4' | relative_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div class="gallery-item">
+    <h3>Shiba the Reporter</h3>
+    <video muted controls width="480px">
+      <source src="{{ '/sketches/shiba-the-reporter.mp4' | relative_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+</div>

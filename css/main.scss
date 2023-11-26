@@ -3,4 +3,10 @@
 
 @import "base";
 @import "minima";
-@import "minima_overrides"
+@import "minima_overrides";
+
+
+.wrapper.wrapper-full {
+  max-width: -webkit-calc(90% - (#{$spacing-unit} * 2));
+  max-width:         calc(90% - (#{$spacing-unit} * 2));
+}
