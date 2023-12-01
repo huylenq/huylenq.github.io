@@ -2,10 +2,31 @@
 //     @include relative-font-size(1.75);
 // }
 
+@import "minima";
+
 
 .post-link {
     display: block;
     @include relative-font-size(1.2);
 }
 
+@mixin add-css-variable($name, $color) {
+    --#{$name}: $color;
+}
 
+
+// Capture the SASS variables to CSS
+// ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/minima-2.5.1/_sass/minima.scss
+
+// My life is too short to figure out why this doesn't simply just work
+// :root {
+//     --text-color: $text-color;
+//     --backbround-color: $background-color;
+//     --brand-color: $brand-color;
+// }
+:root {
+    --text-color: #111;
+    --backbround-color: #fdfdfd;
+    --brand-color: #2a7ae2;
+    --grey-color: #828282;
+}
