@@ -55,7 +55,7 @@ layout: default
         </div>
 
         <div class="headline-item">
-            <a class="post-link" target="_black" href="/assets/huy-cv.pdf" style="display: inline">Curriculum Vitae</a>
+            <a class="post-link" target="_black" href="/cv" style="display: inline">Curriculum Vitae</a>
             <a class="download-button" style="margin-left:.5rem" download filename="Huy CV.pdf" href="/assets/huy-cv.pdf">
                 <svg width="1.2rem" height="1.2rem" style="display: inline">
                     <g transform="scale(0.2)">
@@ -74,6 +74,13 @@ layout: default
 
     {%- if site.posts.size > 0 -%}
     <h2 class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
+
+    <p class="headline-sub">
+        <i>
+            I have just recently migrated from an old blog posts, so there's not much meat in here yet.
+        </i>
+    </p>
+
     <ul class="post-list">
         {%- for post in site.posts -%}
         <li>
