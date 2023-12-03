@@ -5,12 +5,13 @@ layout: default
 <style>
     .headline-container {
         display: flex;
+        flex-wrap: wrap;
     }
 
     .headline-item {
         flex-grow: 1;
-        min-width: 15rem;
-        padding: 10px;
+        max-width: 20rem;
+        padding: .5rem;
     }
 
     .headline-sub {
@@ -47,6 +48,7 @@ layout: default
     {{ content }}
 
     <div class="headline-container">
+
         <div class="headline-item">
             <a class="post-link" href="/sketches">
                 § Sketches
