@@ -32,7 +32,7 @@ This kind of pondering has made me shift my relationship and interaction with bo
 
 #### Problem #3: Self-loathing, boring to reread an incomplete book.
 
-This is the most interesting one. Unlike the other two, you cannot just "flip the mindset switch** it is rather a technical and mechanical problem. The problem  is further amplified if you do syntopical reading. The major pain resides in the dilemma of having to decide whether to re-read a certain part. You did have a hazy reminiscence that you already read it. But it is hazy enough that you felt the need to read it again.
+This is the most interesting one. Unlike the other two, you cannot just "flip the mindset switch" it is rather a technical and mechanical problem. The problem  is further amplified if you do syntopical reading. The major pain resides in the dilemma of having to decide whether to re-read a certain part. You did have a hazy reminiscence that you already read it. But it is hazy enough that you felt the need to read it again.
 
 **🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧**
 
