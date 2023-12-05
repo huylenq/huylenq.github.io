@@ -13,7 +13,7 @@ Like most of the Facebook-celebrities, I have a complicated relationship with re
 
 After "done" reading a book, I would go to brag to others about how great it is. For most of time, being polite as my family and friends always are, they will ask "What is it about?". Then they would probably hear "er.. it's something like this, like that, err... I promised it is much better than what I said".
 
-I struggled with that for countless times. Bragging rights for cocktail party asides, I wanted to optimize as much as possible my reading experience. That meant maximizing comprehension and retention within the same amount time spent.
+I struggled with that for countless times. Bragging rights for small talks in cocktail party asides, I wanted to optimize as much as possible my reading experience. That meant maximizing comprehension and retention within the same amount time spent.
 
 Let's back to square one, what are most of us struggled with? These are my personal experiences, but I imagine lots of people will find them resonate:
 
