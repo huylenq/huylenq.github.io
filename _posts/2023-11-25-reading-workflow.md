@@ -28,13 +28,13 @@ Well, I would argue that there is nothing inherently wrong with #1. What you abl
 #### Problem #2: Feeling bad for not completing a picked-up book.
 You have my full sympathy. That nagging feeling you got when abandoning a book for whatever reason (it's boring, it's difficult, it's too long, or just simply out of interests, or the interest now place its eyes on a different book). We all have that *completionism* instinct. I guess that is from a very misconception of "done" reading a book. When someone says he/she read that book, what does that actually mean? What differentiate between a careful analytical read from a mindless single pass?
 
-This kind of pondering has made me shift my relationship and interaction with books to a more dynamic manner. I treated my book collection as a tsundoku, and reading more syntopically rather then like a queue of tasks. When I decide to "adopt" a book after some inspectional reading, it is there to stay with me indefinitely. I don't feel guilty to put it aside for awhile. I enjoy leaving a part of it "undiscovered" and get unveiled from time to time. I feel joys when encountered something that I could find relevant in an "ever-complete" book, and happily read the relevant part again now with real-life experiences.
+This kind of pondering has made me shift my relationship and interaction with books to a more dynamic manner. I treated my book collection as a tsundoku, and reading more syntopically rather then like a queue of tasks. When I decide to "adopt" a book after some inspectional reading, it is there to stay with me indefinitely. I don't feel guilty to put it aside for awhile. I enjoy leaving a part of it "undiscovered" and get unveiled from time to time. I feel joys when encountered something that I could find relevant in an "ever-complete** book, and happily read the relevant part again now with real-life experiences.
 
 #### Problem #3: Self-loathing, boring to reread an incomplete book.
 
-This is the most interesting one. Unlike the other two, you cannot just "turn the mindset switch**, it is rather a technical and mechanical problem. The problem  is further amplified if you do syntopical reading. The major pain resides in the dilemma of having to decide whether to re-read a certain part. You did have a hazy reminiscence that you already read it. But it is hazy enough that you felt the need to read it again.
+This is the most interesting one. Unlike the other two, you cannot just "flip the mindset switch** it is rather a technical and mechanical problem. The problem  is further amplified if you do syntopical reading. The major pain resides in the dilemma of having to decide whether to re-read a certain part. You did have a hazy reminiscence that you already read it. But it is hazy enough that you felt the need to read it again.
 
-**🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧**
+**🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧**
 
 _**THE PARTS BELOW ARE W.I.P., THEY WILL BE VERY INCOHERENCE AND FULL OF MISTAKES**_
 
