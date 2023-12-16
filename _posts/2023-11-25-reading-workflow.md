@@ -5,6 +5,8 @@ date:   2023-11-25 19:57:00 +0700
 permalink: /reading-workflow/
 ---
 
+🚧 **THIS IS A VERY DRAFTY PAGE** 🚧
+
 Some friends asked me about how I read my books, instead of repeating from time to time, I decided to capture the process here.<br/>*Ok, I lied. Instead of forcing them to listen to me in person－to be less annoying－I will send them a link here instead. (Ok, ok, they didn't even ask).*
 
 ---<br/>
