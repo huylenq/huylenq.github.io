@@ -53,23 +53,26 @@ export default function StackedThoughts({
     });
   }, [graph]);
 
-  // Animate single-pane → stacked transition (FLIP technique)
+  // Animate first pane sliding left (open) or back to center (close) — FLIP technique
   useLayoutEffect(() => {
     const prevCount = prevPaneCountRef.current;
     prevPaneCountRef.current = panes.length;
     const startLeft = firstPaneStartLeft.current;
 
-    if (prevCount === 1 && panes.length > 1 && startLeft !== null && containerRef.current) {
+    const isOpening = prevCount === 1 && panes.length > 1;
+    const isClosingToSingle = prevCount === 2 && panes.length === 1;
+
+    if ((isOpening || isClosingToSingle) && startLeft !== null && containerRef.current) {
       firstPaneStartLeft.current = null;
       const firstPane = containerRef.current.querySelector('.thought-pane') as HTMLElement;
       if (!firstPane) return;
 
-      // Pane is now rendered at its stacked position — calculate the delta
       const containerRect = containerRef.current.getBoundingClientRect();
       const currentLeft = firstPane.getBoundingClientRect().left - containerRect.left;
       const deltaX = startLeft - currentLeft;
 
-      // Place it back where it was, then animate to new position
+      if (Math.abs(deltaX) < 1) return;
+
       firstPane.style.transition = 'none';
       firstPane.style.transform = `translateX(${deltaX}px)`;
 
@@ -79,7 +82,6 @@ export default function StackedThoughts({
 
         const cleanup = () => {
           firstPane.style.transition = '';
-          firstPane.style.transform = '';
           firstPane.removeEventListener('transitionend', cleanup);
         };
         firstPane.addEventListener('transitionend', cleanup);
@@ -135,9 +137,30 @@ export default function StackedThoughts({
     [panes],
   );
 
-  const closePane = useCallback((index: number) => {
-    setPanes((prev) => prev.filter((_, i) => i !== index));
-  }, []);
+  const closePane = useCallback(
+    (index: number) => {
+      // Snapshot first pane position if closing will return to single pane (for reverse FLIP)
+      if (panes.length === 2 && containerRef.current) {
+        const firstPaneEl = containerRef.current.querySelectorAll('.thought-pane')[0] as HTMLElement;
+        if (firstPaneEl) {
+          const containerRect = containerRef.current.getBoundingClientRect();
+          firstPaneStartLeft.current = firstPaneEl.getBoundingClientRect().left - containerRect.left;
+        }
+      }
+
+      const paneEls = containerRef.current?.querySelectorAll('.thought-pane');
+      const paneEl = paneEls?.[index] as HTMLElement | undefined;
+      if (paneEl) {
+        paneEl.classList.add('closing');
+        setTimeout(() => {
+          setPanes((prev) => prev.filter((_, i) => i !== index));
+        }, 200);
+      } else {
+        setPanes((prev) => prev.filter((_, i) => i !== index));
+      }
+    },
+    [panes.length],
+  );
 
   // Mobile back: pop the last pane
   const goBack = useCallback(() => {

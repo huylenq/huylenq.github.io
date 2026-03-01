@@ -57,12 +57,21 @@
   position: sticky;
   top: 0;
   transform: rotate(var(--tilt));
-  transition: min-width 0.3s ease, width 0.3s ease, box-shadow 0.15s ease, margin 0.3s ease;
+  transition: min-width 0.2s ease, width 0.2s ease, box-shadow 0.15s ease, margin 0.3s ease,
+    opacity 0.1s ease, border-width 0.2s ease;
   animation: none;
 }
 
 .thought-pane.animate-in {
   animation: pane-pop 0.25s ease-out backwards;
+}
+
+.thought-pane.closing {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0;
+  border-width: 0;
+  overflow: hidden;
 }
 
 
