@@ -1,6 +1,6 @@
 ---
 title: "When thinking becomes the excuse"
-slug: "thinking-as-a-form-of-procrastination"
+slug: "when-thinking-becomes-the-excuse"
 ---
 
 I have had a delusional belief that thinking **_is the_** _solution to everything._ It is an even more toxic form of thinking "**_to find_** _the solution to everything_."
