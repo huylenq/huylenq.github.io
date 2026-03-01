@@ -181,57 +181,60 @@
   transition: padding 0.3s ease;
 }
 
-/* Stacked paper effect: alternating pane heights for depth */
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane {
-  height: auto;
-  align-self: stretch;
-}
+/* Stacked paper effect — desktop only (mobile renders a single pane) */
+@media (min-width: 768px) {
+  /* Alternating pane heights for depth */
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane {
+    height: auto;
+    align-self: stretch;
+  }
 
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:first-child {
-  margin-left: var(--space-lg);
-}
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:first-child {
+    margin-left: var(--space-lg);
+  }
 
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(odd) {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(odd) {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(even) {
-  margin-top: 1px;
-  margin-bottom: 1px;
-}
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(even) {
+    margin-top: 1px;
+    margin-bottom: 1px;
+  }
 
-/* Slanted paper — tilt the container, counter-rotate content */
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(odd) {
-  --tilt: 0.6deg;
-}
+  /* Slanted paper — tilt the container, counter-rotate content */
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(odd) {
+    --tilt: 0.6deg;
+  }
 
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(even) {
-  --tilt: -0.4deg;
-}
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(even) {
+    --tilt: -0.4deg;
+  }
 
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-header,
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-body {
-  transform: rotate(calc(var(--tilt) * -1));
-}
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-header,
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-body {
+    transform: rotate(calc(var(--tilt) * -1));
+  }
 
-/* Paper shadow — asymmetric bottom corners for curl illusion */
-.thought-pane:not(.collapsed) {
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.04),
-    -3px 14px 10px -8px rgba(0, 0, 0, 0.2),
-    3px 8px 16px -10px rgba(0, 0, 0, 0.06);
-}
+  /* Paper shadow — asymmetric bottom corners for curl illusion */
+  .thought-pane:not(.collapsed) {
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.04),
+      -3px 14px 10px -8px rgba(0, 0, 0, 0.2),
+      3px 8px 16px -10px rgba(0, 0, 0, 0.06);
+  }
 
-/* Flat edges between adjacent panes for stacked paper illusion */
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(:last-child) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
+  /* Flat edges between adjacent panes for stacked paper illusion */
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
 
-.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(:first-child) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 }
 
 /* Collapsed pane — vertical title strip (paper edge) */
@@ -282,6 +285,7 @@
     overflow-x: hidden;
     height: auto;
     min-height: 100vh;
+    padding: 0;
   }
 
   .thought-pane {
