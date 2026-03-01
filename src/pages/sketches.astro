@@ -51,7 +51,12 @@ import PageLayout from '../layouts/PageLayout.astro';
   </div>
 
   <dialog class="video-overlay" id="video-overlay">
-    <video muted controls id="overlay-video"></video>
+    <div class="video-wrap" id="video-wrap">
+      <video muted id="overlay-video"></video>
+      <div class="progress-bar" id="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
     <p class="overlay-caption" id="overlay-caption"></p>
   </dialog>
 </PageLayout>
@@ -145,10 +150,58 @@ import PageLayout from '../layouts/PageLayout.astro';
     display: none;
   }
 
+  .video-wrap {
+    position: relative;
+    max-width: 85vw;
+    max-height: 80vh;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .video-wrap.scrubbing {
+    cursor: grabbing;
+  }
+
   .video-overlay video {
     max-width: 85vw;
     max-height: 80vh;
     display: block;
+  }
+
+  .video-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.25));
+    pointer-events: none;
+  }
+
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.15);
+    transition: height 0.15s ease;
+    z-index: 1;
+  }
+
+  .video-wrap:hover .progress-bar,
+  .video-wrap.scrubbing .progress-bar {
+    height: 5px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: rgba(0, 0, 0, 0.4);
   }
 
   .overlay-caption {
@@ -172,7 +225,10 @@ import PageLayout from '../layouts/PageLayout.astro';
   const overlay = document.getElementById('video-overlay') as HTMLDialogElement;
   const overlayVideo = document.getElementById('overlay-video') as HTMLVideoElement;
   const overlayCaption = document.getElementById('overlay-caption')!;
+  const videoWrap = document.getElementById('video-wrap')!;
+  const progressFill = document.getElementById('progress-fill')!;
 
+  // --- Gallery → open overlay ---
   document.querySelectorAll('.sketch').forEach(sketch => {
     sketch.addEventListener('click', () => {
       const src = (sketch as HTMLElement).dataset.src!;
@@ -184,17 +240,84 @@ import PageLayout from '../layouts/PageLayout.astro';
     });
   });
 
-  // Click backdrop to close
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      overlay.close();
+  // --- Progress bar update ---
+  overlayVideo.addEventListener('timeupdate', () => {
+    if (!overlayVideo.duration) return;
+    progressFill.style.width = `${(overlayVideo.currentTime / overlayVideo.duration) * 100}%`;
+  });
+
+  // --- Scrub logic ---
+  let scrubbing = false;
+  let wasPlaying = false;
+
+  function seekToX(clientX: number) {
+    const rect = videoWrap.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    overlayVideo.currentTime = ratio * overlayVideo.duration;
+  }
+
+  function startScrub(clientX: number) {
+    if (!overlayVideo.duration) return;
+    scrubbing = true;
+    wasPlaying = !overlayVideo.paused;
+    overlayVideo.pause();
+    videoWrap.classList.add('scrubbing');
+    seekToX(clientX);
+  }
+
+  function moveScrub(clientX: number) {
+    if (!scrubbing) return;
+    seekToX(clientX);
+  }
+
+  function endScrub() {
+    if (!scrubbing) return;
+    scrubbing = false;
+    videoWrap.classList.remove('scrubbing');
+    if (wasPlaying) overlayVideo.play();
+  }
+
+  // Mouse
+  videoWrap.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    startScrub(e.clientX);
+  });
+  window.addEventListener('mousemove', (e) => moveScrub(e.clientX));
+  window.addEventListener('mouseup', endScrub);
+
+  // Touch
+  videoWrap.addEventListener('touchstart', (e) => {
+    startScrub(e.touches[0].clientX);
+  }, { passive: true });
+  videoWrap.addEventListener('touchmove', (e) => {
+    if (!scrubbing) return;
+    e.preventDefault();
+    moveScrub(e.touches[0].clientX);
+  }, { passive: false });
+  videoWrap.addEventListener('touchend', endScrub);
+
+  // Click to toggle play/pause (only if not a drag)
+  let mouseDownX = 0;
+  videoWrap.addEventListener('mousedown', (e) => { mouseDownX = e.clientX; });
+  videoWrap.addEventListener('click', (e) => {
+    if (Math.abs(e.clientX - mouseDownX) > 5) return; // was a drag
+    if (overlayVideo.paused) {
+      overlayVideo.play();
+    } else {
+      overlayVideo.pause();
     }
   });
 
-  // Clean up on close (Esc or backdrop click)
+  // --- Close overlay ---
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.close();
+  });
+
   overlay.addEventListener('close', () => {
     overlayVideo.pause();
     overlayVideo.removeAttribute('src');
     overlayVideo.load();
+    progressFill.style.width = '0%';
   });
 </script>
