@@ -1,0 +1,56 @@
+---
+---
+<header class="site-header">
+  <a href="/" class="site-title">huylenq</a>
+  <nav class="site-nav">
+    <a href="/">Notes</a>
+    <a href="/sketches">Sketches</a>
+    <a href="/cv">CV</a>
+    <a href="/about">About</a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-xl);
+    border-bottom: 1px solid var(--ink-faint);
+    background: var(--paper);
+  }
+
+  .site-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-black);
+    text-decoration: none;
+  }
+
+  .site-title:hover {
+    text-decoration: none;
+    color: var(--ink-dark);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: var(--space-lg);
+  }
+
+  .site-nav a {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-medium);
+    text-decoration: none;
+  }
+
+  .site-nav a:hover {
+    color: var(--ink-black);
+  }
+</style>

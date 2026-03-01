@@ -1,0 +1,23 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+<BaseLayout title={title}>
+  <Header />
+  <main class="page-content">
+    <slot />
+  </main>
+</BaseLayout>
+
+<style>
+  .page-content {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-3xl) var(--space-xl);
+  }
+</style>

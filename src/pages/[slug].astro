@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import StackedNotes from '../components/StackedNotes.tsx';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { NoteGraph, NoteApiResponse } from '../lib/types';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map(note => ({
+    params: { slug: note.data.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+
+// Load graph
+let graph: NoteGraph = {};
+const graphPath = path.join(process.cwd(), 'content/notes/_graph.json');
+if (fs.existsSync(graphPath)) {
+  graph = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
+}
+
+// Load pre-rendered HTML from API JSON
+let initialHtml = '';
+const apiPath = path.join(process.cwd(), 'public/api/notes', `${note.data.slug}.json`);
+if (fs.existsSync(apiPath)) {
+  const apiData: NoteApiResponse = JSON.parse(fs.readFileSync(apiPath, 'utf-8'));
+  initialHtml = apiData.html;
+}
+
+const noteData = graph[note.data.slug];
+const backlinks = noteData?.backlinks ?? [];
+---
+<BaseLayout title={note.data.title}>
+  <Header />
+  <StackedNotes
+    client:load
+    initialSlug={note.data.slug}
+    initialTitle={note.data.title}
+    initialHtml={initialHtml}
+    initialBacklinks={backlinks}
+    graph={graph}
+  />
+</BaseLayout>

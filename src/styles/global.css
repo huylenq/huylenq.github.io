@@ -1,0 +1,93 @@
+/* Paper & Ink Design System — adapted from Hexos Lab */
+
+:root {
+  /* Color Palette - Ink (monochromatic) */
+  --ink-black: #1a1a1a;
+  --ink-dark: #2d2d2d;
+  --ink-medium: #5a5a5a;
+  --ink-light: #8a8a8a;
+  --ink-faint: #b0b0b0;
+
+  /* Color Palette - Paper */
+  --paper: #fdfcf9;
+  --paper-aged: #f8f6f1;
+  --paper-shadow: rgba(0, 0, 0, 0.04);
+
+  /* Typography */
+  --font-serif: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Layout */
+  --max-width: 720px;
+  --border-radius: 2px;
+
+  /* Typography Metrics */
+  --line-height-body: 1.8;
+  --line-height-heading: 1.3;
+  --base-font-size: 18px;
+
+  /* Semantic aliases (for stacked-notes and pane components) */
+  --bg: var(--paper-aged);
+  --text: var(--ink-black);
+  --text-secondary: var(--ink-medium);
+  --link: var(--ink-dark);
+  --border: var(--ink-faint);
+  --pane-bg: var(--paper);
+  --pane-shadow: 0 1px 3px var(--paper-shadow);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--base-font-size);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: var(--line-height-body);
+  color: var(--ink-black);
+  background-color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--ink-dark);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--ink-black);
+}
+
+.private-link {
+  color: var(--ink-light);
+  border-bottom: 1px dashed var(--ink-faint);
+  text-decoration: none;
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}

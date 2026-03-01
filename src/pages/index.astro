@@ -1,0 +1,111 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { NoteGraph } from '../lib/types';
+
+let graph: NoteGraph = {};
+const graphPath = path.join(process.cwd(), 'content/notes/_graph.json');
+if (fs.existsSync(graphPath)) {
+  graph = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
+}
+
+const notes = Object.values(graph);
+---
+<PageLayout title="huylenq.com">
+  <p class="intro">
+    Welcome. I'm Huy — a programmer who sketches, reads, and occasionally writes.
+  </p>
+
+  <nav class="page-links">
+    <a href="/sketches">Sketches</a>
+    <a href="/cv">CV</a>
+    <a href="/about">About</a>
+  </nav>
+
+  <section class="notes-section">
+    <h2>Notes</h2>
+    {notes.length > 0 ? (
+      <ul class="notes-list">
+        {notes.map((note) => (
+          <li>
+            <a href={`/${note.slug}`}>{note.title}</a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">No notes published yet.</p>
+    )}
+  </section>
+</PageLayout>
+
+<style>
+  .intro {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--ink-medium);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .page-links {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .page-links a {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-medium);
+    text-decoration: none;
+  }
+
+  .page-links a:hover {
+    color: var(--ink-black);
+  }
+
+  .notes-section h2 {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--ink-black);
+  }
+
+  .notes-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .notes-list li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .notes-list li:last-child {
+    border-bottom: none;
+  }
+
+  .notes-list a {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--ink-dark);
+    text-decoration: none;
+  }
+
+  .notes-list a:hover {
+    color: var(--ink-black);
+  }
+
+  .empty {
+    color: var(--ink-light);
+    font-style: italic;
+  }
+</style>

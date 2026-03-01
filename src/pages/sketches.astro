@@ -1,0 +1,74 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+<PageLayout title="Sketches">
+  <h1>Sketches</h1>
+  <p class="intro">
+    Sketching is probably the nearest experience with "zen" moment for me.
+    Everything is shoved sideways, just next stroke after next stroke.
+  </p>
+
+  <div class="gallery">
+    <div class="gallery-item">
+      <h3>Straw hat man</h3>
+      <video muted controls width="480">
+        <source src="/sketches/fed-up-man.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="gallery-item">
+      <h3>Just a Cup</h3>
+      <video muted controls width="480">
+        <source src="/sketches/just-a-cup.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="gallery-item">
+      <h3>A planar face practice</h3>
+      <video muted controls width="480">
+        <source src="/sketches/face-planes.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="gallery-item">
+      <h3>Shiba the Reporter</h3>
+      <video muted controls width="480">
+        <source src="/sketches/shiba-the-reporter.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+</PageLayout>
+
+<style>
+  h1 {
+    font-size: 1.6em;
+    margin-bottom: 0.4em;
+  }
+
+  .intro {
+    color: var(--text-secondary);
+    margin-bottom: 2em;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 12px;
+  }
+
+  .gallery-item h3 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+  }
+
+  .gallery-item video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 520px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
