@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import type { BacklinkEntry } from '../lib/types';
 import Backlinks from './Backlinks';
 
@@ -20,9 +21,22 @@ export default function ThoughtPane({
   onClose,
   onNavigateBacklink,
 }: ThoughtPaneProps) {
+  const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // The scrolling container is the parent .thought-pane div
+    const scrollContainer = headerRef.current?.closest('.thought-pane');
+    if (!scrollContainer) return;
+
+    const onScroll = () => setScrolled(scrollContainer.scrollTop > 0);
+    scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+    return () => scrollContainer.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
-      <div className="thought-pane-header">
+      <div className={`thought-pane-header${scrolled ? ' scrolled' : ''}`} ref={headerRef}>
         <span className="thought-pane-title">{title}</span>
         {!isFirst && (
           <button

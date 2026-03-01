@@ -44,18 +44,25 @@
 
 .thought-pane-header {
   z-index: 2;
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 14px 24px 10px;
   background: var(--pane-bg);
-  border-bottom: 1px solid var(--pane-border);
-  padding-top: 1.5rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.thought-pane-header.scrolled {
+  border-bottom-color: var(--pane-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .thought-pane-title {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -78,7 +85,7 @@
 }
 
 .thought-pane-body {
-  padding: 24px;
+  padding: 16px 24px 24px;
 }
 
 /* Stacked paper effect: alternating pane heights for depth */
