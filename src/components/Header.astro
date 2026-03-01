@@ -1,4 +1,8 @@
 ---
+interface Props {
+  section?: string;
+}
+const { section } = Astro.props;
 ---
 <header class="site-header">
   <div class="site-identity">
@@ -16,6 +20,7 @@
       </a>
     </span>
   </div>
+  {section && <span class="header-section-label">{section}</span>}
   <nav class="site-nav">
     <a href="/thoughts">Thoughts</a>
     <a href="/essays">Essays</a>
@@ -41,6 +46,11 @@
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!expanded));
     links.classList.toggle('open');
+    if (expanded) toggle.classList.add('just-closed');
+  });
+
+  toggle.addEventListener('mouseleave', () => {
+    toggle.classList.remove('just-closed');
   });
 
   // Assemble email on click to defeat scrapers
@@ -94,18 +104,22 @@
     font-size: .7rem;
     margin-left: .8rem;
     color: var(--ink-medium);
+    position: relative;
   }
 
   .reach-me {
-    display: none;
+    position: absolute;
+    left: calc(100% + 0.6em);
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
-  .nickname:hover .reach-me {
-    display: inline;
-  }
-
-  .nickname[aria-expanded="true"] .reach-me {
-    display: none !important;
+  .nickname:hover:not([aria-expanded="true"]):not(.just-closed) .reach-me {
+    opacity: 1;
+    transition: opacity 0.08s ease;
   }
 
   .nickname:hover {
@@ -140,6 +154,20 @@
     color: var(--ink-black);
   }
 
+  .header-section-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-medium);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
   .site-nav {
     display: flex;
     gap: var(--space-lg);
@@ -147,7 +175,7 @@
 
   .site-nav a {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;

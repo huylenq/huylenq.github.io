@@ -37,7 +37,7 @@ const thoughtData = graph[thought.data.slug];
 const backlinks = thoughtData?.backlinks ?? [];
 ---
 <BaseLayout title={thought.data.title}>
-  <Header />
+  <Header section="Thoughts" />
   <StackedThoughts
     client:load
     initialSlug={thought.data.slug}

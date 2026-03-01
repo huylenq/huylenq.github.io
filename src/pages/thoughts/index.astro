@@ -15,13 +15,12 @@ if (fs.existsSync(graphPath)) {
 const thoughts = Object.values(graphFile.thoughts);
 const edges = graphFile.edges;
 ---
-<PageLayout title="Thoughts — huylenq.com">
+<PageLayout title="Thoughts — huylenq.com" section="Thoughts">
   <section class="listing-section">
-    <h2>Thoughts</h2>
     {thoughts.length > 0 ? (
       <>
         <div class="graph-desktop">
-          <ThoughtGraph client:media="(min-width: 768px)" thoughts={thoughts} edges={edges} />
+          <ThoughtGraph client:media="(min-width: 768px)" thoughts={thoughts} edges={edges} fillViewport />
         </div>
         <ul class="listing graph-mobile">
           {thoughts.map((thought) => (
@@ -38,15 +37,9 @@ const edges = graphFile.edges;
 </PageLayout>
 
 <style>
-  .listing-section h2 {
-    font-family: var(--font-serif);
-    font-size: 1.35rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-lg);
-    padding-bottom: var(--space-sm);
-    border-bottom: 1px solid var(--ink-black);
+  /* Remove page-content padding so graph fills viewport below header */
+  .listing-section {
+    margin-top: calc(-1 * var(--space-xl));
   }
 
   /* Break out of .page-content container to full width */

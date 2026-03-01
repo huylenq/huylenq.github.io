@@ -147,11 +147,11 @@
 
 /* Slanted paper — tilt the container, counter-rotate content */
 .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(odd) {
-  --tilt: 0.8deg;
+  --tilt: 0.6deg;
 }
 
 .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(even) {
-  --tilt: -0.6deg;
+  --tilt: -0.4deg;
 }
 
 .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-header,

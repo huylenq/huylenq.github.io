@@ -1,47 +1,10 @@
 import { Essay, Var, Slider, Reactive, Toggle, Spark, SprintChart, SystemDiagram, ScenarioCompare } from "../components/essay";
 
 export const meta = {
-  title: "System Dynamics Modeling",
-  description: "An interactive exploration of stocks, flows, and feedback loops",
+  title: "Why Your Scrum Team Is Stuck",
+  description: "A system dynamics model of agile teams — stocks, flows, feedback loops, and the traps that kill velocity",
   date: "2026-03-01",
   slug: "system-dynamics",
-};
-
-export const stockValue = (get) => {
-  const inflow = get("inflow");
-  const outflow = get("outflow");
-  const dt = get("dt");
-  const net = (inflow - outflow) * dt;
-  return net >= 0 ? `+${net.toFixed(1)}` : net.toFixed(1);
-};
-
-export const afterSteps = (get) => {
-  const inflow = get("inflow");
-  const outflow = get("outflow");
-  const dt = get("dt");
-  const initial = 100;
-  const steps = 10;
-  let stock = initial;
-  for (let i = 0; i < steps; i++) {
-    stock += (inflow - outflow) * dt;
-  }
-  return stock.toFixed(0);
-};
-
-export const behavior = (get) => {
-  const inflow = get("inflow");
-  const outflow = get("outflow");
-  if (inflow > outflow) return "growing";
-  if (inflow < outflow) return "draining";
-  return "in equilibrium";
-};
-
-export const delayOsc = (get) => {
-  const delay = get("delay");
-  if (delay <= 1) return "almost none — fast correction";
-  if (delay <= 3) return "mild wobble around target";
-  if (delay <= 6) return "noticeable oscillation";
-  return "wild swings — the system hunts badly";
 };
 
 export const switchingPenalty = (get) => {
@@ -144,64 +107,40 @@ export const dominantLoop = (get) => {
   return "healthy — reinforcing loop dormant, team ships steadily";
 };
 
-<Essay initialState={{ inflow: 8, outflow: 5, dt: 1, delay: 4, devs: 5, wip: 8, debt: 2, bugs: 3, backlog: 40 }}>
+<Essay initialState={{ devs: 5, wip: 8, debt: 2, bugs: 3, backlog: 40 }}>
 
-## The Computational Model of Systems
+Every scrum team is a dynamic system. It has **stocks** that accumulate — backlog, work-in-progress, bugs, tech debt — and **flows** that change them each sprint. What makes teams predictable or chaotic isn't the people. It's the feedback structure connecting those stocks.
 
-Systems theory isn't philosophy — it's a modeling paradigm that maps directly to simulation code. Donella Meadows' core insight: *system structure is the source of system behavior.* Capture structure correctly and behavior emerges on its own. No special cases. No hand-tuning.
+Donella Meadows put it cleanly: *system structure is the source of system behavior.* Swap the PM, fire the "slow" dev, hire two more — if the feedback loops stay the same, the behavior stays the same.
 
-## Stock-Flow: The Fundamental Primitive
+This essay builds a simulation of a scrum team and lets you break it. The math is simple — each stock updates by accumulating its inflows minus its outflows:
 
-Every system dynamics model reduces to three ideas: **stocks** accumulate, **flows** change them, **feedback** connects the two. The update rule is just Euler integration:
+$$S_{t+1} = S_t + (\text{inflow} - \text{outflow}) \times \Delta t$$
 
-$$S_{t+1} = S_t + (\text{inflow} - \text{outflow}) \times dt$$
+The interesting part isn't any single stock. It's the three feedback loops that connect them.
 
-Try it. Set an inflow of <Var name="inflow" min={0} max={20} step={1} /> units/sec and an outflow of <Var name="outflow" min={0} max={20} step={1} /> units/sec, with a timestep of <Var name="dt" min={0.1} max={2} step={0.1} /> seconds.
+## The Feedback Loops
 
-<Slider name="inflow" min={0} max={20} step={1} label="Inflow rate" />
-<Slider name="outflow" min={0} max={20} step={1} label="Outflow rate" />
+**Context-switching penalty** (balancing): when each dev juggles too many tickets, cognitive overhead eats velocity. Below about 2 tickets per dev, negligible cost. Above that, every additional ticket makes *all* tickets slower.
 
-Each tick, the stock changes by <Reactive derive={stockValue} /> units. Starting from 100, after 10 steps it reaches <Reactive derive={afterSteps} /> — the stock is <Reactive derive={behavior} />.
+**Tech debt drag** (reinforcing): debt makes code harder to change → features take longer → pressure to cut corners → more debt. This loop is dormant when debt is low and devastating when it compounds.
 
-That's literally it. A bathtub with a faucet and a drain. Every system dynamics simulation — from epidemiology to supply chains — is just this primitive, repeated and connected.
+**Bug generation** (reinforcing): more concurrent WIP in crufty code produces more bugs. More bugs steal capacity from features. Falling behind → pressure to rush → more debt → more bugs. This is the death spiral.
 
-## The Three Building Blocks
+## The Model
 
-**Stocks** are the system's memory. Population, inventory, bank balance, knowledge — anything that accumulates. They only change through flows, never instantaneously. This constraint is what gives systems their inertia, and inertia is what makes systems *interesting*.
-
-**Flows** control how fast stocks change. Birth rates, sales rates, learning rates. They can be constant, computed from other stocks, or driven by policy decisions.
-
-**Feedback loops** are where the magic lives. A balancing loop seeks a goal (a thermostat). A reinforcing loop amplifies (compound interest). The Sufi teaching story Meadows loved: you cannot understand "one" or "two" without understanding "and" — feedback is the *and* between stocks.
-
-## Delays Make Systems Oscillate
-
-A delay in a balancing feedback loop makes a system oscillate. The classic example: you're in a shower, the water is cold, you crank it hot. But there's a pipe delay. By the time hot water arrives, you've overcorrected. Now it's scalding. You crank it back...
-
-With a delay of <Var name="delay" min={1} max={10} step={1} /> time units:
-
-<Slider name="delay" min={1} max={10} step={1} label="Feedback delay" />
-
-Expected behavior: <Reactive derive={delayOsc} />.
-
-Computationally, delays are modeled as exponential smoothing — the perceived value chases the actual value:
-
-$$P_{t+1} = P_t + \frac{A_t - P_t}{\text{delay}} \times dt$$
-
-The feedback signal is always slightly stale. This is why systems "hunt" around their target, and why supply chains bullwhip, and why monetary policy lags.
-
-## Nonlinearity: An Agile Team as a Dynamic System
-
-Forget biology. Here's a system every software engineer has *lived inside*: an agile team. The stocks are familiar — **backlog**, **work-in-progress**, **bugs**, **tech debt** — but few people model the feedback loops that connect them. Let's fix that.
-
-Three interacting feedback loops drive all the drama: **context-switching** (balancing — more WIP per dev → slower everything), **tech debt drag** (reinforcing — debt breeds more debt), and **bug generation** (reinforcing — WIP in crufty code creates bugs that steal capacity). The diagram below shows the structure. Drag the numbers inside the boxes to change them.
+The diagram below shows the structure. Drag the numbers inside the boxes to change them.
 
 <SystemDiagram />
 
 A team of <Var name="devs" min={2} max={12} step={1} /> developers.
 
 **Velocity:** <Reactive derive={velocity} /> pts/sprint <Spark metric="velocity" /> — context-switching costs <Reactive derive={switchingPenalty} />%, debt drag costs <Reactive derive={debtDrag} />%.
+
 **Bugs:** <Reactive derive={bugRate} />/sprint generated <Spark metric="bugs" />.
+
 **Net throughput:** <Reactive derive={netThroughput} /> pts/sprint <Spark metric="shipped" />.
+
 **Loop diagnosis:** <Reactive derive={dominantLoop} />.
 
 ### 20-Sprint Projection
@@ -232,22 +171,19 @@ Context-switching drops. Fewer concurrent changes means fewer new bugs. The team
 
 This is the core lesson of system dynamics applied to software: the reinforcing loops between WIP, bugs, and tech debt mean that **pushing harder makes things worse** past a threshold. The only way out is to reduce WIP, which feels like slowing down but is structurally the opposite.
 
-## Bounded Rationality
+## Why Replacing People Doesn't Work
 
-This is also why swapping out the engineering manager, or the "slow" developer, rarely fixes a struggling team. When simulating human systems, agents don't optimize — they *satisfice* based on delayed, filtered information. The beer game proves this every semester: smart MBA students produce the same wild oscillations because the *structure* (delays, incomplete information, local incentives) dictates behavior, not individual intelligence.
+The PM sees the backlog growing and pushes more tickets into WIP. The tech lead sees bugs piling up and diverts developers to firefighting. The CTO sees velocity declining and asks for status reports, adding overhead. Everyone is locally rational. The system is globally dysfunctional.
 
-The PM sees the backlog growing and pushes more tickets into WIP. The tech lead sees bugs piling up and diverts developers to firefighting. The CTO sees velocity declining and asks for status reports, adding overhead. Everyone is locally rational. The system is globally dysfunctional. Replacing any one of them changes nothing — the feedback structure remains.
+This is *bounded rationality* — each person optimizes based on delayed, filtered information. The beer game proves it every semester: smart MBA students produce the same wild oscillations because the structure (delays, incomplete information, local incentives) dictates behavior, not individual intelligence. Replacing any one person changes nothing when the feedback loops remain.
 
-## Validating Models
+## What to Actually Do
 
-System dynamics models aren't point predictors. You validate them by checking for archetypal behavior modes under appropriate conditions:
+The model points toward structural interventions, not heroics:
 
-- **Exponential growth/decay** — crank debt and watch bugs compound
-- **Goal-seeking** — set WIP below capacity and watch throughput stabilize
-- **Oscillation** — add feedback delays (not modeled here, but imagine sprint retrospectives lagging by 2 sprints)
-- **S-shaped growth** — a new team ramps up fast, then plateaus as coordination costs grow
-- **Overshoot and collapse** — WIP spike → debt accumulation → velocity crash
-
-If the model produces these patterns under the right parameter regimes, it has structural validity. That's what matters — not whether it predicts next sprint's velocity.
+- **Cap WIP ruthlessly.** The context-switching loop has a hard threshold. Below ~2 tickets per dev, it's dormant. Above that, it compounds. WIP limits aren't bureaucracy — they're the single highest-leverage policy.
+- **Pay down debt deliberately.** Allocate a fixed percentage of each sprint to debt reduction. Don't wait for a "tech debt sprint" that never comes. The reinforcing loop means early investment prevents exponential costs later.
+- **Measure bugs as a leading indicator.** Rising bug counts are the canary. By the time velocity visibly drops, the reinforcing loops are already locked in.
+- **Resist the "just add people" reflex.** More devs with the same WIP policy just distributes the same dysfunction across more people. Fix the structure first.
 
 </Essay>

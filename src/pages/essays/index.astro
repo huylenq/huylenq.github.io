@@ -6,9 +6,8 @@ const sorted = Object.values(essayModules)
   .filter((e) => e.meta?.title)
   .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 ---
-<PageLayout title="Essays — huylenq.com">
+<PageLayout title="Essays — huylenq.com" section="Essays">
   <section class="listing-section">
-    <h2>Essays</h2>
     {sorted.length > 0 ? (
       <ul class="listing">
         {sorted.map((essay) => (
@@ -27,17 +26,6 @@ const sorted = Object.values(essayModules)
 </PageLayout>
 
 <style>
-  .listing-section h2 {
-    font-family: var(--font-serif);
-    font-size: 1.35rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-lg);
-    padding-bottom: var(--space-sm);
-    border-bottom: 1px solid var(--ink-black);
-  }
-
   .listing {
     list-style: none;
     padding: 0;

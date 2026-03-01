@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import {
   forceSimulation,
   forceLink,
@@ -28,6 +28,7 @@ interface GraphLink extends SimulationLinkDatum<GraphNode> {
 interface ThoughtGraphProps {
   thoughts: PublicThought[];
   edges: ThoughtEdge[];
+  fillViewport?: boolean;
 }
 
 function measureTextWidths(
@@ -77,11 +78,24 @@ function forceRectCollide(nodes: GraphNode[], padX: number, padY: number) {
   };
 }
 
-export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
+export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const simulationRef = useRef<ReturnType<typeof forceSimulation<GraphNode>> | null>(null);
 
-  const height = Math.max(400, Math.min(thoughts.length * 60, 600));
+  const fallbackHeight = Math.max(400, Math.min(thoughts.length * 60, 600));
+
+  const getHeight = useCallback(() => {
+    if (!fillViewport || typeof window === "undefined") return fallbackHeight;
+    const headerOffset = 50;
+    return Math.max(400, window.innerHeight - headerOffset);
+  }, [fillViewport, fallbackHeight]);
+
+  const [height, setHeight] = useState(fallbackHeight);
+
+  // Set real height on mount (needs window)
+  useEffect(() => {
+    setHeight(getHeight());
+  }, [getHeight]);
 
   const buildGraph = useCallback(() => {
     const container = containerRef.current;
@@ -385,11 +399,12 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
   useEffect(() => {
     const onResize = () => {
       simulationRef.current?.stop();
+      setHeight(getHeight());
       buildGraph();
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [buildGraph]);
+  }, [buildGraph, getHeight]);
 
   // Reset click underlines when returning via bfcache (back/forward navigation)
   useEffect(() => {
