@@ -20,10 +20,9 @@
   font-size: 1.35rem;
   font-weight: 400;
   letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin: 1.6em 0 0.5em;
+  margin: 0 0 0.5em;
   padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--ink-black);
+  border-bottom: 1px solid var(--ink-faint);
   line-height: var(--line-height-heading);
 }
 
@@ -109,6 +108,12 @@
   border: none;
   border-top: 1px solid var(--ink-faint);
   margin: 2em 0;
+}
+
+.note-content mark {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  color: inherit;
+  padding: 0.05em 0.15em;
 }
 
 .note-content a {

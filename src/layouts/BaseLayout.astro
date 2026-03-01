@@ -15,10 +15,61 @@ const { title = 'huylenq.com' } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload header-critical font files to prevent FOUT pop-and-shrink -->
+  <link rel="preload" href="https://fonts.gstatic.com/s/crimsonpro/v28/q5uDsoa5M_tv7IihmnkabARUoYF6CsKjnlQ.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/crimsonpro/v28/q5uDsoa5M_tv7IihmnkabARboYF6CsKj.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2" as="font" type="font/woff2" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <title>{title}</title>
+  <script is:inline>
+    // Apply theme before paint to prevent FOUC
+    (function() {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
 </head>
 <body>
   <slot />
+  <script>
+    function initThemeToggle() {
+      const btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+
+      const mq = matchMedia('(prefers-color-scheme: dark)');
+
+      function getEffectiveTheme(): string {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return mq.matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme: string) {
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      }
+
+      btn.addEventListener('click', () => {
+        const next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', next);
+        applyTheme(next);
+      });
+
+      // If system preference changes while no explicit choice, follow it
+      mq.addEventListener('change', () => {
+        if (!localStorage.getItem('theme')) {
+          applyTheme(mq.matches ? 'dark' : 'light');
+        }
+      });
+    }
+
+    initThemeToggle();
+    document.addEventListener('astro:after-swap', initThemeToggle);
+  </script>
 </body>
 </html>

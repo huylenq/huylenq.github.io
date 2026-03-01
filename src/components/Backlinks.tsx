@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { BacklinkEntry } from '../lib/types';
 
 interface BacklinksProps {
@@ -7,97 +6,89 @@ interface BacklinksProps {
 }
 
 export default function Backlinks({ backlinks, onNavigate }: BacklinksProps) {
-  const [open, setOpen] = useState(false);
-
   if (backlinks.length === 0) return null;
 
   return (
     <div className="backlinks">
-      <button
-        className="backlinks-toggle"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-      >
-        {backlinks.length} backlink{backlinks.length !== 1 ? 's' : ''}
-        <span className="backlinks-chevron" aria-hidden="true">
-          {open ? '\u25B4' : '\u25BE'}
-        </span>
-      </button>
-      {open && (
-        <ul className="backlinks-list">
-          {backlinks.map((bl) => (
-            <li key={bl.slug} className="backlink-item">
-              <a
-                href={`/${bl.slug}`}
-                className="backlink-title"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate(bl.slug);
-                }}
-              >
-                {bl.title}
-              </a>
-              {bl.context && (
-                <p className="backlink-context">{bl.context}</p>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+      <h2 className="backlinks-heading">Links to this note</h2>
+      <div className="backlinks-grid">
+        {backlinks.map((bl) => (
+          <a
+            key={bl.slug}
+            href={`/${bl.slug}`}
+            className="backlink-card"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate(bl.slug);
+            }}
+          >
+            <span className="backlink-title">{bl.title}</span>
+            {bl.context && (
+              <div
+                className="backlink-context"
+                dangerouslySetInnerHTML={{ __html: bl.context }}
+              />
+            )}
+          </a>
+        ))}
+      </div>
       <style>{`
         .backlinks {
           margin-top: var(--space-xl);
-          padding-top: var(--space-md);
-          border-top: 1px solid var(--ink-faint);
+          padding: var(--space-md) var(--space-md) var(--space-sm);
+          background-color: var(--paper-aged);
+          border-radius: 8px;
+          border: 1px solid var(--paper-shadow);
         }
-        .backlinks-toggle {
-          background: none;
+        .backlinks-heading {
+          font-family: var(--font-serif);
+          font-size: 1rem;
+          font-weight: 400;
+          color: var(--ink-medium);
+          margin: 0 0 var(--space-md);
+          text-transform: none;
+          letter-spacing: normal;
           border: none;
-          font-family: var(--font-sans);
-          font-size: 0.7rem;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--ink-light);
-          cursor: pointer;
-          padding: 4px 0;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .backlinks-toggle:hover {
-          color: var(--ink-dark);
-        }
-        .backlinks-chevron {
-          font-size: 10px;
-        }
-        .backlinks-list {
-          list-style: none;
           padding: 0;
-          margin: var(--space-sm) 0 0;
         }
-        .backlink-item {
-          padding: var(--space-sm) 0;
-          border-bottom: 1px solid var(--ink-faint);
+        .backlinks-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: var(--space-sm);
         }
-        .backlink-item:last-child {
-          border-bottom: none;
+        @media (max-width: 768px) {
+          .backlinks-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        .backlink-card {
+          display: block;
+          padding: var(--space-sm);
+          text-decoration: none;
+          border-radius: 4px;
+          transition: background-color 0.15s ease;
+        }
+        .backlink-card:hover {
+          background-color: var(--paper);
         }
         .backlink-title {
+          display: block;
           font-family: var(--font-serif);
           font-size: 0.9rem;
+          font-weight: 600;
           color: var(--ink-dark);
-          text-decoration: none;
-        }
-        .backlink-title:hover {
-          color: var(--ink-black);
+          line-height: 1.4;
         }
         .backlink-context {
-          font-size: 0.85rem;
-          color: var(--ink-medium);
+          font-size: 0.8rem;
+          color: var(--ink-light);
           margin-top: 4px;
-          line-height: 1.6;
+          line-height: 1.5;
           font-family: var(--font-serif);
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       `}</style>
     </div>

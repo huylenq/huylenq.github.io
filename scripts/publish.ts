@@ -147,6 +147,15 @@ function transformNote(
   // Strip ```ad-* admonition blocks
   md = md.replace(/```ad-[\w-]+[\s\S]*?```/g, "");
 
+  // Strip block reference IDs (^block-id at end of lines)
+  md = md.replace(/ +\^[\w-]+$/gm, "");
+
+  // Convert ==highlight== to <mark>
+  md = md.replace(/==(.*?)==/g, "<mark>$1</mark>");
+
+  // Strip inline tags (#tag) — but not headings (# Heading)
+  md = md.replace(/(^|\s)#([a-zA-Z][\w\/-]*)/gm, "$1");
+
   // Convert ![[embed]] transclusion → [[embed]] (remove the !)
   // But NOT image embeds like ![[image.png]] — those are handled separately
   md = md.replace(/!\[\[([^\]]+)\]\]/g, (match, inner: string) => {
@@ -231,11 +240,11 @@ function resolveAttachment(
 
 // ── Step 3: Build backlink graph ───────────────────────────────
 
-function buildGraph(
+async function buildGraph(
   publicNotes: Map<string, VaultNote>,
   linkMap: Map<string, Set<string>>,
   transformedMarkdown: Map<string, string>
-): NoteGraph {
+): Promise<NoteGraph> {
   // linkMap: sourceId → Set<targetId>
   // Invert to get backlinks: targetId → Set<sourceId>
   const backlinksMap = new Map<string, BacklinkEntry[]>();
@@ -248,7 +257,10 @@ function buildGraph(
       const targetNote = publicNotes.get(targetId);
       if (!targetNote) continue; // safety
 
-      const context = extractContext(sourceMd, targetNote.title, targetId);
+      const contextMd = extractContext(sourceMd, targetNote.title, targetId);
+      const context = contextMd
+        ? await renderMarkdownToHtml(contextMd)
+        : "";
       const entry: BacklinkEntry = {
         slug: sourceId,
         title: sourceNote.title,
@@ -382,7 +394,7 @@ async function main() {
   }
 
   // Build backlink graph
-  const graph = buildGraph(publicNotes, linkMap, transformedMarkdown);
+  const graph = await buildGraph(publicNotes, linkMap, transformedMarkdown);
 
   // Write outputs
   await writeOutputs(publicNotes, transformedMarkdown, graph);

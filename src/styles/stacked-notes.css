@@ -1,10 +1,11 @@
 .stacked-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - var(--header-height, 2.5rem));
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;
   background: var(--bg);
+  padding: 0;
 }
 
 /* Single pane: center the note with a comfortable reading width */
@@ -13,47 +14,46 @@
 }
 
 .stacked-container.single-pane .note-pane {
-  width: min(725px, 100%);
-  min-width: min(725px, 100%);
-  border-left: none;
+  width: min(800px, 100%);
+  min-width: min(800px, 100%);
+}
+
+.stacked-container.single-pane .note-pane-header,
+.stacked-container.single-pane .note-pane-body {
+  padding-left: 48px;
+  padding-right: 48px;
 }
 
 .note-pane {
   width: 625px;
   min-width: 625px;
   flex-shrink: 0;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   background: var(--pane-bg);
-  border-left: 1px solid var(--ink-faint);
+  border: 1px solid var(--pane-border);
+  border-radius: 3px 3px 0 0;
   box-shadow: var(--pane-shadow);
   position: sticky;
-  transition: min-width 0.2s ease, width 0.2s ease;
+  top: 0;
+  transition: min-width 0.2s ease, width 0.2s ease, box-shadow 0.15s ease;
 }
 
-.note-pane:first-child {
-  border-left: none;
-}
 
 .note-pane-header {
-  position: sticky;
-  top: 0;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
   background: var(--pane-bg);
-  border-bottom: 1px solid var(--ink-faint);
+  border-bottom: 1px solid var(--pane-border);
+  padding-top: 1.5rem;
 }
 
 .note-pane-title {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ink-medium);
+  font-size: 1.8rem;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -79,12 +79,16 @@
   padding: 24px;
 }
 
-/* Collapsed pane — vertical title strip */
+/* Collapsed pane — vertical title strip (paper edge) */
 .note-pane.collapsed {
   width: 40px;
   min-width: 40px;
   cursor: pointer;
   overflow: hidden;
+  border-radius: 3px 0 0 0;
+  box-shadow:
+    1px 0 2px var(--paper-shadow),
+    2px 0 6px var(--paper-shadow);
 }
 
 .note-pane.collapsed .note-pane-header,
@@ -130,7 +134,9 @@
     height: auto;
     min-height: 100vh;
     position: static;
-    border-left: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .note-pane.collapsed {
