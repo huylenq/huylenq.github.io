@@ -1,9 +1,19 @@
 /* Essay interactive components */
 
 .essay-page {
-  max-width: var(--max-width);
+  max-width: 820px;
   margin: 0 auto;
   padding: var(--space-3xl) var(--space-xl);
+  line-height: 1.5;
+}
+
+.essay-page p {
+  margin: var(--space-sm) 0;
+}
+
+.essay-page h2,
+.essay-page h3 {
+  margin-top: var(--space-xl);
 }
 
 .essay-var {
@@ -105,4 +115,104 @@
   background: var(--ink-black);
   border-color: var(--ink-black);
   color: var(--paper);
+}
+
+/* ── Spark (inline sparkline) ────────────────────────── */
+
+.essay-spark {
+  display: inline-block;
+  width: 80px;
+  height: 20px;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+/* ── SprintChart ─────────────────────────────────────── */
+
+.essay-chart {
+  margin: var(--space-lg) 0;
+}
+
+.essay-chart svg {
+  width: 100%;
+  height: auto;
+  max-width: 600px;
+}
+
+/* ── SystemDiagram ───────────────────────────────────── */
+
+.essay-diagram {
+  margin: var(--space-lg) 0;
+}
+
+.essay-diagram svg {
+  width: 100%;
+  height: auto;
+  max-width: 680px;
+}
+
+.essay-diagram-scrub {
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.essay-diagram-scrub:hover {
+  opacity: 0.7;
+}
+
+/* Flow arrow dash animation */
+.essay-flow-arrow {
+  animation: flow-dash linear infinite;
+}
+
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+/* ── ScenarioCompare ─────────────────────────────────── */
+
+.essay-scenario {
+  display: flex;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.essay-scenario-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.essay-scenario-panel svg {
+  width: 100%;
+  height: auto;
+}
+
+.essay-scenario-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-medium);
+  margin-bottom: var(--space-xs);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .essay-page {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .essay-chart svg,
+  .essay-diagram svg {
+    max-width: 100%;
+  }
+
+  .essay-scenario {
+    flex-direction: column;
+  }
 }

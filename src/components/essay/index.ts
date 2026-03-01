@@ -3,3 +3,8 @@ export { Var } from './Var';
 export { Slider } from './Slider';
 export { Reactive } from './Reactive';
 export { Toggle } from './Toggle';
+export { Spark } from './Spark';
+export { SprintChart } from './SprintChart';
+export { SystemDiagram } from './SystemDiagram';
+export { ScenarioCompare } from './ScenarioCompare';
+export { simulate } from './simulate';

@@ -48,6 +48,7 @@
   flex-shrink: 0;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--pane-bg);
   border: 1px solid var(--pane-border);
   border-radius: 3px;
@@ -71,6 +72,24 @@
   background: var(--pane-bg);
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Mask bleed-through from tilted panes behind —
+   the counter-rotation on the header creates a triangular gap at top corners
+   where background content peeks through. This pseudo-element stays in the
+   pane's rotated coordinate space (counter-rotating the counter-rotation)
+   to cover the full top edge. */
+.thought-pane:not(.collapsed) > .thought-pane-header::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  height: calc(100% + 10px);
+  background: var(--pane-bg);
+  z-index: -1;
+  /* Undo the parent's counter-rotation so this aligns with the rotated pane */
+  transform: rotate(var(--tilt));
 }
 
 .thought-pane-header.scrolled {
@@ -140,12 +159,12 @@
   transform: rotate(calc(var(--tilt) * -1));
 }
 
-/* Paper shadow — slightly heavier at bottom */
+/* Paper shadow — asymmetric bottom corners for curl illusion */
 .thought-pane:not(.collapsed) {
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 4px 6px -2px rgba(0, 0, 0, 0.06),
-    0 12px 12px -6px rgba(0, 0, 0, 0.1);
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    -3px 14px 10px -8px rgba(0, 0, 0, 0.2),
+    3px 8px 16px -10px rgba(0, 0, 0, 0.06);
 }
 
 /* Flat edges between adjacent panes for stacked paper illusion */

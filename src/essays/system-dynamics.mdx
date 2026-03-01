@@ -1,4 +1,4 @@
-import { Essay, Var, Slider, Reactive, Toggle } from "../components/essay";
+import { Essay, Var, Slider, Reactive, Toggle, Spark, SprintChart, SystemDiagram, ScenarioCompare } from "../components/essay";
 
 export const meta = {
   title: "System Dynamics Modeling",
@@ -154,9 +154,7 @@ Systems theory isn't philosophy — it's a modeling paradigm that maps directly 
 
 Every system dynamics model reduces to three ideas: **stocks** accumulate, **flows** change them, **feedback** connects the two. The update rule is just Euler integration:
 
-```
-stock[t+1] = stock[t] + (inflow - outflow) × dt
-```
+$$S_{t+1} = S_t + (\text{inflow} - \text{outflow}) \times dt$$
 
 Try it. Set an inflow of <Var name="inflow" min={0} max={20} step={1} /> units/sec and an outflow of <Var name="outflow" min={0} max={20} step={1} /> units/sec, with a timestep of <Var name="dt" min={0.1} max={2} step={0.1} /> seconds.
 
@@ -187,9 +185,7 @@ Expected behavior: <Reactive derive={delayOsc} />.
 
 Computationally, delays are modeled as exponential smoothing — the perceived value chases the actual value:
 
-```
-perceived[t+1] = perceived[t] + (actual[t] - perceived[t]) / delay × dt
-```
+$$P_{t+1} = P_t + \frac{A_t - P_t}{\text{delay}} \times dt$$
 
 The feedback signal is always slightly stale. This is why systems "hunt" around their target, and why supply chains bullwhip, and why monetary policy lags.
 
@@ -197,54 +193,42 @@ The feedback signal is always slightly stale. This is why systems "hunt" around 
 
 Forget biology. Here's a system every software engineer has *lived inside*: an agile team. The stocks are familiar — **backlog**, **work-in-progress**, **bugs**, **tech debt** — but few people model the feedback loops that connect them. Let's fix that.
 
-### The Stocks
+Three interacting feedback loops drive all the drama: **context-switching** (balancing — more WIP per dev → slower everything), **tech debt drag** (reinforcing — debt breeds more debt), and **bug generation** (reinforcing — WIP in crufty code creates bugs that steal capacity). The diagram below shows the structure. Drag the numbers inside the boxes to change them.
 
-```
-Backlog     →  tickets waiting to be pulled
-WIP         →  tickets actively being worked
-Bugs        →  known defects awaiting fixes
-Tech Debt   →  accumulated shortcuts (0 = pristine, 18 = legacy horror)
-```
+<SystemDiagram />
 
-### The Flows and Feedback
+A team of <Var name="devs" min={2} max={12} step={1} /> developers.
 
-The interesting dynamics emerge from three interacting loops:
-
-**Context-switching penalty** (balancing): When each dev juggles too many tickets, cognitive overhead eats velocity. Below about 2 tickets per dev, negligible cost. Above that, every additional ticket makes *all* tickets slower.
-
-**Tech debt drag** (reinforcing): Debt makes code harder to change → features take longer → pressure to cut corners → more debt. This loop is dormant when debt is low and devastating when it compounds.
-
-**Bug generation** (reinforcing): More concurrent WIP in crufty code produces more bugs. More bugs steal capacity from features. Falling behind on features → pressure to rush → more debt → more bugs. This is the death spiral.
-
-### Play With the Levers
-
-A team of <Var name="devs" min={2} max={12} step={1} /> developers, currently juggling <Var name="wip" min={1} max={30} step={1} /> tickets in progress, with a tech debt level of <Var name="debt" min={0} max={18} step={1} /> and <Var name="bugs" min={0} max={20} step={1} /> open bugs. The backlog has <Var name="backlog" min={0} max={100} step={5} /> tickets queued.
-
-<Slider name="devs" min={2} max={12} step={1} label="Developers" />
-<Slider name="wip" min={1} max={30} step={1} label="WIP tickets" />
-<Slider name="debt" min={0} max={18} step={1} label="Tech debt" />
-<Slider name="bugs" min={0} max={20} step={1} label="Open bugs" />
-<Slider name="backlog" min={0} max={100} step={5} label="Backlog" />
-
-**Context-switching overhead:** <Reactive derive={switchingPenalty} />% velocity lost.
-**Tech debt drag:** <Reactive derive={debtDrag} />% velocity lost.
-**Gross velocity:** <Reactive derive={velocity} /> story points/sprint.
-**Bugs generated per sprint:** <Reactive derive={bugRate} />.
-**Net throughput** (after bug-fixing tax): <Reactive derive={netThroughput} /> points/sprint.
-
-Over the next 6 sprints, this team ships roughly **<Reactive derive={sprintSim} /> story points** total.
-
+**Velocity:** <Reactive derive={velocity} /> pts/sprint <Spark metric="velocity" /> — context-switching costs <Reactive derive={switchingPenalty} />%, debt drag costs <Reactive derive={debtDrag} />%.
+**Bugs:** <Reactive derive={bugRate} />/sprint generated <Spark metric="bugs" />.
+**Net throughput:** <Reactive derive={netThroughput} /> pts/sprint <Spark metric="shipped" />.
 **Loop diagnosis:** <Reactive derive={dominantLoop} />.
+
+### 20-Sprint Projection
+
+Over 20 sprints this team ships roughly **<Reactive derive={sprintSim} /> story points** total. Here's the full trajectory:
+
+<SprintChart />
 
 ### What the Model Reveals
 
-Try these experiments:
+**The "just add more WIP" trap.** With 5 devs, low debt and bugs, start with WIP at 8 — things look healthy. Now see what happens when you crank WIP to 20:
 
-**The "just add more WIP" trap.** Set devs to 5, debt to 2, bugs to 2. Start with WIP at 8 — things look healthy. Now crank WIP to 20. Watch context-switching eat velocity alive. Gross throughput *drops* even though more work is "in progress." This is Little's Law fighting back: throughput = WIP / cycle time, and cycle time is exploding.
+<ScenarioCompare overrides={{ wip: 20 }} labels={["WIP = 8", "WIP → 20"]} />
 
-**The debt spiral.** Set WIP to 10, bugs to 2, then slide debt from 2 to 14. Velocity collapses. Bug generation rate climbs because defects breed faster in messy code. Net throughput approaches zero. This is the codebase where every sprint is a slog and the team "doesn't understand why we're so slow."
+Context-switching eats velocity alive. Gross throughput *drops* even though more work is "in progress." Little's Law fights back: throughput = WIP / cycle time, and cycle time is exploding.
 
-**The recovery.** From that grim state (debt 14, bugs 12, WIP 15), try the counter-intuitive fix: *reduce* WIP to 5 and hold. Context-switching drops. Fewer concurrent changes means fewer new bugs. The team can start paying down debt instead of generating it. Six-sprint throughput actually *rises* with less WIP.
+**The debt spiral.** With moderate WIP and low bugs, slide debt from 2 to 14:
+
+<ScenarioCompare overrides={{ debt: 14 }} labels={["Debt = 2", "Debt → 14"]} />
+
+Velocity collapses. Bug generation climbs because defects breed faster in messy code. This is the codebase where every sprint is a slog and the team "doesn't understand why we're so slow."
+
+**The recovery.** From a grim state (debt 14, bugs 12, WIP 15), try the counter-intuitive fix — *reduce* WIP to 5:
+
+<ScenarioCompare overrides={{ wip: 5, debt: 14, bugs: 12 }} labels={["WIP 15 + debt 14", "WIP → 5"]} />
+
+Context-switching drops. Fewer concurrent changes means fewer new bugs. The team can start paying down debt instead of generating it. Throughput actually *rises* with less WIP.
 
 This is the core lesson of system dynamics applied to software: the reinforcing loops between WIP, bugs, and tech debt mean that **pushing harder makes things worse** past a threshold. The only way out is to reduce WIP, which feels like slowing down but is structurally the opposite.
 

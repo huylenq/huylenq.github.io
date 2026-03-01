@@ -17,7 +17,9 @@
     "d3-selection": "^3.0.0",
     "d3-transition": "^3.0.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@types/d3-drag": "^3.0.7",
