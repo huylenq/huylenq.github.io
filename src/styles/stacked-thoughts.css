@@ -9,19 +9,23 @@
 }
 
 /* Single pane: center the thought as a floating card */
-.stacked-container.single-pane {
+.stacked-container.single-pane,
+.stacked-container.single-pane-with-ghosts {
   justify-content: center;
   overflow-y: auto;
 }
 
-.stacked-container.single-pane .thought-pane {
+.stacked-container.single-pane .thought-pane,
+.stacked-container.single-pane-with-ghosts .thought-pane {
   width: min(800px, 100%);
   min-width: min(800px, 100%);
   height: auto;
 }
 
 .stacked-container.single-pane .thought-pane-header,
-.stacked-container.single-pane .thought-pane-body {
+.stacked-container.single-pane .thought-pane-body,
+.stacked-container.single-pane-with-ghosts .thought-pane-header,
+.stacked-container.single-pane-with-ghosts .thought-pane-body {
   padding-left: 48px;
   padding-right: 48px;
 }
@@ -29,15 +33,16 @@
 @keyframes pane-pop {
   from {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.92) rotate(var(--tilt));
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) rotate(var(--tilt));
   }
 }
 
 .thought-pane {
+  --tilt: 0deg;
   width: 625px;
   min-width: 625px;
   flex-shrink: 0;
@@ -49,6 +54,7 @@
   box-shadow: var(--pane-shadow);
   position: sticky;
   top: 0;
+  transform: rotate(var(--tilt));
   transition: min-width 0.2s ease, width 0.2s ease, box-shadow 0.15s ease;
   animation: pane-pop 0.25s ease-out;
 }
@@ -101,32 +107,54 @@
 }
 
 /* Stacked paper effect: alternating pane heights for depth */
-.stacked-container:not(.single-pane) .thought-pane {
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane {
   height: auto;
   align-self: stretch;
 }
 
-.stacked-container:not(.single-pane) .thought-pane:first-child {
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:first-child {
   margin-left: var(--space-lg);
 }
 
-.stacked-container:not(.single-pane) .thought-pane:nth-child(odd) {
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(odd) {
   margin-top: 8px;
   margin-bottom: 8px;
 }
 
-.stacked-container:not(.single-pane) .thought-pane:nth-child(even) {
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(even) {
   margin-top: 1px;
   margin-bottom: 1px;
 }
 
+/* Slanted paper — tilt the container, counter-rotate content */
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(odd) {
+  --tilt: 0.8deg;
+}
+
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(even) {
+  --tilt: -0.6deg;
+}
+
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-header,
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-body {
+  transform: rotate(calc(var(--tilt) * -1));
+}
+
+/* Paper shadow — slightly heavier at bottom */
+.thought-pane:not(.collapsed) {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.06),
+    0 12px 12px -6px rgba(0, 0, 0, 0.1);
+}
+
 /* Flat edges between adjacent panes for stacked paper illusion */
-.stacked-container:not(.single-pane) .thought-pane:not(:last-child) {
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.stacked-container:not(.single-pane) .thought-pane:not(:first-child) {
+.stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(:first-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -256,6 +284,7 @@
   gap: var(--space-lg);
   align-self: center;
   margin-left: 36px;
+  margin-right: 1rem;
   position: relative;
 }
 
@@ -293,6 +322,7 @@
   color: inherit;
   text-decoration: underline;
   text-decoration-style: dashed;
+  text-decoration-color: var(--ink-faint);
   text-underline-offset: 2px;
   pointer-events: none;
 }

@@ -5,6 +5,11 @@
       "title": "A Reading System",
       "backlinks": []
     },
+    "just-testing": {
+      "slug": "just-testing",
+      "title": "A test thought",
+      "backlinks": []
+    },
     "how-i-write-notes": {
       "slug": "how-i-write-notes",
       "title": "How I Write Notes",
@@ -19,6 +24,11 @@
       "slug": "the-cost-of-delayed-action",
       "title": "The cost of delayed action",
       "backlinks": [
+        {
+          "slug": "just-testing",
+          "title": "A test thought",
+          "context": "<p>which is linked to <a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a></p>"
+        },
         {
           "slug": "how-i-write-notes",
           "title": "How I Write Notes",
@@ -43,6 +53,10 @@
     }
   },
   "edges": [
+    {
+      "source": "just-testing",
+      "target": "the-cost-of-delayed-action"
+    },
     {
       "source": "how-i-write-notes",
       "target": "the-cost-of-delayed-action"

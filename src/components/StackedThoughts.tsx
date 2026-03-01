@@ -171,10 +171,11 @@ export default function StackedThoughts({
 
   // Single-pane mode only when no ghost backlinks exist
   const isSinglePane = panes.length === 1 && ghostBacklinks.length === 0;
+  const isSinglePaneWithGhosts = panes.length === 1 && ghostBacklinks.length > 0;
 
   return (
     <div
-      className={`stacked-container${isSinglePane ? ' single-pane' : ''}`}
+      className={`stacked-container${isSinglePane ? ' single-pane' : ''}${isSinglePaneWithGhosts ? ' single-pane-with-ghosts' : ''}`}
       ref={containerRef}
       onClick={handleContainerClick}
     >
