@@ -1,5 +1,6 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
+import ThoughtGraph from '../../components/ThoughtGraph.tsx';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { ThoughtGraphFile } from '../../lib/types';
@@ -12,18 +13,24 @@ if (fs.existsSync(graphPath)) {
 }
 
 const thoughts = Object.values(graphFile.thoughts);
+const edges = graphFile.edges;
 ---
 <PageLayout title="Thoughts — huylenq.com">
   <section class="listing-section">
     <h2>Thoughts</h2>
     {thoughts.length > 0 ? (
-      <ul class="listing">
-        {thoughts.map((thought) => (
-          <li>
-            <a href={`/thoughts/${thought.slug}`}>{thought.title}</a>
-          </li>
-        ))}
-      </ul>
+      <>
+        <div class="graph-desktop">
+          <ThoughtGraph client:media="(min-width: 768px)" thoughts={thoughts} edges={edges} />
+        </div>
+        <ul class="listing graph-mobile">
+          {thoughts.map((thought) => (
+            <li>
+              <a href={`/thoughts/${thought.slug}`}>{thought.title}</a>
+            </li>
+          ))}
+        </ul>
+      </>
     ) : (
       <p class="empty">No thoughts published yet.</p>
     )}
@@ -40,6 +47,27 @@ const thoughts = Object.values(graphFile.thoughts);
     margin-bottom: var(--space-lg);
     padding-bottom: var(--space-sm);
     border-bottom: 1px solid var(--ink-black);
+  }
+
+  /* Break out of .page-content container to full width */
+  .graph-desktop {
+    display: block;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .graph-mobile {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .graph-desktop {
+      display: none;
+    }
+    .graph-mobile {
+      display: block;
+    }
   }
 
   .listing {

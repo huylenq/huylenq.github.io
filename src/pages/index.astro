@@ -25,12 +25,6 @@ const essays = Object.values(essayModules)
     Welcome. I'm Huy — a programmer who sketches, reads, and occasionally writes.
   </p>
 
-  <nav class="page-links">
-    <a href="/sketches">Sketches</a>
-    <a href="/cv">CV</a>
-    <a href="/about">About</a>
-  </nav>
-
   <section class="thoughts-section">
     <h2>Thoughts</h2>
     {thoughts.length > 0 ? (
@@ -74,26 +68,6 @@ const essays = Object.values(essayModules)
     font-style: italic;
     color: var(--ink-medium);
     margin-bottom: var(--space-2xl);
-  }
-
-  .page-links {
-    display: flex;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-2xl);
-  }
-
-  .page-links a {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--ink-medium);
-    text-decoration: none;
-  }
-
-  .page-links a:hover {
-    color: var(--ink-black);
   }
 
   .thoughts-section + .thoughts-section {

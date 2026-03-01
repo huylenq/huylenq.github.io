@@ -142,6 +142,42 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
       .attr("height", height)
       .attr("viewBox", `0 0 ${width} ${height}`);
 
+    // Arrow marker for directed edges
+    const defs = svg.append("defs");
+    defs
+      .append("marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "0 0 10 8")
+      .attr("refX", 10)
+      .attr("refY", 4)
+      .attr("markerWidth", 7)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M1,1 L9,4 L1,7")
+      .attr("fill", "none")
+      .attr("stroke", "var(--ink-faint)")
+      .attr("stroke-width", 1.2)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round");
+
+    defs
+      .append("marker")
+      .attr("id", "arrowhead-hover")
+      .attr("viewBox", "0 0 10 8")
+      .attr("refX", 10)
+      .attr("refY", 4)
+      .attr("markerWidth", 7)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M1,1 L9,4 L1,7")
+      .attr("fill", "none")
+      .attr("stroke", "var(--ink-medium)")
+      .attr("stroke-width", 1.2)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round");
+
     const linkGroup = svg.append("g").attr("class", "links");
     const nodeGroup = svg.append("g").attr("class", "nodes");
 
@@ -153,7 +189,8 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
       .append("line")
       .attr("stroke", "var(--ink-faint)")
       .attr("stroke-width", 1)
-      .attr("stroke-opacity", 0.5);
+      .attr("stroke-opacity", 0.5)
+      .attr("marker-end", "url(#arrowhead)");
 
     // Render nodes as <a> wrapping <text>
     const nodeElements = nodeGroup
@@ -214,6 +251,11 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
           )
           .attr("stroke-opacity", (l) =>
             l.source.id === d.id || l.target.id === d.id ? 1 : 0.2
+          )
+          .attr("marker-end", (l) =>
+            l.source.id === d.id || l.target.id === d.id
+              ? "url(#arrowhead-hover)"
+              : "url(#arrowhead)"
           );
       })
       .on("mouseleave", () => {
@@ -227,7 +269,8 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
         linkElements
           .attr("stroke", "var(--ink-faint)")
           .attr("stroke-width", 1)
-          .attr("stroke-opacity", 0.5);
+          .attr("stroke-opacity", 0.5)
+          .attr("marker-end", "url(#arrowhead)");
       });
 
     // Drag behavior with click protection

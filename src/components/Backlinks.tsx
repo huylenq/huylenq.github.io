@@ -45,7 +45,7 @@ export default function Backlinks({ backlinks, onNavigate }: BacklinksProps) {
           font-size: 1rem;
           font-weight: 400;
           color: var(--ink-medium);
-          margin: 0 0 var(--space-md);
+          margin: 0 0 var(--space-xs);
           text-transform: none;
           letter-spacing: normal;
           border: none;
@@ -89,6 +89,10 @@ export default function Backlinks({ backlinks, onNavigate }: BacklinksProps) {
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+        .backlink-context a {
+          text-decoration: none;
+          font-weight: 500;
         }
       `}</style>
     </div>

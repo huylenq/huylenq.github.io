@@ -9,34 +9,51 @@ import PageLayout from '../layouts/PageLayout.astro';
   </p>
 
   <div class="gallery">
-    <div class="gallery-item">
-      <h3>Straw hat man</h3>
-      <video muted controls width="480">
-        <source src="/sketches/fed-up-man.mp4" type="video/mp4" />
-      </video>
-    </div>
+    <figure class="sketch" data-src="/sketches/fed-up-man.mp4">
+      <div class="thumb">
+        <video muted preload="metadata" tabindex="-1">
+          <source src="/sketches/fed-up-man.mp4" type="video/mp4" />
+        </video>
+        <div class="play-icon" aria-hidden="true">&#9654;</div>
+      </div>
+      <figcaption>Straw hat man</figcaption>
+    </figure>
 
-    <div class="gallery-item">
-      <h3>Just a Cup</h3>
-      <video muted controls width="480">
-        <source src="/sketches/just-a-cup.mp4" type="video/mp4" />
-      </video>
-    </div>
+    <figure class="sketch" data-src="/sketches/just-a-cup.mp4">
+      <div class="thumb">
+        <video muted preload="metadata" tabindex="-1">
+          <source src="/sketches/just-a-cup.mp4" type="video/mp4" />
+        </video>
+        <div class="play-icon" aria-hidden="true">&#9654;</div>
+      </div>
+      <figcaption>Just a Cup</figcaption>
+    </figure>
 
-    <div class="gallery-item">
-      <h3>A planar face practice</h3>
-      <video muted controls width="480">
-        <source src="/sketches/face-planes.mp4" type="video/mp4" />
-      </video>
-    </div>
+    <figure class="sketch" data-src="/sketches/face-planes.mp4">
+      <div class="thumb">
+        <video muted preload="metadata" tabindex="-1">
+          <source src="/sketches/face-planes.mp4" type="video/mp4" />
+        </video>
+        <div class="play-icon" aria-hidden="true">&#9654;</div>
+      </div>
+      <figcaption>A planar face practice</figcaption>
+    </figure>
 
-    <div class="gallery-item">
-      <h3>Shiba the Reporter</h3>
-      <video muted controls width="480">
-        <source src="/sketches/shiba-the-reporter.mp4" type="video/mp4" />
-      </video>
-    </div>
+    <figure class="sketch" data-src="/sketches/shiba-the-reporter.mp4">
+      <div class="thumb">
+        <video muted preload="metadata" tabindex="-1">
+          <source src="/sketches/shiba-the-reporter.mp4" type="video/mp4" />
+        </video>
+        <div class="play-icon" aria-hidden="true">&#9654;</div>
+      </div>
+      <figcaption>Shiba the Reporter</figcaption>
+    </figure>
   </div>
+
+  <dialog class="video-overlay" id="video-overlay">
+    <video muted controls id="overlay-video"></video>
+    <p class="overlay-caption" id="overlay-caption"></p>
+  </dialog>
 </PageLayout>
 
 <style>
@@ -47,23 +64,100 @@ import PageLayout from '../layouts/PageLayout.astro';
 
   .intro {
     color: var(--text-secondary);
-    margin-bottom: 2em;
+    margin-bottom: var(--space-2xl);
   }
 
   .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl) var(--space-lg);
   }
 
-  .gallery-item h3 {
-    margin-top: 1em;
-    margin-bottom: 0.5em;
+  .sketch {
+    margin: 0;
+    cursor: pointer;
   }
 
-  .gallery-item video {
-    max-width: 100%;
+  .thumb {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thumb video {
+    width: 100%;
     height: auto;
+    display: block;
+    pointer-events: none;
+  }
+
+  .play-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--paper);
+    background: rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .sketch:hover .play-icon {
+    opacity: 1;
+  }
+
+  .sketch figcaption {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-top: var(--space-xs);
+  }
+
+  /* Overlay */
+  .video-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    border: none;
+    background: rgba(0, 0, 0, 0.92);
+    padding: 0;
+    margin: 0;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-overlay:not([open]) {
+    display: none;
+  }
+
+  .video-overlay::backdrop {
+    display: none;
+  }
+
+  .video-overlay video {
+    max-width: 85vw;
+    max-height: 80vh;
+    display: block;
+  }
+
+  .overlay-caption {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: var(--space-sm);
+    text-align: center;
   }
 
   @media (max-width: 520px) {
@@ -72,3 +166,34 @@ import PageLayout from '../layouts/PageLayout.astro';
     }
   }
 </style>
+
+<script>
+  const overlay = document.getElementById('video-overlay') as HTMLDialogElement;
+  const overlayVideo = document.getElementById('overlay-video') as HTMLVideoElement;
+  const overlayCaption = document.getElementById('overlay-caption')!;
+
+  document.querySelectorAll('.sketch').forEach(sketch => {
+    sketch.addEventListener('click', () => {
+      const src = (sketch as HTMLElement).dataset.src!;
+      const caption = sketch.querySelector('figcaption')?.textContent || '';
+      overlayVideo.src = src;
+      overlayCaption.textContent = caption;
+      overlay.showModal();
+      overlayVideo.play();
+    });
+  });
+
+  // Click backdrop to close
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.close();
+    }
+  });
+
+  // Clean up on close (Esc or backdrop click)
+  overlay.addEventListener('close', () => {
+    overlayVideo.pause();
+    overlayVideo.removeAttribute('src');
+    overlayVideo.load();
+  });
+</script>

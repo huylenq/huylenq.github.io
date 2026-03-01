@@ -291,22 +291,74 @@ async function buildGraph(
   return { graph, edges };
 }
 
+const CONTEXT_WINDOW = 200;
+
 function extractContext(
   markdown: string,
-  targetTitle: string,
+  _targetTitle: string,
   targetId: string
 ): string {
   const paragraphs = markdown.split(/\n\n+/);
+  const linkPattern = `(/thoughts/${targetId})`;
 
-  // Look for a paragraph containing a link to the target (by slug or title)
   for (const para of paragraphs) {
-    if (para.includes(`(/thoughts/${targetId})`) || para.includes(targetTitle)) {
-      const cleaned = para.replace(/\n/g, " ").trim();
-      if (cleaned.length <= 200) return cleaned;
-      return cleaned.slice(0, 197) + "...";
+    if (!para.includes(linkPattern)) continue;
+
+    const cleaned = para.replace(/\n/g, " ").trim();
+    if (cleaned.length <= CONTEXT_WINDOW) return cleaned;
+
+    // Find the markdown link and center the window on it
+    const linkRegex = new RegExp(
+      `\\[([^\\]]+)\\]\\(/thoughts/${escapeRegex(targetId)}\\)`
+    );
+    const match = linkRegex.exec(cleaned);
+    if (!match) {
+      // Link pattern exists but regex didn't match — fall back to start
+      return cleaned.slice(0, CONTEXT_WINDOW - 3) + "...";
     }
+
+    const linkStart = match.index;
+    const linkEnd = linkStart + match[0].length;
+    const linkLen = linkEnd - linkStart;
+
+    // Budget the remaining chars equally before and after the link
+    const budget = CONTEXT_WINDOW - linkLen;
+    const halfBudget = Math.floor(budget / 2);
+
+    let windowStart = linkStart - halfBudget;
+    let windowEnd = linkEnd + halfBudget;
+
+    // Clamp and redistribute if we hit a boundary
+    if (windowStart < 0) {
+      windowEnd = Math.min(cleaned.length, windowEnd + (-windowStart));
+      windowStart = 0;
+    }
+    if (windowEnd > cleaned.length) {
+      windowStart = Math.max(0, windowStart - (windowEnd - cleaned.length));
+      windowEnd = cleaned.length;
+    }
+
+    // Snap to word boundaries
+    if (windowStart > 0) {
+      const spaceIdx = cleaned.indexOf(" ", windowStart);
+      if (spaceIdx !== -1 && spaceIdx < linkStart) windowStart = spaceIdx + 1;
+    }
+    if (windowEnd < cleaned.length) {
+      const spaceIdx = cleaned.lastIndexOf(" ", windowEnd);
+      if (spaceIdx > linkEnd) windowEnd = spaceIdx;
+    }
+
+    let snippet = cleaned.slice(windowStart, windowEnd);
+    if (windowStart > 0) snippet = "..." + snippet;
+    if (windowEnd < cleaned.length) snippet = snippet + "...";
+
+    return snippet;
   }
   return "";
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 // ── Step 4: Write outputs ──────────────────────────────────────
