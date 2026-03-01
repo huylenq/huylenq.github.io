@@ -207,4 +207,26 @@ const { section } = Astro.props;
   .icon-moon { display: block; }
   :global([data-theme="dark"]) .icon-sun { display: block; }
   :global([data-theme="dark"]) .icon-moon { display: none; }
+
+  @media (max-width: 768px) {
+    .site-header {
+      flex-wrap: wrap;
+      padding: var(--space-xs) var(--space-md);
+    }
+
+    .site-identity {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .site-nav {
+      width: 100%;
+      justify-content: center;
+      gap: var(--space-md);
+    }
+
+    .header-section-label {
+      display: none;
+    }
+  }
 </style>

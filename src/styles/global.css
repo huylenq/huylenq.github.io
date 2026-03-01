@@ -118,4 +118,7 @@ a:hover {
   html {
     font-size: 16px;
   }
+  :root {
+    --header-height: 4.5rem;
+  }
 }
