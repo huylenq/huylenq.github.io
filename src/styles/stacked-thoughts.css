@@ -110,7 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px 10px;
+  padding: 18px 24px 10px;
   background: var(--pane-bg);
   border-bottom: 1px solid transparent;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, padding 0.3s ease;

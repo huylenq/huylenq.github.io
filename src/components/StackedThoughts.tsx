@@ -53,7 +53,9 @@ export default function StackedThoughts({
     });
   }, [graph]);
 
-  // Animate first pane sliding left (open) or back to center (close) — FLIP technique
+  // Animate first pane sliding (open: left, close: right to center) — FLIP technique
+  // useLayoutEffect runs after React commits DOM but before paint, so width/tilt/padding
+  // changes from class swaps are already applied invisibly — we only animate position.
   useLayoutEffect(() => {
     const prevCount = prevPaneCountRef.current;
     prevPaneCountRef.current = panes.length;
@@ -73,11 +75,12 @@ export default function StackedThoughts({
 
       if (Math.abs(deltaX) < 1) return;
 
+      // Pin pane at old position (transition:none so CSS class changes stay invisible)
       firstPane.style.transition = 'none';
       firstPane.style.transform = `translateX(${deltaX}px)`;
 
       requestAnimationFrame(() => {
-        firstPane.style.transition = 'transform 0.3s ease';
+        firstPane.style.transition = 'transform 0.25s ease';
         firstPane.style.transform = '';
 
         const cleanup = () => {
@@ -139,25 +142,26 @@ export default function StackedThoughts({
 
   const closePane = useCallback(
     (index: number) => {
-      // Snapshot first pane position if closing will return to single pane (for reverse FLIP)
-      if (panes.length === 2 && containerRef.current) {
-        const firstPaneEl = containerRef.current.querySelectorAll('.thought-pane')[0] as HTMLElement;
-        if (firstPaneEl) {
-          const containerRect = containerRef.current.getBoundingClientRect();
-          firstPaneStartLeft.current = firstPaneEl.getBoundingClientRect().left - containerRect.left;
-        }
+      const containerEl = containerRef.current;
+      const paneEls = containerEl?.querySelectorAll('.thought-pane');
+      const closingEl = paneEls?.[index] as HTMLElement | undefined;
+
+      if (!closingEl) {
+        setPanes((prev) => prev.filter((_, i) => i !== index));
+        return;
       }
 
-      const paneEls = containerRef.current?.querySelectorAll('.thought-pane');
-      const paneEl = paneEls?.[index] as HTMLElement | undefined;
-      if (paneEl) {
-        paneEl.classList.add('closing');
-        setTimeout(() => {
-          setPanes((prev) => prev.filter((_, i) => i !== index));
-        }, 200);
-      } else {
-        setPanes((prev) => prev.filter((_, i) => i !== index));
+      // Snapshot first pane position for reverse FLIP in useLayoutEffect
+      if (panes.length === 2 && containerEl) {
+        const firstPaneEl = paneEls![0] as HTMLElement;
+        const containerRect = containerEl.getBoundingClientRect();
+        firstPaneStartLeft.current = firstPaneEl.getBoundingClientRect().left - containerRect.left;
       }
+
+      closingEl.classList.add('closing');
+      setTimeout(() => {
+        setPanes((prev) => prev.filter((_, i) => i !== index));
+      }, 200);
     },
     [panes.length],
   );
@@ -257,7 +261,7 @@ export default function StackedThoughts({
 
         return (
           <div
-            key={`${pane.slug}-${realIndex}`}
+            key={pane.slug}
             className={`thought-pane${isCollapsed ? ' collapsed' : ''}${!initialPaneSlugs.current.has(pane.slug) ? ' animate-in' : ''}`}
             style={{ left: `${realIndex * 40}px` }}
             onClick={
