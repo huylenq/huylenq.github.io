@@ -18,16 +18,22 @@ export default function ThoughtPane({
   onClose,
 }: ThoughtPaneProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // The scrolling container is the parent .thought-pane div
-    const scrollContainer = headerRef.current?.closest('.thought-pane');
+    const scrollContainer = headerRef.current?.closest('.thought-pane') as HTMLElement | null;
     if (!scrollContainer) return;
 
-    const onScroll = () => setScrolled(scrollContainer.scrollTop > 0);
-    scrollContainer.addEventListener('scroll', onScroll, { passive: true });
-    return () => scrollContainer.removeEventListener('scroll', onScroll);
+    const updateScrollState = () => {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+      setScrolled(scrollTop > 0);
+      setCanScrollDown(scrollHeight - scrollTop - clientHeight > 1);
+    };
+
+    scrollContainer.addEventListener('scroll', updateScrollState, { passive: true });
+    updateScrollState();
+    return () => scrollContainer.removeEventListener('scroll', updateScrollState);
   }, []);
 
   return (
@@ -50,6 +56,7 @@ export default function ThoughtPane({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
+      <div className={`thought-pane-fade thought-pane-fade--bottom${canScrollDown ? ' visible' : ''}`} />
     </>
   );
 }

@@ -7,6 +7,15 @@
   line-height: 1.5;
 }
 
+.essay-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: var(--line-height-heading);
+  color: var(--ink-black);
+  margin: 0 0 var(--space-xl);
+}
+
 .essay-page p {
   margin: var(--space-sm) 0;
 }
