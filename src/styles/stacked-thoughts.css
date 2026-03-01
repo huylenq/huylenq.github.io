@@ -364,7 +364,7 @@
   position: relative;
 }
 
-/* Connector line + link icon from ghost pane toward the thought pane */
+/* Connector line + arrowhead from ghost pane toward the thought pane */
 .ghost-pane::before {
   content: '';
   position: absolute;
@@ -379,16 +379,16 @@
 .ghost-pane::after {
   content: '';
   position: absolute;
-  right: calc(100% + 18px);
+  right: calc(100% + 49px);
   top: 50%;
-  width: 20px;
-  height: 20px;
-  transform: translate(0, -50%);
-  border-radius: 50%;
-  background-color: var(--bg, #f5f3ee);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
+  width: 0;
+  height: 0;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+  border-right: 6px solid var(--ink-faint);
+  border-radius: 0;
+  background: none;
+  transform: translateY(-50%);
 }
 
 .ghost-pane-title {
