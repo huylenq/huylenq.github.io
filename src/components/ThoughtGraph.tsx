@@ -9,6 +9,7 @@ import {
   type SimulationLinkDatum,
 } from "d3-force";
 import { select } from "d3-selection";
+import "d3-transition";
 import { drag as d3Drag } from "d3-drag";
 import type { PublicThought, ThoughtEdge } from "../lib/types";
 
@@ -177,6 +178,18 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
       .style("cursor", "pointer")
       .style("user-select", "none");
 
+    // Hidden underline for click loading indicator
+    nodeElements
+      .append("line")
+      .attr("class", "click-underline")
+      .attr("x1", 0)
+      .attr("y1", 10)
+      .attr("x2", 0)
+      .attr("y2", 10)
+      .attr("stroke", "var(--ink-light)")
+      .attr("stroke-width", 1)
+      .attr("stroke-opacity", 0);
+
     // Hover highlight
     nodeElements
       .on("mouseenter", (_event, d) => {
@@ -242,11 +255,23 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
 
     nodeElements.call(dragBehavior);
 
-    // Prevent navigation when dragging
-    nodeElements.on("click", (event) => {
+    // Click: prevent nav when dragging, animate underline on real clicks
+    nodeElements.on("click", function (event, d) {
       if (dragged) {
         event.preventDefault();
+        return;
       }
+      // Animate underline growing outward from center
+      const halfW = d.textWidth / 2;
+      select(this)
+        .select(".click-underline")
+        .attr("stroke-opacity", 1)
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .transition()
+        .duration(600)
+        .attr("x1", -halfW)
+        .attr("x2", halfW);
     });
 
     // Force simulation
