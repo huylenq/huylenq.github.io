@@ -20,7 +20,12 @@ const { section } = Astro.props;
       </a>
     </span>
   </div>
-  {section && <a href={`/${section.toLowerCase()}`} class="header-section-label">{section}</a>}
+  {section && (
+    <span class="header-section-group">
+      <a href={`/${section.toLowerCase()}`} class="header-section-label">{section}</a>
+      <slot name="section-extra" />
+    </span>
+  )}
   <nav class="site-nav">
     <a href="/thoughts">Thoughts</a>
     <a href="/essays">Essays</a>
@@ -154,17 +159,23 @@ const { section } = Astro.props;
     color: var(--ink-black);
   }
 
-  .header-section-label {
+  .header-section-group {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .header-section-label {
     font-family: var(--font-sans);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink-medium);
-    white-space: nowrap;
     text-decoration: none;
   }
 
@@ -212,6 +223,12 @@ const { section } = Astro.props;
   :global([data-theme="dark"]) .icon-sun { display: block; }
   :global([data-theme="dark"]) .icon-moon { display: none; }
 
+  @media (max-width: 1024px) {
+    .header-section-group {
+      display: none;
+    }
+  }
+
   @media (max-width: 768px) {
     .site-header {
       flex-wrap: wrap;
@@ -237,10 +254,6 @@ const { section } = Astro.props;
       width: 100%;
       justify-content: center;
       gap: var(--space-md);
-    }
-
-    .header-section-label {
-      display: none;
     }
 
     .theme-toggle {
