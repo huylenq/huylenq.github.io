@@ -17,4 +17,4 @@ Also, the longer the delaying is, the building up of:
 
 ## How to mitigate
 
-Take **<mark>token actions</mark>**.
+Take **<mark>token actions</mark>**. A token action is the smallest possible step that moves the task from abstract intention to concrete progress. Write one line of code. Send the email. Open the document. The point isn't completion — it's breaking static friction. Once the task has a foothold in reality, the organic motivation has something to grip onto instead of decaying in a list.
