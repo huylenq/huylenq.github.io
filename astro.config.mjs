@@ -1,12 +1,15 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import mdx from '@mdx-js/rollup';
 
 export default defineConfig({
   site: 'https://huylenq.com',
   output: 'static',
   integrations: [react()],
-  redirects: {
-    '/hello/': '/hello-world',
-    '/reading-workflow/': '/a-reading-system',
+  vite: {
+    plugins: [
+      { enforce: 'pre', ...mdx({ jsxImportSource: 'react' }) },
+    ],
   },
+  redirects: {},
 });

@@ -1,7 +1,7 @@
 import type { BacklinkEntry } from '../lib/types';
 import Backlinks from './Backlinks';
 
-interface NotePaneProps {
+interface ThoughtPaneProps {
   slug: string;
   title: string;
   html: string;
@@ -12,21 +12,21 @@ interface NotePaneProps {
   onNavigateBacklink: (slug: string) => void;
 }
 
-export default function NotePane({
+export default function ThoughtPane({
   title,
   html,
   backlinks,
   isFirst,
   onClose,
   onNavigateBacklink,
-}: NotePaneProps) {
+}: ThoughtPaneProps) {
   return (
     <>
-      <div className="note-pane-header">
-        <span className="note-pane-title">{title}</span>
+      <div className="thought-pane-header">
+        <span className="thought-pane-title">{title}</span>
         {!isFirst && (
           <button
-            className="note-pane-close"
+            className="thought-pane-close"
             onClick={onClose}
             aria-label="Close pane"
           >
@@ -34,9 +34,9 @@ export default function NotePane({
           </button>
         )}
       </div>
-      <div className="note-pane-body">
+      <div className="thought-pane-body">
         <div
-          className="note-content"
+          className="thought-content"
           dangerouslySetInnerHTML={{ __html: html }}
         />
         <Backlinks backlinks={backlinks} onNavigate={onNavigateBacklink} />

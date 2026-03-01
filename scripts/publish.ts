@@ -6,10 +6,10 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import type {
-  NoteGraph,
-  NoteApiResponse,
+  ThoughtGraph,
+  ThoughtApiResponse,
   BacklinkEntry,
-  PublicNote,
+  PublicThought,
 } from "../src/lib/types.js";
 
 // ── Configuration ──────────────────────────────────────────────
@@ -18,28 +18,28 @@ const VAULT_PATH =
   process.env.VAULT_PATH ??
   "/Users/huy/Library/Mobile Documents/iCloud~md~obsidian/Documents/IWE";
 const PROJECT_ROOT = path.resolve(import.meta.dirname, "..");
-const CONTENT_NOTES_DIR = path.join(PROJECT_ROOT, "content", "notes");
-const API_NOTES_DIR = path.join(PROJECT_ROOT, "public", "api", "notes");
-const NOTE_ASSETS_DIR = path.join(PROJECT_ROOT, "public", "note-assets");
+const CONTENT_THOUGHTS_DIR = path.join(PROJECT_ROOT, "content", "thoughts");
+const API_THOUGHTS_DIR = path.join(PROJECT_ROOT, "public", "api", "thoughts");
+const THOUGHT_ASSETS_DIR = path.join(PROJECT_ROOT, "public", "thought-assets");
 
 const SKIP_DIRS = new Set(["node_modules"]);
 
 // ── Types ──────────────────────────────────────────────────────
 
-interface VaultNote {
+interface VaultThought {
   title: string;
   vaultPath: string;
   rawContent: string;
   frontmatter: Record<string, unknown>;
 }
 
-// ── Step 1: Scan vault for public notes ────────────────────────
+// ── Step 1: Scan vault for public thoughts ────────────────────
 
 function scanVault(): {
-  publicNotes: Map<string, VaultNote>;
+  publicThoughts: Map<string, VaultThought>;
   filenameToId: Map<string, string>;
 } {
-  const publicNotes = new Map<string, VaultNote>();
+  const publicThoughts = new Map<string, VaultThought>();
   const filenameToId = new Map<string, string>();
   const mdFiles = collectMarkdownFiles(VAULT_PATH);
 
@@ -58,7 +58,7 @@ function scanVault(): {
       fm = parsed.data;
       content = parsed.content;
     } catch {
-      // Malformed frontmatter — skip, it can't be a valid public note
+      // Malformed frontmatter — skip
       continue;
     }
 
@@ -78,7 +78,7 @@ function scanVault(): {
     }
 
     // Collision detection
-    const existing = publicNotes.get(publishId);
+    const existing = publicThoughts.get(publishId);
     if (existing) {
       console.error(
         `FATAL: publish-id "${publishId}" is used by multiple notes:`
@@ -89,7 +89,7 @@ function scanVault(): {
     }
 
     const title = path.basename(filePath, ".md");
-    publicNotes.set(publishId, {
+    publicThoughts.set(publishId, {
       title,
       vaultPath: filePath,
       rawContent: content, // gray-matter already strips frontmatter from `content`
@@ -98,7 +98,7 @@ function scanVault(): {
     filenameToId.set(title, publishId);
   }
 
-  return { publicNotes, filenameToId };
+  return { publicThoughts, filenameToId };
 }
 
 function collectMarkdownFiles(dir: string): string[] {
@@ -126,16 +126,16 @@ function normalizeTags(tags: unknown): string[] {
 
 interface TransformResult {
   markdown: string;
-  /** publish-ids of outgoing links to other public notes */
+  /** publish-ids of outgoing links to other public thoughts */
   outgoingLinks: Set<string>;
 }
 
-function transformNote(
-  note: VaultNote,
+function transformThought(
+  thought: VaultThought,
   filenameToId: Map<string, string>,
   publishId: string
 ): TransformResult {
-  let md = note.rawContent;
+  let md = thought.rawContent;
   const outgoingLinks = new Set<string>();
 
   // Strip %%comment%% blocks
@@ -165,7 +165,7 @@ function transformNote(
 
   // Resolve image/attachment references: ![[image.png]]
   md = md.replace(/!\[\[([^\]|]+?)(\|[^\]]*)?\]\]/g, (_match, filename: string) => {
-    const resolved = resolveAttachment(filename.trim(), note.vaultPath, publishId);
+    const resolved = resolveAttachment(filename.trim(), thought.vaultPath, publishId);
     if (resolved) return `![${filename}](${resolved})`;
     return `![${filename}](${filename})`; // leave broken
   });
@@ -176,7 +176,7 @@ function transformNote(
     (_match, alt: string, srcPath: string) => {
       const resolved = resolveAttachment(
         path.basename(srcPath),
-        note.vaultPath,
+        thought.vaultPath,
         publishId
       );
       if (resolved) return `![${alt}](${resolved})`;
@@ -197,7 +197,7 @@ function transformNote(
 
     if (targetId) {
       outgoingLinks.add(targetId);
-      return `[${displayText}](/${targetId})`;
+      return `[${displayText}](/thoughts/${targetId})`;
     }
     return `<span class="private-link">${displayText}</span>`;
   });
@@ -216,23 +216,23 @@ function isImageFile(name: string): boolean {
 
 function resolveAttachment(
   filename: string,
-  notePath: string,
+  thoughtPath: string,
   publishId: string
 ): string | null {
-  const noteDir = path.dirname(notePath);
+  const thoughtDir = path.dirname(thoughtPath);
   const candidates = [
-    path.join(noteDir, filename),
-    path.join(noteDir, "attachments", filename),
+    path.join(thoughtDir, filename),
+    path.join(thoughtDir, "attachments", filename),
     path.join(VAULT_PATH, "attachments", filename),
     path.join(VAULT_PATH, "assets", filename),
   ];
 
   for (const candidate of candidates) {
     if (fs.existsSync(candidate)) {
-      const destDir = path.join(NOTE_ASSETS_DIR, publishId);
+      const destDir = path.join(THOUGHT_ASSETS_DIR, publishId);
       fs.mkdirSync(destDir, { recursive: true });
       fs.copyFileSync(candidate, path.join(destDir, filename));
-      return `/note-assets/${publishId}/${filename}`;
+      return `/thought-assets/${publishId}/${filename}`;
     }
   }
   return null;
@@ -241,29 +241,29 @@ function resolveAttachment(
 // ── Step 3: Build backlink graph ───────────────────────────────
 
 async function buildGraph(
-  publicNotes: Map<string, VaultNote>,
+  publicThoughts: Map<string, VaultThought>,
   linkMap: Map<string, Set<string>>,
   transformedMarkdown: Map<string, string>
-): Promise<NoteGraph> {
+): Promise<ThoughtGraph> {
   // linkMap: sourceId → Set<targetId>
   // Invert to get backlinks: targetId → Set<sourceId>
   const backlinksMap = new Map<string, BacklinkEntry[]>();
 
   for (const [sourceId, targets] of linkMap) {
-    const sourceNote = publicNotes.get(sourceId)!;
+    const sourceThought = publicThoughts.get(sourceId)!;
     const sourceMd = transformedMarkdown.get(sourceId)!;
 
     for (const targetId of targets) {
-      const targetNote = publicNotes.get(targetId);
-      if (!targetNote) continue; // safety
+      const targetThought = publicThoughts.get(targetId);
+      if (!targetThought) continue; // safety
 
-      const contextMd = extractContext(sourceMd, targetNote.title, targetId);
+      const contextMd = extractContext(sourceMd, targetThought.title, targetId);
       const context = contextMd
         ? await renderMarkdownToHtml(contextMd)
         : "";
       const entry: BacklinkEntry = {
         slug: sourceId,
-        title: sourceNote.title,
+        title: sourceThought.title,
         context,
       };
 
@@ -273,14 +273,14 @@ async function buildGraph(
     }
   }
 
-  const graph: NoteGraph = {};
-  for (const [id, note] of publicNotes) {
-    const publicNote: PublicNote = {
+  const graph: ThoughtGraph = {};
+  for (const [id, thought] of publicThoughts) {
+    const publicThought: PublicThought = {
       slug: id,
-      title: note.title,
+      title: thought.title,
       backlinks: backlinksMap.get(id) ?? [],
     };
-    graph[id] = publicNote;
+    graph[id] = publicThought;
   }
 
   return graph;
@@ -295,7 +295,7 @@ function extractContext(
 
   // Look for a paragraph containing a link to the target (by slug or title)
   for (const para of paragraphs) {
-    if (para.includes(`(/${targetId})`) || para.includes(targetTitle)) {
+    if (para.includes(`(/thoughts/${targetId})`) || para.includes(targetTitle)) {
       const cleaned = para.replace(/\n/g, " ").trim();
       if (cleaned.length <= 200) return cleaned;
       return cleaned.slice(0, 197) + "...";
@@ -316,49 +316,49 @@ async function renderMarkdownToHtml(md: string): Promise<string> {
 }
 
 function cleanOutputDirs() {
-  for (const dir of [CONTENT_NOTES_DIR, API_NOTES_DIR, NOTE_ASSETS_DIR]) {
+  for (const dir of [CONTENT_THOUGHTS_DIR, API_THOUGHTS_DIR, THOUGHT_ASSETS_DIR]) {
     fs.rmSync(dir, { recursive: true, force: true });
     fs.mkdirSync(dir, { recursive: true });
   }
 }
 
 async function writeOutputs(
-  publicNotes: Map<string, VaultNote>,
+  publicThoughts: Map<string, VaultThought>,
   transformedMarkdown: Map<string, string>,
-  graph: NoteGraph
+  graph: ThoughtGraph
 ) {
-  for (const [id, note] of publicNotes) {
+  for (const [id, thought] of publicThoughts) {
     const md = transformedMarkdown.get(id)!;
     const backlinks = graph[id]?.backlinks ?? [];
 
-    // content/notes/{publish-id}.md
+    // content/thoughts/{publish-id}.md
     const contentMd = [
       "---",
-      `title: "${note.title.replace(/"/g, '\\"')}"`,
+      `title: "${thought.title.replace(/"/g, '\\"')}"`,
       `slug: "${id}"`,
       "---",
       md,
     ].join("\n");
-    fs.writeFileSync(path.join(CONTENT_NOTES_DIR, `${id}.md`), contentMd);
+    fs.writeFileSync(path.join(CONTENT_THOUGHTS_DIR, `${id}.md`), contentMd);
     console.log(`  Writing ${id}...`);
 
-    // public/api/notes/{publish-id}.json
+    // public/api/thoughts/{publish-id}.json
     const html = await renderMarkdownToHtml(md);
-    const apiResponse: NoteApiResponse = {
+    const apiResponse: ThoughtApiResponse = {
       slug: id,
-      title: note.title,
+      title: thought.title,
       html,
       backlinks,
     };
     fs.writeFileSync(
-      path.join(API_NOTES_DIR, `${id}.json`),
+      path.join(API_THOUGHTS_DIR, `${id}.json`),
       JSON.stringify(apiResponse, null, 2)
     );
   }
 
-  // content/notes/_graph.json
+  // content/thoughts/_graph.json
   fs.writeFileSync(
-    path.join(CONTENT_NOTES_DIR, "_graph.json"),
+    path.join(CONTENT_THOUGHTS_DIR, "_graph.json"),
     JSON.stringify(graph, null, 2)
   );
 }
@@ -368,36 +368,36 @@ async function writeOutputs(
 async function main() {
   console.log(`Scanning vault: ${VAULT_PATH}`);
 
-  const { publicNotes, filenameToId } = scanVault();
-  console.log(`Found ${publicNotes.size} public notes.`);
+  const { publicThoughts, filenameToId } = scanVault();
+  console.log(`Found ${publicThoughts.size} public thoughts.`);
 
   cleanOutputDirs();
 
-  if (publicNotes.size === 0) {
-    const emptyGraph: NoteGraph = {};
+  if (publicThoughts.size === 0) {
+    const emptyGraph: ThoughtGraph = {};
     fs.writeFileSync(
-      path.join(CONTENT_NOTES_DIR, "_graph.json"),
+      path.join(CONTENT_THOUGHTS_DIR, "_graph.json"),
       JSON.stringify(emptyGraph, null, 2)
     );
-    console.log("No public notes found. Wrote empty graph. Done!");
+    console.log("No public thoughts found. Wrote empty graph. Done!");
     return;
   }
 
-  // Transform all notes
+  // Transform all thoughts
   const transformedMarkdown = new Map<string, string>();
   const linkMap = new Map<string, Set<string>>();
 
-  for (const [id, note] of publicNotes) {
-    const { markdown, outgoingLinks } = transformNote(note, filenameToId, id);
+  for (const [id, thought] of publicThoughts) {
+    const { markdown, outgoingLinks } = transformThought(thought, filenameToId, id);
     transformedMarkdown.set(id, markdown);
     linkMap.set(id, outgoingLinks);
   }
 
   // Build backlink graph
-  const graph = await buildGraph(publicNotes, linkMap, transformedMarkdown);
+  const graph = await buildGraph(publicThoughts, linkMap, transformedMarkdown);
 
   // Write outputs
-  await writeOutputs(publicNotes, transformedMarkdown, graph);
+  await writeOutputs(publicThoughts, transformedMarkdown, graph);
 
   console.log("Done!");
 }

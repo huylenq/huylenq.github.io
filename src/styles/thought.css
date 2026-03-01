@@ -1,11 +1,11 @@
-.note-content {
+.thought-content {
   max-width: var(--max-width);
   font-family: var(--font-serif);
   color: var(--ink-black);
   line-height: var(--line-height-body);
 }
 
-.note-content h1 {
+.thought-content h1 {
   font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 400;
@@ -15,7 +15,7 @@
   color: var(--ink-black);
 }
 
-.note-content h2 {
+.thought-content h2 {
   font-family: var(--font-serif);
   font-size: 1.35rem;
   font-weight: 400;
@@ -26,7 +26,7 @@
   line-height: var(--line-height-heading);
 }
 
-.note-content h3 {
+.thought-content h3 {
   font-family: var(--font-serif);
   font-size: 1.15rem;
   font-weight: 600;
@@ -34,7 +34,7 @@
   line-height: var(--line-height-heading);
 }
 
-.note-content h4 {
+.thought-content h4 {
   font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: 600;
@@ -43,13 +43,13 @@
   line-height: var(--line-height-heading);
 }
 
-.note-content p {
+.thought-content p {
   margin: 0 0 1em;
   text-align: justify;
   hyphens: auto;
 }
 
-.note-content blockquote {
+.thought-content blockquote {
   border-left: 2px solid var(--ink-light);
   padding-left: var(--space-lg);
   margin: 1em 0;
@@ -57,7 +57,7 @@
   font-style: italic;
 }
 
-.note-content code {
+.thought-content code {
   font-family: var(--font-mono);
   font-size: 0.85em;
   background: var(--paper-aged);
@@ -65,7 +65,7 @@
   border-radius: var(--border-radius);
 }
 
-.note-content pre {
+.thought-content pre {
   background: var(--paper-aged);
   padding: 16px;
   border-radius: var(--border-radius);
@@ -75,59 +75,59 @@
   border: 1px solid var(--ink-faint);
 }
 
-.note-content pre code {
+.thought-content pre code {
   background: none;
   padding: 0;
   border-radius: 0;
   font-size: 0.85em;
 }
 
-.note-content ul,
-.note-content ol {
+.thought-content ul,
+.thought-content ol {
   margin: 0 0 1em;
   padding-left: 1.5em;
 }
 
-.note-content li {
+.thought-content li {
   margin: 0.3em 0;
 }
 
-.note-content li > ul,
-.note-content li > ol {
+.thought-content li > ul,
+.thought-content li > ol {
   margin: 0.2em 0 0;
 }
 
-.note-content img {
+.thought-content img {
   max-width: 100%;
   height: auto;
   border-radius: var(--border-radius);
   margin: 1em 0;
 }
 
-.note-content hr {
+.thought-content hr {
   border: none;
   border-top: 1px solid var(--ink-faint);
   margin: 2em 0;
 }
 
-.note-content mark {
+.thought-content mark {
   background: color-mix(in srgb, currentColor 12%, transparent);
   color: inherit;
   padding: 0.05em 0.15em;
 }
 
-.note-content a {
+.thought-content a {
   color: var(--ink-dark);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
 }
 
-.note-content a:hover {
+.thought-content a:hover {
   color: var(--ink-black);
 }
 
-.note-content table {
+.thought-content table {
   width: 100%;
   border-collapse: collapse;
   margin: 1em 0;
@@ -135,14 +135,14 @@
   font-size: 0.9em;
 }
 
-.note-content th,
-.note-content td {
+.thought-content th,
+.thought-content td {
   text-align: left;
   padding: 8px 12px;
   border-bottom: 1px solid var(--ink-faint);
 }
 
-.note-content th {
+.thought-content th {
   font-weight: 600;
   color: var(--ink-dark);
 }

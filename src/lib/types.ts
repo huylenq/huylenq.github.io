@@ -1,28 +1,28 @@
-/** Metadata for a single public note (used in graph and API responses) */
-export interface PublicNote {
+/** Metadata for a single public thought (used in graph and API responses) */
+export interface PublicThought {
   /** The publish-id UUID used as URL slug */
   slug: string;
-  /** Note title (derived from filename) */
+  /** Thought title (derived from filename) */
   title: string;
-  /** Backlinks from other public notes */
+  /** Backlinks from other public thoughts */
   backlinks: BacklinkEntry[];
 }
 
 /** A single backlink reference */
 export interface BacklinkEntry {
-  /** publish-id of the linking note */
+  /** publish-id of the linking thought */
   slug: string;
-  /** Title of the linking note */
+  /** Title of the linking thought */
   title: string;
   /** Context excerpt (~200 chars around the link) */
   context: string;
 }
 
-/** The full public note graph: publish-id → note metadata */
-export type NoteGraph = Record<string, PublicNote>;
+/** The full public thought graph: publish-id → thought metadata */
+export type ThoughtGraph = Record<string, PublicThought>;
 
-/** JSON payload served at /api/notes/{slug}.json for client-side pane loading */
-export interface NoteApiResponse {
+/** JSON payload served at /api/thoughts/{slug}.json for client-side pane loading */
+export interface ThoughtApiResponse {
   slug: string;
   title: string;
   /** Pre-rendered HTML content */

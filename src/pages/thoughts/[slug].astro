@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import StackedThoughts from '../../components/StackedThoughts.tsx';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { ThoughtGraph, ThoughtApiResponse } from '../../lib/types';
+
+export async function getStaticPaths() {
+  const thoughts = await getCollection('thoughts');
+  return thoughts.map(thought => ({
+    params: { slug: thought.data.slug },
+    props: { thought },
+  }));
+}
+
+const { thought } = Astro.props;
+
+// Load graph
+let graph: ThoughtGraph = {};
+const graphPath = path.join(process.cwd(), 'content/thoughts/_graph.json');
+if (fs.existsSync(graphPath)) {
+  graph = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
+}
+
+// Load pre-rendered HTML from API JSON
+let initialHtml = '';
+const apiPath = path.join(process.cwd(), 'public/api/thoughts', `${thought.data.slug}.json`);
+if (fs.existsSync(apiPath)) {
+  const apiData: ThoughtApiResponse = JSON.parse(fs.readFileSync(apiPath, 'utf-8'));
+  initialHtml = apiData.html;
+}
+
+const thoughtData = graph[thought.data.slug];
+const backlinks = thoughtData?.backlinks ?? [];
+---
+<BaseLayout title={thought.data.title}>
+  <Header />
+  <StackedThoughts
+    client:load
+    initialSlug={thought.data.slug}
+    initialTitle={thought.data.title}
+    initialHtml={initialHtml}
+    initialBacklinks={backlinks}
+    graph={graph}
+  />
+</BaseLayout>

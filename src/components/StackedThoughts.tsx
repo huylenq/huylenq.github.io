@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { NoteGraph, BacklinkEntry } from '../lib/types';
-import { fetchNote } from '../lib/notes';
-import NotePane from './NotePane';
+import type { ThoughtGraph, BacklinkEntry } from '../lib/types';
+import { fetchThought } from '../lib/thoughts';
+import ThoughtPane from './ThoughtPane';
 
 interface Pane {
   slug: string;
@@ -10,21 +10,21 @@ interface Pane {
   backlinks: BacklinkEntry[];
 }
 
-interface StackedNotesProps {
+interface StackedThoughtsProps {
   initialSlug: string;
   initialHtml: string;
   initialTitle: string;
   initialBacklinks: BacklinkEntry[];
-  graph: NoteGraph;
+  graph: ThoughtGraph;
 }
 
-export default function StackedNotes({
+export default function StackedThoughts({
   initialSlug,
   initialHtml,
   initialTitle,
   initialBacklinks,
   graph,
-}: StackedNotesProps) {
+}: StackedThoughtsProps) {
   const [panes, setPanes] = useState<Pane[]>([
     { slug: initialSlug, title: initialTitle, html: initialHtml, backlinks: initialBacklinks },
   ]);
@@ -44,8 +44,8 @@ export default function StackedNotes({
     const validSlugs = stackedSlugs.filter((s) => s in graph);
     if (validSlugs.length === 0) return;
 
-    Promise.all(validSlugs.map(fetchNote)).then((notes) => {
-      setPanes((prev) => [...prev, ...notes]);
+    Promise.all(validSlugs.map(fetchThought)).then((thoughts) => {
+      setPanes((prev) => [...prev, ...thoughts]);
     });
   }, [graph]);
 
@@ -61,7 +61,7 @@ export default function StackedNotes({
   // Scroll to newly added pane
   useEffect(() => {
     if (scrollTarget === null || !containerRef.current) return;
-    const paneEls = containerRef.current.querySelectorAll('.note-pane');
+    const paneEls = containerRef.current.querySelectorAll('.thought-pane');
     const target = paneEls[scrollTarget] as HTMLElement | undefined;
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
@@ -69,7 +69,7 @@ export default function StackedNotes({
     setScrollTarget(null);
   }, [scrollTarget]);
 
-  const openNote = useCallback(
+  const openThought = useCallback(
     async (slug: string, fromPaneIndex: number) => {
       // Already the next pane? Just scroll to it.
       if (panes[fromPaneIndex + 1]?.slug === slug) {
@@ -77,10 +77,10 @@ export default function StackedNotes({
         return;
       }
 
-      const note = await fetchNote(slug);
+      const thought = await fetchThought(slug);
       setPanes((prev) => {
         const truncated = prev.slice(0, fromPaneIndex + 1);
-        return [...truncated, note];
+        return [...truncated, thought];
       });
       setScrollTarget(fromPaneIndex + 1);
     },
@@ -103,25 +103,25 @@ export default function StackedNotes({
       if (!anchor) return;
 
       const href = anchor.getAttribute('href');
-      if (!href || !href.startsWith('/')) return;
+      if (!href || !href.startsWith('/thoughts/')) return;
 
-      const slug = href.replace(/^\//, '').replace(/\/$/, '');
-      if (!(slug in graph)) return; // Not a known note — let browser navigate
+      const slug = href.replace(/^\/thoughts\//, '').replace(/\/$/, '');
+      if (!(slug in graph)) return; // Not a known thought — let browser navigate
 
       e.preventDefault();
 
       // Determine which pane the click came from
-      const paneEl = anchor.closest<HTMLElement>('.note-pane');
+      const paneEl = anchor.closest<HTMLElement>('.thought-pane');
       let fromIndex = 0;
       if (paneEl && containerRef.current) {
-        const paneEls = Array.from(containerRef.current.querySelectorAll('.note-pane'));
+        const paneEls = Array.from(containerRef.current.querySelectorAll('.thought-pane'));
         const idx = paneEls.indexOf(paneEl);
         if (idx >= 0) fromIndex = idx;
       }
 
-      openNote(slug, fromIndex);
+      openThought(slug, fromIndex);
     },
-    [graph, openNote],
+    [graph, openThought],
   );
 
   // Determine which panes are collapsed (all except last 2 visible ones on desktop)
@@ -142,7 +142,7 @@ export default function StackedNotes({
       const viewportWidth = container.clientWidth;
       const newCollapsed = new Set<number>();
 
-      const paneEls = container.querySelectorAll('.note-pane');
+      const paneEls = container.querySelectorAll('.thought-pane');
       paneEls.forEach((el, i) => {
         const pane = el as HTMLElement;
         const paneRight = pane.offsetLeft + pane.offsetWidth;
@@ -179,7 +179,7 @@ export default function StackedNotes({
         return (
           <div
             key={`${pane.slug}-${realIndex}`}
-            className={`note-pane${isCollapsed ? ' collapsed' : ''}`}
+            className={`thought-pane${isCollapsed ? ' collapsed' : ''}`}
             style={{ left: `${realIndex * 40}px` }}
             onClick={
               isCollapsed
@@ -200,7 +200,7 @@ export default function StackedNotes({
                     </button>
                   </div>
                 )}
-                <NotePane
+                <ThoughtPane
                   slug={pane.slug}
                   title={pane.title}
                   html={pane.html}
@@ -208,7 +208,7 @@ export default function StackedNotes({
                   isFirst={realIndex === 0}
                   index={realIndex}
                   onClose={() => closePane(realIndex)}
-                  onNavigateBacklink={(slug) => openNote(slug, realIndex)}
+                  onNavigateBacklink={(slug) => openThought(slug, realIndex)}
                 />
               </>
             )}

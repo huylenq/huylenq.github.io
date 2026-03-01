@@ -1,0 +1,108 @@
+/* Essay interactive components */
+
+.essay-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-3xl) var(--space-xl);
+}
+
+.essay-var {
+  font-weight: 600;
+  border-bottom: 1px dotted var(--ink-medium);
+  padding: 0 2px;
+  cursor: ew-resize;
+  touch-action: none;
+  transition: background 0.1s ease;
+}
+
+.essay-var:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border-radius: 2px;
+}
+
+.essay-reactive {
+  font-weight: 600;
+}
+
+.essay-slider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-md) 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+}
+
+.essay-slider-label {
+  color: var(--ink-medium);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 5em;
+}
+
+.essay-slider input[type="range"] {
+  flex: 1;
+  height: 2px;
+  appearance: none;
+  background: var(--ink-faint);
+  border-radius: 1px;
+  outline: none;
+}
+
+.essay-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink-dark);
+  cursor: pointer;
+}
+
+.essay-slider input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink-dark);
+  border: none;
+  cursor: pointer;
+}
+
+.essay-slider-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-dark);
+  min-width: 3em;
+  text-align: right;
+}
+
+.essay-toggle {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border: 1px solid var(--ink-faint);
+  border-radius: var(--border-radius);
+  background: var(--paper);
+  color: var(--ink-medium);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.15s ease;
+}
+
+.essay-toggle:hover {
+  border-color: var(--ink-medium);
+  color: var(--ink-dark);
+}
+
+.essay-toggle-on {
+  background: var(--ink-dark);
+  color: var(--paper);
+  border-color: var(--ink-dark);
+}
+
+.essay-toggle-on:hover {
+  background: var(--ink-black);
+  border-color: var(--ink-black);
+  color: var(--paper);
+}

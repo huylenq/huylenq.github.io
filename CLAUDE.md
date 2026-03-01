@@ -1,17 +1,17 @@
 # huylenq.com
 
-Personal website for Huy — an Andy Matuschak-style stacked-panes notes system publishing Obsidian notes.
+Personal website for Huy — an Andy Matuschak-style stacked-panes thoughts system publishing Obsidian notes.
 
 ## Architecture
 
 **Stack:** Astro (static) + React islands (stacked panes) → GitHub Pages
 
-**Pipeline:** Obsidian vault → `scripts/publish.ts` → `content/notes/` + `public/api/notes/` → `astro build` → static HTML
+**Pipeline:** Obsidian vault → `scripts/publish.ts` → `content/thoughts/` + `public/api/thoughts/` → `astro build` → static HTML
 
 ```
 Obsidian vault (iCloud)
     ↓  [npm run publish]  scans for #public + publish-id
-content/notes/*.md + public/api/notes/*.json + _graph.json
+content/thoughts/*.md + public/api/thoughts/*.json + _graph.json
     ↓  [npm run build]    Astro static build
 dist/ → GitHub Pages (huylenq.com)
 ```
@@ -25,7 +25,7 @@ npm run build      # astro build → dist/
 npm run preview    # serve dist/ locally
 ```
 
-Deploy workflow: `npm run publish && git add content/ public/api/ public/note-assets/ && git commit && git push`
+Deploy workflow: `npm run publish && git add content/ public/api/ public/thought-assets/ && git commit && git push`
 
 ## Project Structure
 
@@ -33,35 +33,35 @@ Deploy workflow: `npm run publish && git add content/ public/api/ public/note-as
 ├── scripts/publish.ts          # Vault scanner + markdown transformer + backlink graph builder
 ├── astro.config.mjs            # Static output, React integration, legacy redirects
 ├── src/
-│   ├── content.config.ts       # Astro content collection (notes)
+│   ├── content.config.ts       # Astro content collection (thoughts)
 │   ├── lib/
-│   │   ├── types.ts            # Shared interfaces: PublicNote, NoteGraph, BacklinkEntry, NoteApiResponse
-│   │   └── notes.ts            # Client-side fetch utility
+│   │   ├── types.ts            # Shared interfaces: PublicThought, ThoughtGraph, BacklinkEntry, ThoughtApiResponse
+│   │   └── thoughts.ts         # Client-side fetch utility
 │   ├── components/
-│   │   ├── StackedNotes.tsx    # React island: stacked panes with URL sync, link interception
-│   │   ├── NotePane.tsx        # Single pane renderer
-│   │   ├── Backlinks.tsx       # Collapsible backlinks section
-│   │   └── Header.astro        # Site nav
+│   │   ├── StackedThoughts.tsx  # React island: stacked panes with URL sync, link interception
+│   │   ├── ThoughtPane.tsx      # Single pane renderer
+│   │   ├── Backlinks.tsx        # Collapsible backlinks section
+│   │   └── Header.astro         # Site nav
 │   ├── layouts/
-│   │   ├── BaseLayout.astro    # HTML shell, loads Google Fonts + all CSS
-│   │   └── PageLayout.astro    # Centered content wrapper with Header
+│   │   ├── BaseLayout.astro     # HTML shell, loads Google Fonts + all CSS
+│   │   └── PageLayout.astro     # Centered content wrapper with Header
 │   ├── pages/
-│   │   ├── index.astro         # Homepage: intro + note list from _graph.json
-│   │   ├── [slug].astro        # Dynamic note route with StackedNotes React island
-│   │   ├── cv.astro            # PDF embed + download
-│   │   ├── sketches.astro      # Video gallery
-│   │   └── about.astro         # Bio
+│   │   ├── index.astro          # Homepage: intro + thought list from _graph.json
+│   │   ├── thoughts/[slug].astro # Dynamic thought route at /thoughts/<slug>
+│   │   ├── cv.astro             # PDF embed + download
+│   │   ├── sketches.astro       # Video gallery
+│   │   └── about.astro          # Bio
 │   └── styles/
-│       ├── global.css          # Paper & Ink design system variables + base styles
-│       ├── stacked-notes.css   # Pane layout, collapse, mobile
-│       └── note.css            # Note content typography
-├── content/notes/              # GENERATED — do not hand-edit
-│   ├── _graph.json             # Public note graph (backlinks, titles)
-│   └── *.md                    # Transformed notes with title + slug frontmatter
+│       ├── global.css           # Paper & Ink design system variables + base styles
+│       ├── stacked-thoughts.css # Pane layout, collapse, mobile
+│       └── thought.css          # Thought content typography
+├── content/thoughts/            # GENERATED — do not hand-edit
+│   ├── _graph.json              # Public thought graph (backlinks, titles)
+│   └── *.md                     # Transformed thoughts with title + slug frontmatter
 ├── public/
-│   ├── api/notes/*.json        # GENERATED — per-note JSON for client-side fetch
-│   ├── note-assets/            # GENERATED — images copied from vault
-│   ├── CNAME                   # huylenq.com
+│   ├── api/thoughts/*.json      # GENERATED — per-thought JSON for client-side fetch
+│   ├── thought-assets/          # GENERATED — images copied from vault
+│   ├── CNAME                    # huylenq.com
 │   ├── assets/huy-cv.pdf
 │   └── sketches/*.mp4
 └── .github/workflows/deploy.yml
@@ -91,26 +91,26 @@ The pipeline reads from the vault at `VAULT_PATH` env var (defaults to Huy's iCl
 1. Only notes with `tags: [public]` AND `publish-id` in frontmatter are processed
 2. Wikilinks to non-public notes → `<span class="private-link">` (no href)
 3. Backlink graph is public-to-public only
-4. Context excerpts come only from public note content
+4. Context excerpts come only from public thought content
 5. All private frontmatter stripped (sr-due, sr-interval, etc.)
 6. `%%comments%%`, dataview blocks, ad-* blocks stripped
 7. No vault paths leak — only publish-id slugs
 
 ## Obsidian Plugin (separate repo)
 
-The `public-notes` plugin lives at `/Users/huy/src/iPKM/public-notes/`. It adds a "Toggle public" command that assigns a `publish-id` (UUID) and toggles the `public` tag in frontmatter.
+The `public-thoughts` plugin lives at `/Users/huy/src/iPKM/public-thoughts/`. It adds a "Toggle public" command that assigns a `publish-id` (UUID) and toggles the `public` tag in frontmatter.
 
 ## Stacked Panes Behavior
 
 - Desktop: horizontal scroll container, 625px panes, earlier panes collapse to 40px strips
 - Mobile (<768px): single pane with back button
-- URL sync: `/{slug}?stacked=s1&stacked=s2`
-- Link clicks intercepted via event delegation — only internal note links open as new panes
+- URL sync: `/thoughts/{slug}?stacked=s1&stacked=s2`
+- Link clicks intercepted via event delegation — only `/thoughts/` links open as new panes
 - First pane HTML comes from pre-rendered API JSON; subsequent panes fetched client-side
 
 ## Content Conventions
 
-- Note slugs are human-readable for blog-migrated posts (`hello-world`, `trust`, `a-reading-system`)
-- New notes from the plugin get UUID slugs
-- The `content/notes/` and `public/api/notes/` directories are gitignored but committed when publishing
-- `_graph.json` is the source of truth for the note index and backlinks
+- Thought slugs are human-readable for blog-migrated posts (`hello-world`, `trust`, `a-reading-system`)
+- New thoughts from the plugin get UUID slugs
+- The `content/thoughts/` and `public/api/thoughts/` directories are gitignored but committed when publishing
+- `_graph.json` is the source of truth for the thought index and backlinks

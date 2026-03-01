@@ -10,12 +10,12 @@ export default function Backlinks({ backlinks, onNavigate }: BacklinksProps) {
 
   return (
     <div className="backlinks">
-      <h2 className="backlinks-heading">Links to this note</h2>
+      <h2 className="backlinks-heading">Links to this thought</h2>
       <div className="backlinks-grid">
         {backlinks.map((bl) => (
           <a
             key={bl.slug}
-            href={`/${bl.slug}`}
+            href={`/thoughts/${bl.slug}`}
             className="backlink-card"
             onClick={(e) => {
               e.preventDefault();

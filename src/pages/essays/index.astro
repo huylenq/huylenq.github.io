@@ -1,0 +1,27 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+
+const essayModules = import.meta.glob('../../essays/*.mdx', { eager: true }) as Record<string, any>;
+const sorted = Object.values(essayModules)
+  .filter((e) => e.meta?.title)
+  .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
+---
+<PageLayout title="Essays — huylenq.com">
+  <div class="note-content">
+    <h1>Essays</h1>
+    <p>Explorable explanations — writing with reactive, interactive elements.</p>
+    {sorted.length === 0 && <p><em>Nothing here yet.</em></p>}
+    <ul>
+      {sorted.map((essay) => (
+        <li>
+          <a href={`/essays/${essay.meta.slug}`}>{essay.meta.title}</a>
+          {essay.meta.description && (
+            <span style="color: var(--ink-medium); margin-left: 0.5em;">
+              — {essay.meta.description}
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+</PageLayout>

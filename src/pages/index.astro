@@ -2,15 +2,20 @@
 import PageLayout from '../layouts/PageLayout.astro';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { NoteGraph } from '../lib/types';
+import type { ThoughtGraph } from '../lib/types';
 
-let graph: NoteGraph = {};
-const graphPath = path.join(process.cwd(), 'content/notes/_graph.json');
+let graph: ThoughtGraph = {};
+const graphPath = path.join(process.cwd(), 'content/thoughts/_graph.json');
 if (fs.existsSync(graphPath)) {
   graph = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
 }
 
-const notes = Object.values(graph);
+const thoughts = Object.values(graph);
+
+const essayModules = import.meta.glob('../essays/*.mdx', { eager: true }) as Record<string, any>;
+const essays = Object.values(essayModules)
+  .filter((e) => e.meta?.title)
+  .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 ---
 <PageLayout title="huylenq.com">
   <p class="intro">
@@ -23,18 +28,33 @@ const notes = Object.values(graph);
     <a href="/about">About</a>
   </nav>
 
-  <section class="notes-section">
-    <h2>Notes</h2>
-    {notes.length > 0 ? (
-      <ul class="notes-list">
-        {notes.map((note) => (
+  <section class="thoughts-section">
+    <h2>Thoughts</h2>
+    {thoughts.length > 0 ? (
+      <ul class="thoughts-list">
+        {thoughts.map((thought) => (
           <li>
-            <a href={`/${note.slug}`}>{note.title}</a>
+            <a href={`/thoughts/${thought.slug}`}>{thought.title}</a>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="empty">No notes published yet.</p>
+      <p class="empty">No thoughts published yet.</p>
+    )}
+  </section>
+
+  <section class="thoughts-section">
+    <h2>Essays</h2>
+    {essays.length > 0 ? (
+      <ul class="thoughts-list">
+        {essays.map((essay) => (
+          <li>
+            <a href={`/essays/${essay.meta.slug}`}>{essay.meta.title}</a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">No essays published yet.</p>
     )}
   </section>
 </PageLayout>
@@ -68,7 +88,11 @@ const notes = Object.values(graph);
     color: var(--ink-black);
   }
 
-  .notes-section h2 {
+  .thoughts-section + .thoughts-section {
+    margin-top: var(--space-2xl);
+  }
+
+  .thoughts-section h2 {
     font-family: var(--font-serif);
     font-size: 1.35rem;
     font-weight: 400;
@@ -79,28 +103,28 @@ const notes = Object.values(graph);
     border-bottom: 1px solid var(--ink-black);
   }
 
-  .notes-list {
+  .thoughts-list {
     list-style: none;
     padding: 0;
   }
 
-  .notes-list li {
+  .thoughts-list li {
     padding: var(--space-sm) 0;
     border-bottom: 1px solid var(--ink-faint);
   }
 
-  .notes-list li:last-child {
+  .thoughts-list li:last-child {
     border-bottom: none;
   }
 
-  .notes-list a {
+  .thoughts-list a {
     font-family: var(--font-serif);
     font-size: 0.95rem;
     color: var(--ink-dark);
     text-decoration: none;
   }
 
-  .notes-list a:hover {
+  .thoughts-list a:hover {
     color: var(--ink-black);
   }
 

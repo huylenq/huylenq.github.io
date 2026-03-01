@@ -8,23 +8,23 @@
   padding: 0;
 }
 
-/* Single pane: center the note with a comfortable reading width */
+/* Single pane: center the thought with a comfortable reading width */
 .stacked-container.single-pane {
   justify-content: center;
 }
 
-.stacked-container.single-pane .note-pane {
+.stacked-container.single-pane .thought-pane {
   width: min(800px, 100%);
   min-width: min(800px, 100%);
 }
 
-.stacked-container.single-pane .note-pane-header,
-.stacked-container.single-pane .note-pane-body {
+.stacked-container.single-pane .thought-pane-header,
+.stacked-container.single-pane .thought-pane-body {
   padding-left: 48px;
   padding-right: 48px;
 }
 
-.note-pane {
+.thought-pane {
   width: 625px;
   min-width: 625px;
   flex-shrink: 0;
@@ -40,7 +40,7 @@
 }
 
 
-.note-pane-header {
+.thought-pane-header {
   z-index: 2;
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
   padding-top: 1.5rem;
 }
 
-.note-pane-title {
+.thought-pane-title {
   font-size: 1.8rem;
   font-weight: 700;
   overflow: hidden;
@@ -59,7 +59,7 @@
   white-space: nowrap;
 }
 
-.note-pane-close {
+.thought-pane-close {
   background: none;
   border: none;
   font-size: 18px;
@@ -70,17 +70,17 @@
   line-height: 1;
 }
 
-.note-pane-close:hover {
+.thought-pane-close:hover {
   background: var(--paper-aged);
   color: var(--ink-dark);
 }
 
-.note-pane-body {
+.thought-pane-body {
   padding: 24px;
 }
 
 /* Collapsed pane — vertical title strip (paper edge) */
-.note-pane.collapsed {
+.thought-pane.collapsed {
   width: 40px;
   min-width: 40px;
   cursor: pointer;
@@ -91,8 +91,8 @@
     2px 0 6px var(--paper-shadow);
 }
 
-.note-pane.collapsed .note-pane-header,
-.note-pane.collapsed .note-pane-body {
+.thought-pane.collapsed .thought-pane-header,
+.thought-pane.collapsed .thought-pane-body {
   display: none;
 }
 
@@ -100,7 +100,7 @@
   display: none;
 }
 
-.note-pane.collapsed .collapsed-title {
+.thought-pane.collapsed .collapsed-title {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,7 +128,7 @@
     min-height: 100vh;
   }
 
-  .note-pane {
+  .thought-pane {
     width: 100%;
     min-width: 100%;
     height: auto;
@@ -139,7 +139,7 @@
     box-shadow: none;
   }
 
-  .note-pane.collapsed {
+  .thought-pane.collapsed {
     display: none;
   }
 
