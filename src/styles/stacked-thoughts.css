@@ -30,6 +30,7 @@
   padding-right: 48px;
 }
 
+
 @keyframes pane-pop {
   from {
     opacity: 0;
@@ -56,8 +57,12 @@
   position: sticky;
   top: 0;
   transform: rotate(var(--tilt));
-  transition: min-width 0.2s ease, width 0.2s ease, box-shadow 0.15s ease;
-  animation: pane-pop 0.25s ease-out;
+  transition: min-width 0.3s ease, width 0.3s ease, box-shadow 0.15s ease, margin 0.3s ease;
+  animation: none;
+}
+
+.thought-pane.animate-in {
+  animation: pane-pop 0.25s ease-out backwards;
 }
 
 
@@ -99,7 +104,7 @@
   padding: 14px 24px 10px;
   background: var(--pane-bg);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, padding 0.3s ease;
 }
 
 /* Mask bleed-through from tilted panes behind —
@@ -164,6 +169,7 @@
 
 .thought-pane-body {
   padding: 16px 24px 24px;
+  transition: padding 0.3s ease;
 }
 
 /* Stacked paper effect: alternating pane heights for depth */

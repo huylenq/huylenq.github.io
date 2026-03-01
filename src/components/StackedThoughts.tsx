@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import type { ThoughtGraph, BacklinkEntry } from '../lib/types';
 import { fetchThought } from '../lib/thoughts';
 import ThoughtPane from './ThoughtPane';
@@ -31,6 +31,9 @@ export default function StackedThoughts({
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTarget, setScrollTarget] = useState<number | null>(null);
   const initializedRef = useRef(false);
+  const prevPaneCountRef = useRef(1);
+  const firstPaneStartLeft = useRef<number | null>(null);
+  const initialPaneSlugs = useRef(new Set([initialSlug]));
 
   // On mount: restore stacked panes from URL
   useEffect(() => {
@@ -44,10 +47,45 @@ export default function StackedThoughts({
     const validSlugs = stackedSlugs.filter((s) => s in graph);
     if (validSlugs.length === 0) return;
 
+    validSlugs.forEach((s) => initialPaneSlugs.current.add(s));
     Promise.all(validSlugs.map(fetchThought)).then((thoughts) => {
       setPanes((prev) => [...prev, ...thoughts]);
     });
   }, [graph]);
+
+  // Animate single-pane → stacked transition (FLIP technique)
+  useLayoutEffect(() => {
+    const prevCount = prevPaneCountRef.current;
+    prevPaneCountRef.current = panes.length;
+    const startLeft = firstPaneStartLeft.current;
+
+    if (prevCount === 1 && panes.length > 1 && startLeft !== null && containerRef.current) {
+      firstPaneStartLeft.current = null;
+      const firstPane = containerRef.current.querySelector('.thought-pane') as HTMLElement;
+      if (!firstPane) return;
+
+      // Pane is now rendered at its stacked position — calculate the delta
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const currentLeft = firstPane.getBoundingClientRect().left - containerRect.left;
+      const deltaX = startLeft - currentLeft;
+
+      // Place it back where it was, then animate to new position
+      firstPane.style.transition = 'none';
+      firstPane.style.transform = `translateX(${deltaX}px)`;
+
+      requestAnimationFrame(() => {
+        firstPane.style.transition = 'transform 0.3s ease';
+        firstPane.style.transform = '';
+
+        const cleanup = () => {
+          firstPane.style.transition = '';
+          firstPane.style.transform = '';
+          firstPane.removeEventListener('transitionend', cleanup);
+        };
+        firstPane.addEventListener('transitionend', cleanup);
+      });
+    }
+  }, [panes.length]);
 
   // Sync URL when panes change
   useEffect(() => {
@@ -75,6 +113,16 @@ export default function StackedThoughts({
       if (panes[fromPaneIndex + 1]?.slug === slug) {
         setScrollTarget(fromPaneIndex + 1);
         return;
+      }
+
+      // Snapshot first pane position before re-render (for slide animation)
+      if (panes.length === 1 && containerRef.current) {
+        const firstPane = containerRef.current.querySelector('.thought-pane') as HTMLElement;
+        if (firstPane) {
+          const containerRect = containerRef.current.getBoundingClientRect();
+          const paneRect = firstPane.getBoundingClientRect();
+          firstPaneStartLeft.current = paneRect.left - containerRect.left;
+        }
       }
 
       const thought = await fetchThought(slug);
@@ -187,7 +235,7 @@ export default function StackedThoughts({
         return (
           <div
             key={`${pane.slug}-${realIndex}`}
-            className={`thought-pane${isCollapsed ? ' collapsed' : ''}`}
+            className={`thought-pane${isCollapsed ? ' collapsed' : ''}${!initialPaneSlugs.current.has(pane.slug) ? ' animate-in' : ''}`}
             style={{ left: `${realIndex * 40}px` }}
             onClick={
               isCollapsed
