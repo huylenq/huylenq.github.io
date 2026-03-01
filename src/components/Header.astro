@@ -20,7 +20,7 @@ const { section } = Astro.props;
       </a>
     </span>
   </div>
-  {section && <span class="header-section-label">{section}</span>}
+  {section && <a href={`/${section.toLowerCase()}`} class="header-section-label">{section}</a>}
   <nav class="site-nav">
     <a href="/thoughts">Thoughts</a>
     <a href="/essays">Essays</a>
@@ -165,7 +165,11 @@ const { section } = Astro.props;
     text-transform: uppercase;
     color: var(--ink-medium);
     white-space: nowrap;
-    pointer-events: none;
+    text-decoration: none;
+  }
+
+  .header-section-label:hover {
+    color: var(--ink-dark);
   }
 
   .site-nav {
@@ -212,11 +216,21 @@ const { section } = Astro.props;
     .site-header {
       flex-wrap: wrap;
       padding: var(--space-xs) var(--space-md);
+      row-gap: var(--space-xs);
     }
 
     .site-identity {
       width: 100%;
       justify-content: center;
+    }
+
+    .site-identity::before {
+      content: "@huylenq";
+      visibility: hidden;
+      font-family: var(--font-mono, monospace);
+      font-size: .7rem;
+      margin-right: .8rem;
+      order: -1;
     }
 
     .site-nav {
@@ -227,6 +241,12 @@ const { section } = Astro.props;
 
     .header-section-label {
       display: none;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: var(--space-xs);
+      right: var(--space-xs);
     }
   }
 </style>
