@@ -2,15 +2,16 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ThoughtGraph } from '../../lib/types';
+import type { ThoughtGraphFile } from '../../lib/types';
 
-let graph: ThoughtGraph = {};
+const defaultGraphFile: ThoughtGraphFile = { thoughts: {}, edges: [] };
+let graphFile = defaultGraphFile;
 const graphPath = path.join(process.cwd(), 'content/thoughts/_graph.json');
 if (fs.existsSync(graphPath)) {
-  graph = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
+  graphFile = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
 }
 
-const thoughts = Object.values(graph);
+const thoughts = Object.values(graphFile.thoughts);
 ---
 <PageLayout title="Thoughts — huylenq.com">
   <section class="listing-section">

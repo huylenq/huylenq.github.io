@@ -5,7 +5,7 @@ import Header from '../../components/Header.astro';
 import StackedThoughts from '../../components/StackedThoughts.tsx';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ThoughtGraph, ThoughtApiResponse } from '../../lib/types';
+import type { ThoughtGraph, ThoughtGraphFile, ThoughtApiResponse } from '../../lib/types';
 
 export async function getStaticPaths() {
   const thoughts = await getCollection('thoughts');
@@ -21,7 +21,8 @@ const { thought } = Astro.props;
 let graph: ThoughtGraph = {};
 const graphPath = path.join(process.cwd(), 'content/thoughts/_graph.json');
 if (fs.existsSync(graphPath)) {
-  graph = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
+  const graphFile: ThoughtGraphFile = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
+  graph = graphFile.thoughts;
 }
 
 // Load pre-rendered HTML from API JSON

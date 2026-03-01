@@ -1,43 +1,51 @@
 {
-  "a-reading-system": {
-    "slug": "a-reading-system",
-    "title": "A Reading System",
-    "backlinks": []
+  "thoughts": {
+    "a-reading-system": {
+      "slug": "a-reading-system",
+      "title": "A Reading System",
+      "backlinks": []
+    },
+    "how-i-write-notes": {
+      "slug": "how-i-write-notes",
+      "title": "How I Write Notes",
+      "backlinks": []
+    },
+    "software-engineering-fatigue": {
+      "slug": "software-engineering-fatigue",
+      "title": "Software engineering fatigue",
+      "backlinks": []
+    },
+    "the-cost-of-delayed-action": {
+      "slug": "the-cost-of-delayed-action",
+      "title": "The cost of delayed action",
+      "backlinks": [
+        {
+          "slug": "how-i-write-notes",
+          "title": "How I Write Notes",
+          "context": "<ol>\n<li>(<em>Quite radical and (still in) experimental</em>): write <strong>directly</strong> and <strong>immediately</strong> in your vault. That means if an idea belong to the Vault, do not dump it down to the interim ephemeral notes...</li>\n</ol>"
+        }
+      ]
+    },
+    "thinking-as-a-form-of-procrastination": {
+      "slug": "thinking-as-a-form-of-procrastination",
+      "title": "Thinking as a form of procrastination",
+      "backlinks": []
+    },
+    "trust": {
+      "slug": "trust",
+      "title": "Trust",
+      "backlinks": []
+    },
+    "what-if-i-found-a-startup": {
+      "slug": "what-if-i-found-a-startup",
+      "title": "What if I found a startup",
+      "backlinks": []
+    }
   },
-  "how-i-write-notes": {
-    "slug": "how-i-write-notes",
-    "title": "How I Write Notes",
-    "backlinks": []
-  },
-  "software-engineering-fatigue": {
-    "slug": "software-engineering-fatigue",
-    "title": "Software engineering fatigue",
-    "backlinks": []
-  },
-  "the-cost-of-delayed-action": {
-    "slug": "the-cost-of-delayed-action",
-    "title": "The cost of delayed action",
-    "backlinks": [
-      {
-        "slug": "how-i-write-notes",
-        "title": "How I Write Notes",
-        "context": "<ol>\n<li>(<em>Quite radical and (still in) experimental</em>): write <strong>directly</strong> and <strong>immediately</strong> in your vault. That means if an idea belong to the Vault, do not dump it down to the interim ephemeral notes...</li>\n</ol>"
-      }
-    ]
-  },
-  "thinking-as-a-form-of-procrastination": {
-    "slug": "thinking-as-a-form-of-procrastination",
-    "title": "Thinking as a form of procrastination",
-    "backlinks": []
-  },
-  "trust": {
-    "slug": "trust",
-    "title": "Trust",
-    "backlinks": []
-  },
-  "what-if-i-found-a-startup": {
-    "slug": "what-if-i-found-a-startup",
-    "title": "What if I found a startup",
-    "backlinks": []
-  }
+  "edges": [
+    {
+      "source": "how-i-write-notes",
+      "target": "the-cost-of-delayed-action"
+    }
+  ]
 }

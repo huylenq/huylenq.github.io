@@ -7,9 +7,9 @@ There are some rules of thumb that I find universal and applicable to many corne
 
 ### Why does trust matter?
 
-It is an _heuristic_ to free your mental capacity. It gives you the basis to explore and to build upon.
+It is a _heuristic_ to free your mental capacity. It gives you the basis to explore and to build upon.
 
-Because there is no other way to live. Doubt everything by default will overwhelm you to a broken point. At the bottom of it, there's a line you must draw to give the benefit of the doubt to many things beyond that line.
+Because there is no other way to live. Doubting everything by default will overwhelm you to a broken point. At the bottom of it, there's a line you must draw to give the benefit of the doubt to many things beyond that line.
 
 ### What do I trust?
 

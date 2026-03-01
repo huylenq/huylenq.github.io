@@ -21,6 +21,18 @@ export interface BacklinkEntry {
 /** The full public thought graph: publish-id → thought metadata */
 export type ThoughtGraph = Record<string, PublicThought>;
 
+/** A directed edge between two public thoughts */
+export interface ThoughtEdge {
+  source: string;
+  target: string;
+}
+
+/** Shape of _graph.json on disk */
+export interface ThoughtGraphFile {
+  thoughts: ThoughtGraph;
+  edges: ThoughtEdge[];
+}
+
 /** JSON payload served at /api/thoughts/{slug}.json for client-side pane loading */
 export interface ThoughtApiResponse {
   slug: string;

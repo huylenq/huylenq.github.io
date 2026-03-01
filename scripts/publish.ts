@@ -7,6 +7,8 @@ import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import type {
   ThoughtGraph,
+  ThoughtGraphFile,
+  ThoughtEdge,
   ThoughtApiResponse,
   BacklinkEntry,
   PublicThought,
@@ -244,10 +246,11 @@ async function buildGraph(
   publicThoughts: Map<string, VaultThought>,
   linkMap: Map<string, Set<string>>,
   transformedMarkdown: Map<string, string>
-): Promise<ThoughtGraph> {
+): Promise<{ graph: ThoughtGraph; edges: ThoughtEdge[] }> {
   // linkMap: sourceId → Set<targetId>
   // Invert to get backlinks: targetId → Set<sourceId>
   const backlinksMap = new Map<string, BacklinkEntry[]>();
+  const edges: ThoughtEdge[] = [];
 
   for (const [sourceId, targets] of linkMap) {
     const sourceThought = publicThoughts.get(sourceId)!;
@@ -256,6 +259,8 @@ async function buildGraph(
     for (const targetId of targets) {
       const targetThought = publicThoughts.get(targetId);
       if (!targetThought) continue; // safety
+
+      edges.push({ source: sourceId, target: targetId });
 
       const contextMd = extractContext(sourceMd, targetThought.title, targetId);
       const context = contextMd
@@ -283,7 +288,7 @@ async function buildGraph(
     graph[id] = publicThought;
   }
 
-  return graph;
+  return { graph, edges };
 }
 
 function extractContext(
@@ -325,7 +330,8 @@ function cleanOutputDirs() {
 async function writeOutputs(
   publicThoughts: Map<string, VaultThought>,
   transformedMarkdown: Map<string, string>,
-  graph: ThoughtGraph
+  graph: ThoughtGraph,
+  edges: ThoughtEdge[]
 ) {
   for (const [id, thought] of publicThoughts) {
     const md = transformedMarkdown.get(id)!;
@@ -357,9 +363,10 @@ async function writeOutputs(
   }
 
   // content/thoughts/_graph.json
+  const graphFile: ThoughtGraphFile = { thoughts: graph, edges };
   fs.writeFileSync(
     path.join(CONTENT_THOUGHTS_DIR, "_graph.json"),
-    JSON.stringify(graph, null, 2)
+    JSON.stringify(graphFile, null, 2)
   );
 }
 
@@ -374,10 +381,10 @@ async function main() {
   cleanOutputDirs();
 
   if (publicThoughts.size === 0) {
-    const emptyGraph: ThoughtGraph = {};
+    const emptyGraphFile: ThoughtGraphFile = { thoughts: {}, edges: [] };
     fs.writeFileSync(
       path.join(CONTENT_THOUGHTS_DIR, "_graph.json"),
-      JSON.stringify(emptyGraph, null, 2)
+      JSON.stringify(emptyGraphFile, null, 2)
     );
     console.log("No public thoughts found. Wrote empty graph. Done!");
     return;
@@ -394,10 +401,10 @@ async function main() {
   }
 
   // Build backlink graph
-  const graph = await buildGraph(publicThoughts, linkMap, transformedMarkdown);
+  const { graph, edges } = await buildGraph(publicThoughts, linkMap, transformedMarkdown);
 
   // Write outputs
-  await writeOutputs(publicThoughts, transformedMarkdown, graph);
+  await writeOutputs(publicThoughts, transformedMarkdown, graph, edges);
 
   console.log("Done!");
 }

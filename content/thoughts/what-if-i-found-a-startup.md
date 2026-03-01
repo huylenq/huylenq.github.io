@@ -6,10 +6,6 @@ slug: "what-if-i-found-a-startup"
 The foundation of every corners, of the all DNA I would establish if I found a software company.
 
 Before founding a company, the prerequisite is knowing the purpose on why does the company should exist: establish **the mission**.
-
-These frameworks should be reviewed team-wise on a regular basis. This could happen during the "team talks" session (weekly or bi-weekly) or at the sprint/cycle closure (prepared beforehand by me, with the violated or adjustment-necessary items).
-
-Each individual framework is reviewed on a different cadence (for example, core values certainly should be revised on a weekly basis). The team talks sessions could just be about reminders and discussions regarding the framework/protocol, not necessarily for a revision.
 ## Culture & Values
 
 ### Core Values
@@ -28,7 +24,7 @@ Each individual framework is reviewed on a different cadence (for example, core 
 
 ### Cultural Principles
 
-- **No brilliant jerks** - Competence never execuses poor collaboration
+- **No brilliant jerks** - Competence never excuses poor collaboration
 - **Work-life integration** not balance - Flexible boundaries, results over hours 
 - **Celebration of craft** - Take pride in elegant solutions and beautiful code 
 - **Yes, and...** culture - Build on ideas rather than shooting them down
@@ -44,11 +40,11 @@ References: https://x.com/zfellows/status/1824443390244594000?s=46
 
 ### Core Competencies
 
-These criteria are assess in interviews and contract-to-hire projects:
+These criteria are assessed in interviews and contract-to-hire projects:
 
 - **AI utilization skill** is expected - Leverage and augment AI usage into your produced values
 - **Excellent writer** - Being both a good thinker and bad writer people doesn't exist
-- **Fluent in English**, especially in writing - This is a proxy skill requirement, it proves that you are a intrinsic learner
+- **Fluent in English**, especially in writing - This is a proxy skill requirement, it proves that you are an intrinsic learner
 - **Autonomous and high agency** - They spot out the problem before me. They come up with solution and execute it even if I don't ask for it
 
 ### Team Composition Strategy
@@ -63,29 +59,29 @@ These criteria are assess in interviews and contract-to-hire projects:
 > - **Resource allocator** - Decides sprint priorities, negotiates for engineering/design/budget resources
 > - **Deadline owner** - Personally accountable for shipping on time, cuts scope when needed
 > - **Quality gatekeeper** - Final review on what ships, maintains standard
-> 
+>
 > **Human Responsibilities:**
 > - **Energy setter** - Maintains team momentum, especially during slog phases
 > - **Conflict resolver** - Addresses tensions before they fester
 > - **Context provider** - Ensures everyone understands the "why" behind decisions
 > - **Blocker remover** - Actively hunts and eliminates obstacles
-> 
+>
 > **Framework for Leading (Simple):**
-> 
+>
 > **PACE Model:**
 > - **P**lan - Define what success looks like (1-2 weeks max horizon)
 > - **A**lign - Get explicit buy-in from team on approach
 > - **C**lear blockers - Daily ask: "What's slowing you down?"
 > - **E**valuate - Ship, measure, learn, hand off leadership
-> 
+>
 > **Key insight:** Leadership ≠ permanent authority. It's temporary ownership of outcomes. Think "DRI" (Directly Responsible Individual) not "boss."
-> 
+>
 > **Rotation Triggers:**
 > - Project completion
 > - Expertise mismatch (need different skills)
 > - Burnout prevention (leadership is exhausting)
 > - Growth opportunity (someone needs leadership experience)
-> 
+>
 > The beautiful part: Everyone learns to both lead and follow, creating empathy and eliminating ego-driven power dynamics.
 - **Two-pizza teams** - 6-8 people on a team is the sweet spot.
 
@@ -130,13 +126,13 @@ These criteria are assess in interviews and contract-to-hire projects:
 ## Tool stack
 
 - Notion as primary company knowledge base
-- Slack as the main mean of communication - No internal emails
+- Slack as the main means of communication - No internal emails
 
 ## Communication Protocol
 
 - Treat mentioned chat messages as mail inbox. Process them in a cadence, address each of them accordingly. Treat non-mentioned as broadcast bulletin board information, read them as news.
-- If a message *should* to be see by a person, mention their name
-- If a message *must* be see by a person, says `ackp` (acknowledge please) in the message.
+- If a message *should* be seen by a person, mention their name
+- If a message *must* be seen by a person, write `ackp` (acknowledge please) in the message.
 - Replying to either should or must level when you saw it is a decent etiquette to maintain, especially when it has an action to take.
 - If synchronous communication or immediate action is required, pat the other back or use phone call. Synchronize sparingly.
 

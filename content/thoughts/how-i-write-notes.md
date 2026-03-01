@@ -12,17 +12,17 @@ slug: "how-i-write-notes"
 
 1. (*Quite radical and (still in) experimental*): write **directly** and **immediately** in your vault. That means if an idea belong to the Vault, do not dump it down to the interim ephemeral notes. Avoid [The cost of delayed action](/thoughts/the-cost-of-delayed-action).
 
-2. Write with the **quality** as if I am about to show it to someone. Writing in proses potentially (I don’t know for sure) comes with the cost of being too elaborated for efficient reread. This can be mitigated by **bolding** the keywords.
+2. Write with the **quality** as if I am about to show it to someone. Writing in prose potentially (I don’t know for sure) comes with the cost of being too elaborated for efficient reread. This can be mitigated by **bolding** the keywords.
 
 3. **Make connections** *relentlessly*:
-    - Be mindful of three linage mechanisms: wiki links for network thoughts; topic/ tags to build up topic indices; and Obsidian **Canvas** to synthesize perspectives
+    - Be mindful of three linkage mechanisms: wiki links for network thoughts; topic/ tags to build up topic indices; and Obsidian **Canvas** to synthesize perspectives
     - From the parked relations that haven’t yet incorporate to the main text.
     - From the orphan and loosely connected notes in Obsidian graph view.
     - From your mind, of course.
 
 4. Don't write the words down out of tiredness and fear of loss if they don't make sense. The cost maintaining them outweighs the risk of losing valuable (which is a doubt in this case) thoughts. Don't turn your Vault into a garbage dump.
 
-## Some other things to keep in mind
+## Vault hygiene
 
 - Leverage Raycast AI Commands to fix spelling and improve writing.
 - Use Obsidian Local Graph (with adjustable depth) to discover (sometimes surprising) transitive connections.
