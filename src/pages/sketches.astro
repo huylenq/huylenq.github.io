@@ -81,6 +81,7 @@ import PageLayout from '../layouts/PageLayout.astro';
   .thumb {
     position: relative;
     overflow: hidden;
+    border-radius: 6px;
   }
 
   .thumb video {
@@ -97,8 +98,8 @@ import PageLayout from '../layouts/PageLayout.astro';
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    color: var(--paper);
-    background: rgba(0, 0, 0, 0.15);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.25);
     opacity: 0;
     transition: opacity 0.2s ease;
   }
@@ -112,7 +113,7 @@ import PageLayout from '../layouts/PageLayout.astro';
     font-size: 0.72rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--ink-light);
+    color: var(--ink-medium);
     margin-top: var(--space-xs);
   }
 

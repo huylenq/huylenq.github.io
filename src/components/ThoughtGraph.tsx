@@ -156,7 +156,7 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
       .append("path")
       .attr("d", "M1,1 L9,4 L1,7")
       .attr("fill", "none")
-      .attr("stroke", "var(--ink-faint)")
+      .attr("stroke", "var(--ink-light)")
       .attr("stroke-width", 1.2)
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round");
@@ -173,7 +173,7 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
       .append("path")
       .attr("d", "M1,1 L9,4 L1,7")
       .attr("fill", "none")
-      .attr("stroke", "var(--ink-medium)")
+      .attr("stroke", "var(--ink-dark)")
       .attr("stroke-width", 1.2)
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round");
@@ -187,7 +187,7 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
       .data(links)
       .enter()
       .append("line")
-      .attr("stroke", "var(--ink-faint)")
+      .attr("stroke", "var(--ink-light)")
       .attr("stroke-width", 1)
       .attr("stroke-opacity", 0.5)
       .attr("marker-end", "url(#arrowhead)");
@@ -243,8 +243,8 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
         linkElements
           .attr("stroke", (l) =>
             l.source.id === d.id || l.target.id === d.id
-              ? "var(--ink-medium)"
-              : "var(--ink-faint)"
+              ? "var(--ink-dark)"
+              : "var(--ink-light)"
           )
           .attr("stroke-width", (l) =>
             l.source.id === d.id || l.target.id === d.id ? 1.5 : 1
@@ -267,7 +267,7 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
           .style("font-weight", "");
 
         linkElements
-          .attr("stroke", "var(--ink-faint)")
+          .attr("stroke", "var(--ink-light)")
           .attr("stroke-width", 1)
           .attr("stroke-opacity", 0.5)
           .attr("marker-end", "url(#arrowhead)");
