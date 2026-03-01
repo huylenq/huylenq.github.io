@@ -139,7 +139,6 @@ export default function StackedThoughts({
 
     const updateCollapsed = () => {
       const scrollLeft = container.scrollLeft;
-      const viewportWidth = container.clientWidth;
       const newCollapsed = new Set<number>();
 
       const paneEls = container.querySelectorAll('.thought-pane');
@@ -166,15 +165,23 @@ export default function StackedThoughts({
   const visiblePanes = isMobile ? [panes[panes.length - 1]] : panes;
   const mobileShowBack = isMobile && panes.length > 1;
 
+  // Ghost backlinks from the last pane
+  const lastPane = panes[panes.length - 1];
+  const ghostBacklinks = lastPane.backlinks;
+
+  // Single-pane mode only when no ghost backlinks exist
+  const isSinglePane = panes.length === 1 && ghostBacklinks.length === 0;
+
   return (
     <div
-      className={`stacked-container${panes.length === 1 ? ' single-pane' : ''}`}
+      className={`stacked-container${isSinglePane ? ' single-pane' : ''}`}
       ref={containerRef}
       onClick={handleContainerClick}
     >
       {visiblePanes.map((pane, visualIndex) => {
         const realIndex = isMobile ? panes.length - 1 : visualIndex;
         const isCollapsed = collapsedSet.has(realIndex);
+        const isLastPane = realIndex === panes.length - 1;
 
         return (
           <div
@@ -193,7 +200,7 @@ export default function StackedThoughts({
             <span className="collapsed-title">{pane.title}</span>
             {!isCollapsed && (
               <>
-                {mobileShowBack && realIndex === panes.length - 1 && (
+                {mobileShowBack && isLastPane && (
                   <div style={{ padding: '12px 24px 0' }}>
                     <button className="mobile-back" onClick={goBack}>
                       &larr; Back
@@ -208,13 +215,50 @@ export default function StackedThoughts({
                   isFirst={realIndex === 0}
                   index={realIndex}
                   onClose={() => closePane(realIndex)}
-                  onNavigateBacklink={(slug) => openThought(slug, realIndex)}
                 />
+                {isMobile && isLastPane && pane.backlinks.length > 0 && (
+                  <div className="mobile-ghost-backlinks">
+                    {pane.backlinks.map((bl) => (
+                      <div
+                        key={bl.slug}
+                        className="mobile-ghost-card"
+                        onClick={() => openThought(bl.slug, realIndex)}
+                      >
+                        <span className="mobile-ghost-title">{bl.title}</span>
+                        {bl.context && (
+                          <div
+                            className="mobile-ghost-context"
+                            dangerouslySetInnerHTML={{ __html: bl.context }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>
         );
       })}
+      {!isMobile && ghostBacklinks.length > 0 && (
+        <div className="ghost-pane-column">
+          {ghostBacklinks.map((bl) => (
+            <div
+              key={`ghost-${bl.slug}`}
+              className="ghost-pane"
+              onClick={() => openThought(bl.slug, panes.length - 1)}
+            >
+              <span className="ghost-pane-title">{bl.title}</span>
+              {bl.context && (
+                <div
+                  className="ghost-pane-context"
+                  dangerouslySetInnerHTML={{ __html: bl.context }}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

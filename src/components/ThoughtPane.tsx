@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import type { BacklinkEntry } from '../lib/types';
-import Backlinks from './Backlinks';
 
 interface ThoughtPaneProps {
   slug: string;
@@ -10,16 +9,13 @@ interface ThoughtPaneProps {
   isFirst: boolean;
   index: number;
   onClose: () => void;
-  onNavigateBacklink: (slug: string) => void;
 }
 
 export default function ThoughtPane({
   title,
   html,
-  backlinks,
   isFirst,
   onClose,
-  onNavigateBacklink,
 }: ThoughtPaneProps) {
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -53,7 +49,6 @@ export default function ThoughtPane({
           className="thought-content"
           dangerouslySetInnerHTML={{ __html: html }}
         />
-        <Backlinks backlinks={backlinks} onNavigate={onNavigateBacklink} />
       </div>
     </>
   );

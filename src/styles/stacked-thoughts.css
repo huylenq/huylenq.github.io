@@ -26,6 +26,17 @@
   padding-right: 48px;
 }
 
+@keyframes pane-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .thought-pane {
   width: 625px;
   min-width: 625px;
@@ -39,6 +50,7 @@
   position: sticky;
   top: 0;
   transition: min-width 0.2s ease, width 0.2s ease, box-shadow 0.15s ease;
+  animation: pane-pop 0.25s ease-out;
 }
 
 
@@ -203,4 +215,129 @@
   .mobile-back {
     display: none;
   }
+}
+
+/* Ghost panes (desktop) — backlinks rendered as placeholder panes */
+.ghost-pane {
+  width: 200px;
+  min-width: 200px;
+  flex-shrink: 0;
+  height: auto;
+  align-self: flex-start;
+  background: transparent;
+  border: 2px dashed var(--ink-faint);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.06);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  overflow: visible;
+  position: relative;
+}
+
+
+.ghost-pane:hover {
+  opacity: 1;
+}
+
+.ghost-pane:hover .ghost-pane-title {
+  color: var(--ink-black);
+}
+
+.ghost-pane:hover .ghost-pane-context {
+  color: var(--ink-dark);
+}
+
+/* Ghost column — vertical stack to the right of real panes */
+.ghost-pane-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  align-self: center;
+  margin-left: 36px;
+  position: relative;
+}
+
+/* Left arrow per ghost pane */
+.ghost-pane::before {
+  content: '←';
+  position: absolute;
+  left: -32px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink-faint);
+  line-height: 1;
+}
+
+.ghost-pane-title {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-dark);
+  line-height: 1.4;
+}
+
+.ghost-pane-context {
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  color: var(--ink-medium);
+  margin-top: var(--space-xs);
+  line-height: 1.5;
+}
+
+.ghost-pane-context a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 2px;
+  pointer-events: none;
+}
+
+
+/* Mobile ghost backlinks */
+.mobile-ghost-backlinks {
+  padding: var(--space-md) 24px var(--space-lg);
+}
+
+.mobile-ghost-card {
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--paper-shadow);
+  cursor: pointer;
+}
+
+.mobile-ghost-card:last-child {
+  border-bottom: none;
+}
+
+.mobile-ghost-title {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-dark);
+}
+
+.mobile-ghost-context {
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  margin-top: 4px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive visibility */
+@media (max-width: 767px) {
+  .ghost-pane-column { display: none; }
+}
+
+@media (min-width: 768px) {
+  .mobile-ghost-backlinks { display: none; }
 }
