@@ -1,5 +1,5 @@
 ---
-title: "Thinking as a form of procrastination"
+title: "When thinking becomes the excuse"
 slug: "thinking-as-a-form-of-procrastination"
 ---
 

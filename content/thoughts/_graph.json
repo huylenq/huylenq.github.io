@@ -26,11 +26,6 @@
         }
       ]
     },
-    "thinking-as-a-form-of-procrastination": {
-      "slug": "thinking-as-a-form-of-procrastination",
-      "title": "Thinking as a form of procrastination",
-      "backlinks": []
-    },
     "trust": {
       "slug": "trust",
       "title": "Trust",
@@ -39,6 +34,11 @@
     "what-if-i-found-a-startup": {
       "slug": "what-if-i-found-a-startup",
       "title": "What if I found a startup",
+      "backlinks": []
+    },
+    "thinking-as-a-form-of-procrastination": {
+      "slug": "thinking-as-a-form-of-procrastination",
+      "title": "When thinking becomes the excuse",
       "backlinks": []
     }
   },
