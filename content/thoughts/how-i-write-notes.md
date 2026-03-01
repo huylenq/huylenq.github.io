@@ -2,6 +2,9 @@
 title: "How I Write Notes"
 slug: "how-i-write-notes"
 ---
+
+I've been maintaining a personal knowledge vault in Obsidian for a few years now. These are the principles I've settled on — not a system I planned upfront, but habits that survived contact with reality.
+
 ## Write when
 
 - In the writing window time.
