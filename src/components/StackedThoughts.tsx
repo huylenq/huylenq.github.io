@@ -214,8 +214,10 @@ export default function StackedThoughts({
                   html={pane.html}
                   backlinks={pane.backlinks}
                   isFirst={realIndex === 0}
+                  isLastPane={isLastPane}
                   index={realIndex}
                   onClose={() => closePane(realIndex)}
+                  onNavigateBacklink={(slug) => openThought(slug, realIndex)}
                 />
                 {isMobile && isLastPane && pane.backlinks.length > 0 && (
                   <div className="mobile-ghost-backlinks">

@@ -1,8 +1,19 @@
-import { Essay, Var, Slider, Reactive, Toggle, Spark, SprintChart, SystemDiagram, ScenarioCompare } from "../components/essay";
+import {
+  Essay,
+  Var,
+  Slider,
+  Reactive,
+  Toggle,
+  Spark,
+  SprintChart,
+  SystemDiagram,
+  ScenarioCompare,
+} from "../components/essay";
 
 export const meta = {
   title: "Why Your Scrum Team Is Stuck",
-  description: "A system dynamics model of agile teams — stocks, flows, feedback loops, and the traps that kill velocity",
+  description:
+    "A system dynamics model of agile teams — stocks, flows, feedback loops, and the traps that kill velocity",
   date: "2026-03-01",
   slug: "system-dynamics",
 };
@@ -111,7 +122,7 @@ export const dominantLoop = (get) => {
 
 Every scrum team is a dynamic system. It has **stocks** that accumulate — backlog, work-in-progress, bugs, tech debt — and **flows** that change them each sprint. What makes teams predictable or chaotic isn't the people. It's the feedback structure connecting those stocks.
 
-Donella Meadows put it cleanly: *system structure is the source of system behavior.* Swap the PM, fire the "slow" dev, hire two more — if the feedback loops stay the same, the behavior stays the same.
+Donella Meadows put it cleanly: _system structure is the source of system behavior._ Swap the PM, fire the "slow" dev, hire two more — if the feedback loops stay the same, the behavior stays the same.
 
 This essay builds a simulation of a scrum team and lets you break it. The math is simple — each stock updates by accumulating its inflows minus its outflows:
 
@@ -121,7 +132,7 @@ The interesting part isn't any single stock. It's the three feedback loops that 
 
 ## The Feedback Loops
 
-**Context-switching penalty** (balancing): when each dev juggles too many tickets, cognitive overhead eats velocity. Below about 2 tickets per dev, negligible cost. Above that, every additional ticket makes *all* tickets slower.
+**Context-switching penalty** (balancing): when each dev juggles too many tickets, cognitive overhead eats velocity. Below about 2 tickets per dev, negligible cost. Above that, every additional ticket makes _all_ tickets slower.
 
 **Tech debt drag** (reinforcing): debt makes code harder to change → features take longer → pressure to cut corners → more debt. This loop is dormant when debt is low and devastating when it compounds.
 
@@ -135,13 +146,13 @@ The diagram below shows the structure. Drag the numbers inside the boxes to chan
 
 A team of <Var name="devs" min={2} max={12} step={1} /> developers.
 
-**Velocity:** <Reactive derive={velocity} /> pts/sprint <Spark metric="velocity" /> — context-switching costs <Reactive derive={switchingPenalty} />%, debt drag costs <Reactive derive={debtDrag} />%.
+**Velocity:** <Reactive derive={velocity} /> pts/sprint <Spark metric="velocity" /> — context-switching costs <Reactive derive={switchingPenalty} />%, debt drag costs <Reactive derive={debtDrag} />%
 
-**Bugs:** <Reactive derive={bugRate} />/sprint generated <Spark metric="bugs" />.
+**Bugs:** <Reactive derive={bugRate} />/sprint generated <Spark metric="bugs" />
 
-**Net throughput:** <Reactive derive={netThroughput} /> pts/sprint <Spark metric="shipped" />.
+**Net throughput:** <Reactive derive={netThroughput} /> pts/sprint <Spark metric="shipped" />
 
-**Loop diagnosis:** <Reactive derive={dominantLoop} />.
+**Loop diagnosis:** <Reactive derive={dominantLoop} />
 
 ### 20-Sprint Projection
 
@@ -155,7 +166,7 @@ Over 20 sprints this team ships roughly **<Reactive derive={sprintSim} /> story 
 
 <ScenarioCompare overrides={{ wip: 20 }} labels={["WIP = 8", "WIP → 20"]} />
 
-Context-switching eats velocity alive. Gross throughput *drops* even though more work is "in progress." Little's Law fights back: throughput = WIP / cycle time, and cycle time is exploding.
+Context-switching eats velocity alive. Gross throughput _drops_ even though more work is "in progress." Little's Law fights back: throughput = WIP / cycle time, and cycle time is exploding.
 
 **The debt spiral.** With moderate WIP and low bugs, slide debt from 2 to 14:
 
@@ -163,11 +174,14 @@ Context-switching eats velocity alive. Gross throughput *drops* even though more
 
 Velocity collapses. Bug generation climbs because defects breed faster in messy code. This is the codebase where every sprint is a slog and the team "doesn't understand why we're so slow."
 
-**The recovery.** From a grim state (debt 14, bugs 12, WIP 15), try the counter-intuitive fix — *reduce* WIP to 5:
+**The recovery.** From a grim state (debt 14, bugs 12, WIP 15), try the counter-intuitive fix — _reduce_ WIP to 5:
 
-<ScenarioCompare overrides={{ wip: 5, debt: 14, bugs: 12 }} labels={["WIP 15 + debt 14", "WIP → 5"]} />
+<ScenarioCompare
+  overrides={{ wip: 5, debt: 14, bugs: 12 }}
+  labels={["WIP 15 + debt 14", "WIP → 5"]}
+/>
 
-Context-switching drops. Fewer concurrent changes means fewer new bugs. The team can start paying down debt instead of generating it. Throughput actually *rises* with less WIP.
+Context-switching drops. Fewer concurrent changes means fewer new bugs. The team can start paying down debt instead of generating it. Throughput actually _rises_ with less WIP.
 
 This is the core lesson of system dynamics applied to software: the reinforcing loops between WIP, bugs, and tech debt mean that **pushing harder makes things worse** past a threshold. The only way out is to reduce WIP, which feels like slowing down but is structurally the opposite.
 
@@ -175,7 +189,7 @@ This is the core lesson of system dynamics applied to software: the reinforcing 
 
 The PM sees the backlog growing and pushes more tickets into WIP. The tech lead sees bugs piling up and diverts developers to firefighting. The CTO sees velocity declining and asks for status reports, adding overhead. Everyone is locally rational. The system is globally dysfunctional.
 
-This is *bounded rationality* — each person optimizes based on delayed, filtered information. The beer game proves it every semester: smart MBA students produce the same wild oscillations because the structure (delays, incomplete information, local incentives) dictates behavior, not individual intelligence. Replacing any one person changes nothing when the feedback loops remain.
+This is _bounded rationality_ — each person optimizes based on delayed, filtered information. The beer game proves it every semester: smart MBA students produce the same wild oscillations because the structure (delays, incomplete information, local incentives) dictates behavior, not individual intelligence. Replacing any one person changes nothing when the feedback loops remain.
 
 ## What to Actually Do
 

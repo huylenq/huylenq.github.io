@@ -7,15 +7,20 @@ interface ThoughtPaneProps {
   html: string;
   backlinks: BacklinkEntry[];
   isFirst: boolean;
+  isLastPane: boolean;
   index: number;
   onClose: () => void;
+  onNavigateBacklink: (slug: string) => void;
 }
 
 export default function ThoughtPane({
   title,
   html,
+  backlinks,
   isFirst,
+  isLastPane,
   onClose,
+  onNavigateBacklink,
 }: ThoughtPaneProps) {
   const [scrolled, setScrolled] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
@@ -55,6 +60,33 @@ export default function ThoughtPane({
           className="thought-content"
           dangerouslySetInnerHTML={{ __html: html }}
         />
+        {backlinks.length > 0 && (
+          <div className={`pane-backlinks${isLastPane ? ' pane-backlinks--hidden' : ''}`}>
+            <h2 className="pane-backlinks-heading">Links to this thought</h2>
+            <div className="pane-backlinks-list">
+              {backlinks.map((bl) => (
+                <a
+                  key={bl.slug}
+                  href={`/thoughts/${bl.slug}`}
+                  className="pane-backlink-card"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onNavigateBacklink(bl.slug);
+                  }}
+                >
+                  <span className="pane-backlink-title">{bl.title}</span>
+                  {bl.context && (
+                    <div
+                      className="pane-backlink-context"
+                      dangerouslySetInnerHTML={{ __html: bl.context }}
+                    />
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className={`thought-pane-fade thought-pane-fade--bottom${canScrollDown ? ' visible' : ''}`} />
     </>

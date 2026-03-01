@@ -70,7 +70,7 @@ export function SystemDiagram() {
           maxRate={10}
           label={`+${bugGen.toFixed(1)} bugs`}
           curved
-          labelOffset={{ dx: -30, dy: -10 }}
+          labelOffset={{ dx: -40, dy: -10 }}
         />
         {/* Bugs → WIP (upward, bug fixes consume velocity) */}
         <FlowArrow
@@ -81,7 +81,7 @@ export function SystemDiagram() {
           label={`fix ${bugFix.toFixed(1)}`}
           curved
           dashed
-          labelOffset={{ dx: 55, dy: 10 }}
+          labelOffset={{ dx: 45, dy: 10 }}
         />
         {/* WIP → Debt (high WIP accrues debt) */}
         <FlowArrow
@@ -406,7 +406,7 @@ function FlowArrow({
           x={midX + labelOffset.dx}
           y={midY - 6 + labelOffset.dy}
           style={{
-            fill: 'var(--ink-light)',
+            fill: 'var(--ink-medium)',
             fontSize: 8.5,
             fontFamily: 'var(--font-sans)',
             textAnchor: 'middle',
