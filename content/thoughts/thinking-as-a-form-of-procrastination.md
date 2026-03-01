@@ -7,7 +7,7 @@ I have had a delusional belief that thinking **_is the_** _solution to everythin
 
 Thinking became my excuse to avoid action, **procrastinate** in my comfort zone, fantasize with thoughts, or sit down with a computer pouring words while making no change in the world.
 
-Here is the uncomfortable arithmetic: **<mark>your additional ideas produce no value</mark>** if the current idea hasn't yet been proven executable or not. Every hour spent imagining a better approach is an hour the existing approach sits untested. The thinker gets to feel productive — connections made, frameworks compared, possibilities mapped — while the scoreboard remains unchanged.
+Here is the uncomfortable arithmetic: **<mark>additional ideas lose their weight</mark>** when the current one sits untested. Every hour spent imagining a better approach is an hour the existing approach sits untested. The thinker gets to feel productive — connections made, frameworks compared, possibilities mapped — while the scoreboard remains unchanged.
 
 It is seductive because thinking carries no risk of failure. In your head, the idea stays pristine. The moment you act, it meets friction, ugliness, compromise. So you retreat to the drawing board — not because the plan needs more work, but because the drawing board is comfortable.
 
