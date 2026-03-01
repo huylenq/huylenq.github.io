@@ -27,6 +27,7 @@ const essays = Object.values(essayModules)
 
   <section class="thoughts-section">
     <h2>Thoughts</h2>
+    <p class="section-description">My shower thoughts, put together.</p>
     {thoughts.length > 0 ? (
       <>
         <div class="graph-desktop">
@@ -47,11 +48,15 @@ const essays = Object.values(essayModules)
 
   <section class="thoughts-section">
     <h2>Essays</h2>
+    <p class="section-description">Interactive, play-able essays that I'm having fun making.</p>
     {essays.length > 0 ? (
       <ul class="thoughts-list">
         {essays.map((essay) => (
           <li>
-            <a href={`/essays/${essay.meta.slug}`}>{essay.meta.title}</a>
+            <a href={`/essays/${essay.meta.slug}`}><strong>{essay.meta.title}</strong></a>
+            {essay.meta.description && (
+              <span class="essay-description">— {essay.meta.description}</span>
+            )}
           </li>
         ))}
       </ul>
@@ -72,6 +77,15 @@ const essays = Object.values(essayModules)
 
   .thoughts-section + .thoughts-section {
     margin-top: var(--space-2xl);
+  }
+
+  .section-description {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--ink-medium);
+    font-style: italic;
+    margin-top: calc(-1 * var(--space-sm));
+    margin-bottom: var(--space-lg);
   }
 
   .thoughts-section h2 {
@@ -108,6 +122,11 @@ const essays = Object.values(essayModules)
 
   .thoughts-list a:hover {
     color: var(--ink-black);
+  }
+
+  .essay-description {
+    color: var(--ink-medium);
+    margin-left: 0.5em;
   }
 
   .empty {

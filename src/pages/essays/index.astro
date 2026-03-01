@@ -8,11 +8,12 @@ const sorted = Object.values(essayModules)
 ---
 <PageLayout title="Essays — huylenq.com" section="Essays">
   <section class="listing-section">
+    <p class="section-description">Interactive, play-able essays that I'm having fun making.</p>
     {sorted.length > 0 ? (
       <ul class="listing">
         {sorted.map((essay) => (
           <li>
-            <a href={`/essays/${essay.meta.slug}`}>{essay.meta.title}</a>
+            <a href={`/essays/${essay.meta.slug}`}><strong>{essay.meta.title}</strong></a>
             {essay.meta.description && (
               <span class="description">— {essay.meta.description}</span>
             )}
@@ -26,6 +27,14 @@ const sorted = Object.values(essayModules)
 </PageLayout>
 
 <style>
+  .section-description {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--ink-medium);
+    font-style: italic;
+    margin-bottom: var(--space-lg);
+  }
+
   .listing {
     list-style: none;
     padding: 0;
