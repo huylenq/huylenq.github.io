@@ -348,5 +348,20 @@ export default function ThoughtGraph({ thoughts, edges }: ThoughtGraphProps) {
     return () => window.removeEventListener("resize", onResize);
   }, [buildGraph]);
 
+  // Reset click underlines when returning via bfcache (back/forward navigation)
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted && containerRef.current) {
+        select(containerRef.current)
+          .selectAll(".click-underline")
+          .attr("stroke-opacity", 0)
+          .attr("x1", 0)
+          .attr("x2", 0);
+      }
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
   return <div ref={containerRef} className="thought-graph-container" style={{ width: "100%", height }} />;
 }

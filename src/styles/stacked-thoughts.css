@@ -5,17 +5,19 @@
   overflow-y: hidden;
   scroll-behavior: smooth;
   background: var(--bg);
-  padding: 0;
+  padding: var(--space-lg) 0;
 }
 
-/* Single pane: center the thought with a comfortable reading width */
+/* Single pane: center the thought as a floating card */
 .stacked-container.single-pane {
   justify-content: center;
+  overflow-y: auto;
 }
 
 .stacked-container.single-pane .thought-pane {
   width: min(800px, 100%);
   min-width: min(800px, 100%);
+  height: auto;
 }
 
 .stacked-container.single-pane .thought-pane-header,
@@ -32,7 +34,7 @@
   overflow-y: auto;
   background: var(--pane-bg);
   border: 1px solid var(--pane-border);
-  border-radius: 3px 3px 0 0;
+  border-radius: 3px;
   box-shadow: var(--pane-shadow);
   position: sticky;
   top: 0;
@@ -79,13 +81,44 @@
   padding: 24px;
 }
 
+/* Stacked paper effect: alternating pane heights for depth */
+.stacked-container:not(.single-pane) .thought-pane {
+  height: auto;
+  align-self: stretch;
+}
+
+.stacked-container:not(.single-pane) .thought-pane:first-child {
+  margin-left: var(--space-lg);
+}
+
+.stacked-container:not(.single-pane) .thought-pane:nth-child(odd) {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.stacked-container:not(.single-pane) .thought-pane:nth-child(even) {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+/* Flat edges between adjacent panes for stacked paper illusion */
+.stacked-container:not(.single-pane) .thought-pane:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.stacked-container:not(.single-pane) .thought-pane:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 /* Collapsed pane — vertical title strip (paper edge) */
 .thought-pane.collapsed {
   width: 40px;
   min-width: 40px;
   cursor: pointer;
   overflow: hidden;
-  border-radius: 3px 0 0 0;
+  border-radius: 3px;
   box-shadow:
     1px 0 2px var(--paper-shadow),
     2px 0 6px var(--paper-shadow);
