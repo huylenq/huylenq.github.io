@@ -33,28 +33,6 @@ This kind of pondering has made me shift my relationship and interaction with bo
 
 This is the most interesting one. Unlike the other two, you cannot just "flip the mindset switch" it is rather a technical and mechanical problem. The problem  is further amplified if you do syntopical reading. The major pain resides in the dilemma of having to decide whether to re-read a certain part. You did have a hazy reminiscence that you already read it. But it is hazy enough that you felt the need to read it again.
 
-**🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧**
+Here is how I deal with it: I highlight while reading on Kindle, those highlights sync to Readwise, and from there into my notes where I progressively summarize and review them through spaced repetition. Each step is a natural filter — not everything cascades through the whole pipeline. The result is a searchable library of passages I personally found relevant, surfaced when I need them rather than re-read when I don't.
 
-_**THE PARTS BELOW ARE W.I.P., THEY WILL BE VERY INCOHERENCE AND FULL OF MISTAKES**_
 
-There many methods to attack the problem of inefficient reread. The two prominent ones are:
-
-- [Incremental Reading by SuperMemo](https://www.supermemo.wiki/en/learning/incremental-reading)
-- Progressive Summarization by Tiago Forte
-
-One of the method to attack the problem of unproductive reread is [incremental reading] by SuperMemo. While I don't use their software, I did a straw-men replication by compose some services together:
-
-Read on Kindle / Reader app → Highlights → Readwise Integration → Tana → Progressive Summarization → SRS.
-
-Imagine this likes a funnel. It's not necessary that all "processed" items in an earlier step get cascaded into a later step. While sounding hairy, it is nothing like a pipeline that I have to go through whenever reading a book. Each step has natural occurrences based on contexts.
-
-Read: I pick up my Kindle whenever in the mood of reading.
-
-Highlights: I highlight while reading if I found something fascinating and/or guessing that I will look it up later. I won't thinking too much or try to do a threshing process. It is more important to maintain your joy and reading flow rather than nitpicking for highlights. The rule of thumb is if you wonder, then just highlight it.
-
-Highlights → Readwise Integration → Tana: happens in the background and generally doesn't involve human interference.
-
-After this stage, which involved only two activities (read, and highlighting), I already have a library of passages that I personally found relevant. When the need come, I would search in Tana, usually I'll able to get to it in matter of seconds. Although, in some cases,  This discoverability would be further enhanced by the Progressive Summerisation describe blow.
-
-Progressive Summarisation: I only do this when the need for reviewing come.
-a method from [Tiago Forte](https://fortelabs.com/blog/progressive-summarization-a-practical-technique-for-designing-discoverable-notes/). Basically you have multi-level of summarization. From the raw synced passage, to bold, to yellow-highlighted, and to self-phrased summary. Another hairy sounded
