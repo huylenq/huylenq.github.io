@@ -79,7 +79,7 @@ export default function ThoughtPane({
         />
         {backlinks.length > 0 && (
           <div className={`pane-backlinks${isLastPane ? ' pane-backlinks--hidden' : ''}`}>
-            <h2 className="pane-backlinks-heading">Links to this thought</h2>
+            <h2 className="pane-backlinks-heading">Backlinks</h2>
             <div className="pane-backlinks-list">
               {backlinks.map((bl) => (
                 <a

@@ -772,6 +772,9 @@ export default function StackedThoughts({
               )}
             </div>
           )}
+          {ghostBacklinks.length > 0 && (
+            <span className="ghost-section-label">Backlinks</span>
+          )}
           {ghostBacklinks.map((bl) => {
             const openIndex = panes.findIndex((p) => p.slug === bl.slug);
             return (

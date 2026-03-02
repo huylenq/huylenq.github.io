@@ -118,8 +118,13 @@
 }
 
 .thought-pane.hover-highlight {
-  outline: 2px solid rgba(212, 180, 60, 0.35);
+  outline: 3px solid rgba(212, 180, 60, 0.45);
   outline-offset: -1px;
+}
+
+[data-theme="dark"] .thought-pane.hover-highlight {
+  outline-width: 2px;
+  outline-color: rgba(212, 180, 60, 0.35);
 }
 
 .thought-pane.closing {
@@ -469,6 +474,31 @@
   pointer-events: none;
 }
 
+
+/* Section label separating forward ghosts from backward ghosts */
+.ghost-section-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-light);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  white-space: nowrap;
+  width: 240px;
+  margin-left: -10px;
+  opacity: 0.7;
+}
+
+.ghost-section-label::before,
+.ghost-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ink-faint);
+}
 
 /* Forward ghost pane — preview for forward links, placed in ghost-pane-column above backlinks.
    No overflow:hidden here — arrows (::before/::after) are positioned outside and need to be visible. */

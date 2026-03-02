@@ -26,8 +26,8 @@ interface ForceParams {
 }
 
 const DEFAULT_FORCE_PARAMS: ForceParams = {
-  "linkStrength": 0.1,
-  "linkDistance": 20,
+  "linkStrength": 0.45,
+  "linkDistance": 30,
   "chargeStrength": 0,
   "centerXStrength": 0.005,
   "centerYStrength": 0.02,
@@ -500,7 +500,7 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       });
 
     // Restart gently — first tick paints the pre-settled positions
-    simulation.alpha(0.1).restart();
+    simulation.alpha(0.03).restart();
 
     simulationRef.current = simulation;
   }, [thoughts, edges, height]);
