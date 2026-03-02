@@ -22,9 +22,11 @@
 }
 .stacked-container.single-pane .ghost-pane-column {
   position: absolute;
-  right: 2rem;
+  /* 400px = half the 800px pane width, 44px = connector gap (matches base margin-left) */
+  left: calc(50% + 444px);
   top: 50%;
   transform: translateY(-50%);
+  margin-left: 0;
 }
 
 .stacked-container.single-pane .thought-pane,
