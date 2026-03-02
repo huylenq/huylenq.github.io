@@ -12,13 +12,15 @@ const books = [
   { title: 'Range', author: 'David Epstein', cover: '41nLL-wUTXL' },
   { title: 'Never Split the Difference', author: 'Chris Voss & Tahl Raz', cover: '51yKczFDuQL' },
   { title: "The Subtle Art of Not Giving a F*ck", author: 'Mark Manson', cover: '51mN3bY0JjL' },
+  { title: 'Thinking in Systems', author: 'Donella H. Meadows', cover: '51q+TMvkNFL' },
+  { title: 'An Elegant Puzzle', author: 'Will Larson', cover: '51aTO3pGp9L' },
 ];
 
-const topShelf = books.slice(0, 5);
-const bottomShelf = books.slice(5, 10);
+const topShelf = books.slice(0, 6);
+const bottomShelf = books.slice(6, 12);
 
 // Deterministic height variations per book (seeded by index)
-const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
+const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
 ---
 
 <PageLayout title="Bookshelf">
@@ -57,7 +59,7 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
 </PageLayout>
 
 <style>
-  /* Override page-content to flex-fill the viewport */
+  /* Override page-content for bookshelf layout */
   :global(.page-content:has(.bookshelf)) {
     display: flex;
     flex-direction: column;
@@ -68,51 +70,62 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
 
   h1 {
     font-size: 1.6em;
-    margin-bottom: 0.4em;
+    margin: 0 auto 0.4em;
     max-width: var(--max-width);
     padding: 0 var(--space-xl);
   }
 
   .intro {
     color: var(--text-secondary);
-    margin-bottom: var(--space-lg);
+    margin: 0 auto var(--space-lg);
     max-width: var(--max-width);
     padding: 0 var(--space-xl);
   }
 
-  /* --- Bookshelf structure --- */
+  /* --- Bookshelf structure: tủ âm tường (recessed wall alcove) --- */
   .bookshelf {
-    flex: 1;
+    max-width: 950px;
     width: 100%;
+    margin: 0 auto var(--space-xl);
     display: flex;
     flex-direction: column;
-    background: url('/assets/bookshelf/back.jpg') center / cover;
+    justify-content: center;
+    padding: var(--space-lg) 0;
     position: relative;
-    /* recessed back panel feel */
-    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
-  }
+    overflow: hidden;
 
-  /* Top/bottom fade into page background */
-  .bookshelf::before,
-  .bookshelf::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    pointer-events: none;
-  }
+    /* Back panel + inner side-wall depth gradients */
+    background:
+      /* Left wall depth */
+      linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.12) 20px, transparent 50px),
+      /* Right wall depth */
+      linear-gradient(to left, rgba(0,0,0,0.5), rgba(0,0,0,0.12) 20px, transparent 50px),
+      /* Top wall depth */
+      linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.08) 25px, transparent 55px),
+      /* Bottom wall depth */
+      linear-gradient(to top, rgba(0,0,0,0.25), rgba(0,0,0,0.05) 20px, transparent 40px),
+      /* Back panel texture */
+      url('/assets/bookshelf/back.jpg') center / cover;
 
-  .bookshelf::before {
-    top: 0;
-    height: 50px;
-    background: linear-gradient(to bottom, var(--paper), transparent);
-  }
+    /* Wall cutout frame — beveled inward (darker top = shadow from overhang) */
+    border: 10px solid;
+    border-color: #cec9c0 #dbd7cf #e5e2db #dbd7cf;
+    border-radius: 3px;
 
-  .bookshelf::after {
-    bottom: 0;
-    height: 80px;
-    background: linear-gradient(to top, var(--paper), transparent);
+    /* Recess depth shadows */
+    box-shadow:
+      /* Deep ambient recess */
+      inset 0 0 70px rgba(0,0,0,0.45),
+      /* Top overhang shadow */
+      inset 0 10px 25px rgba(0,0,0,0.35),
+      /* Side depth */
+      inset 6px 0 18px rgba(0,0,0,0.2),
+      inset -6px 0 18px rgba(0,0,0,0.2),
+      /* Inner lip — dark line at frame/recess transition */
+      inset 0 0 0 1px rgba(0,0,0,0.2),
+      /* Outer: subtle cast shadow on the wall */
+      0 2px 12px rgba(0,0,0,0.08),
+      0 0 0 1px rgba(0,0,0,0.03);
   }
 
   .shelf-row {
@@ -127,13 +140,13 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
     justify-content: center;
     gap: 14px;
     align-items: flex-end;
-    padding: 20px 32px 0;
+    padding: 20px 40px 0;
   }
 
   /* --- Individual book (3D skeuomorphic) --- */
   .book {
-    width: 120px;
-    flex-shrink: 0;
+    flex: 0 1 120px;
+    min-width: 80px;
     cursor: default;
     position: relative;
     transform: translateY(var(--h-offset, 0px));
@@ -151,11 +164,17 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
     border-radius: 3px 1px 1px 3px;
     position: relative;
     z-index: 1;
-    /* layered shadow: contact shadow + ambient + depth */
+    /* Stacked box-shadows: page layers create visible thickness */
     box-shadow:
-      1px 1px 2px rgba(0, 0, 0, 0.3),
-      3px 3px 8px rgba(0, 0, 0, 0.25),
-      6px 6px 20px rgba(0, 0, 0, 0.15);
+      /* page layers — each offset creates a "page edge" */
+      1px 1px 0 0 #ebe7df,
+      2px 1px 0 0 #e5e1d9,
+      3px 2px 0 0 #e0dcd4,
+      4px 2px 0 0 #dbd7cf,
+      5px 3px 0 0 #d6d2ca,
+      /* depth shadows beyond the page stack */
+      7px 5px 4px rgba(0, 0, 0, 0.25),
+      10px 8px 15px rgba(0, 0, 0, 0.15);
   }
 
   /* Spine: left edge with rounded highlight */
@@ -163,55 +182,17 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
     content: '';
     position: absolute;
     top: 0;
-    left: -4px;
-    width: 6px;
+    left: -5px;
+    width: 7px;
     height: 180px;
     background: linear-gradient(
       to right,
-      rgba(0, 0, 0, 0.15),
-      rgba(255, 255, 255, 0.08) 40%,
-      rgba(0, 0, 0, 0.2)
+      rgba(0, 0, 0, 0.2),
+      rgba(255, 255, 255, 0.1) 40%,
+      rgba(0, 0, 0, 0.25)
     );
     border-radius: 3px 0 0 3px;
     z-index: 2;
-    transform: translateY(var(--h-offset, 0px));
-  }
-
-  /* Page edges: visible white pages on the right side */
-  .book::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    right: -5px;
-    width: 5px;
-    height: 174px;
-    background: linear-gradient(
-      to right,
-      #d4cfc7,
-      #ebe7df 30%,
-      #f5f2ec 60%,
-      #e8e4dc
-    );
-    border-radius: 0 1px 1px 0;
-    z-index: 0;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-    transform: translateY(var(--h-offset, 0px));
-  }
-
-  /* Cover gloss/lighting: subtle top-down light reflection */
-  .book img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      170deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      transparent 40%,
-      transparent 80%,
-      rgba(0, 0, 0, 0.08) 100%
-    );
-    border-radius: 3px 1px 1px 3px;
-    pointer-events: none;
   }
 
   .book:hover {
@@ -221,9 +202,13 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
 
   .book:hover img {
     box-shadow:
-      2px 2px 4px rgba(0, 0, 0, 0.3),
-      5px 5px 15px rgba(0, 0, 0, 0.25),
-      10px 10px 30px rgba(0, 0, 0, 0.2);
+      1px 1px 0 0 #ebe7df,
+      2px 1px 0 0 #e5e1d9,
+      3px 2px 0 0 #e0dcd4,
+      4px 2px 0 0 #dbd7cf,
+      5px 3px 0 0 #d6d2ca,
+      8px 8px 8px rgba(0, 0, 0, 0.25),
+      14px 12px 25px rgba(0, 0, 0, 0.2);
   }
 
   /* --- Shelf plank (3D skeuomorphic) --- */
@@ -322,10 +307,17 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
   /* --- Dark mode --- */
   :global([data-theme="dark"]) .bookshelf {
     filter: brightness(0.85);
+    border-color: #2a2826 #333130 #3a3836 #333130;
   }
 
   /* --- Mobile --- */
   @media (max-width: 768px) {
+    .bookshelf {
+      margin-left: var(--space-sm);
+      margin-right: var(--space-sm);
+      border-width: 7px;
+    }
+
     .books {
       gap: 8px;
       padding: 14px 12px 0;

@@ -108,6 +108,16 @@ The `public-thoughts` plugin lives at `/Users/huy/src/iPKM/public-thoughts/`. It
 - Link clicks intercepted via event delegation — only `/thoughts/` links open as new panes
 - First pane HTML comes from pre-rendered API JSON; subsequent panes fetched client-side
 
+## Bookshelf (`src/pages/books.astro`)
+
+Recessed wall shelf (tủ âm tường) displaying book covers from Amazon.
+
+**Adding books:** Extract from Huy's Readwise book notes at `{VAULT_PATH}/Readwise/Books/{Title}.md`. Each note has frontmatter (`Author`, `Full Title`) and a cover image line: `![rw-book-cover](https://images-na.ssl-images-amazon.com/images/I/{COVER_ID}._SL200_.jpg)`. Add to the `books` array with `{ title, author, cover: '{COVER_ID}' }`.
+
+**Shelf layout:** Books are split into rows via `topShelf`/`bottomShelf` slices. When adding books, update the slice indices and add entries to the `heightOffsets` array (small ints between -7 and 7 for visual variation). Books use `flex: 0 1 120px` so they shrink gracefully if a row gets crowded.
+
+**Alcove sizing:** The `.bookshelf` has `max-width: 950px` which fits ~6 books per row comfortably. If adding 7+ per row, increase `max-width` (~130px per additional book). The `overflow: hidden` clips anything outside the alcove boundary.
+
 ## Content Conventions
 
 - Thought slugs are human-readable for blog-migrated posts (`hello-world`, `trust`, `a-reading-system`)
