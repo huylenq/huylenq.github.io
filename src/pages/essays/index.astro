@@ -13,10 +13,12 @@ const sorted = Object.values(essayModules)
       <ul class="listing">
         {sorted.map((essay) => (
           <li>
-            <a href={`/essays/${essay.meta.slug}`}><strong>{essay.meta.title}</strong></a>
-            {essay.meta.description && (
-              <span class="description">— {essay.meta.description}</span>
-            )}
+            <a href={`/essays/${essay.meta.slug}`}>
+              <strong>{essay.meta.title}</strong>
+              {essay.meta.description && (
+                <span class="description">— {essay.meta.description}</span>
+              )}
+            </a>
           </li>
         ))}
       </ul>
@@ -50,6 +52,7 @@ const sorted = Object.values(essayModules)
   }
 
   .listing a {
+    display: block;
     font-family: var(--font-serif);
     font-size: 0.95rem;
     color: var(--ink-dark);
