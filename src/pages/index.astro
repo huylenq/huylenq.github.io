@@ -53,10 +53,12 @@ const essays = Object.values(essayModules)
       <ul class="thoughts-list">
         {essays.map((essay) => (
           <li>
-            <a href={`/essays/${essay.meta.slug}`}><strong>{essay.meta.title}</strong></a>
-            {essay.meta.description && (
-              <span class="essay-description">— {essay.meta.description}</span>
-            )}
+            <a href={`/essays/${essay.meta.slug}`} class="essay-link">
+              <strong>{essay.meta.title}</strong>
+              {essay.meta.description && (
+                <span class="essay-description">— {essay.meta.description}</span>
+              )}
+            </a>
           </li>
         ))}
       </ul>
@@ -135,6 +137,10 @@ const essays = Object.values(essayModules)
 
   .thoughts-list a:hover {
     color: var(--ink-black);
+  }
+
+  .essay-link {
+    display: block;
   }
 
   .essay-description {

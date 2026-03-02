@@ -445,9 +445,11 @@ export default function StackedThoughts({
     }
   }, [hasGhostColumn]);
 
-  // Single-pane mode only when no ghost column content exists
-  const isSinglePane = panes.length === 1 && !hasGhostColumn;
-  const isSinglePaneWithGhosts = panes.length === 1 && hasGhostColumn;
+  // Single-pane mode based on stable ghosts (backlinks) only — transient forward
+  // ghost is absolutely positioned so it won't shift the centered pane.
+  const hasStableGhosts = ghostBacklinks.length > 0;
+  const isSinglePane = panes.length === 1 && !hasStableGhosts;
+  const isSinglePaneWithGhosts = panes.length === 1 && hasStableGhosts;
 
   return (
     <div

@@ -120,7 +120,7 @@ function useTweakpane(
       const pane = new Pane({ title: "Force Graph", expanded: false });
       paneRef.current = pane;
       pane.element.style.position = "fixed";
-      pane.element.style.top = "8px";
+      pane.element.style.top = "56px";
       pane.element.style.right = "8px";
       pane.element.style.zIndex = "9999";
 
