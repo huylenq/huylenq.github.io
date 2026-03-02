@@ -102,7 +102,7 @@
   top: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-xs);
   padding: 18px 24px 10px;
   background: var(--pane-bg);
   border-bottom: 1px solid transparent;
@@ -135,12 +135,29 @@
 .thought-pane-title {
   font-size: 1.35rem;
   font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: break-word;
+}
+
+.obsidian-dev-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: var(--space-xs);
+  padding: 4px;
+  color: var(--ink-faint);
+  border-radius: var(--border-radius);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.obsidian-dev-link:hover {
+  background: var(--paper-aged);
+  color: var(--ink-dark);
 }
 
 .thought-pane-close {
+  margin-left: auto;
   background: none;
   border: none;
   font-size: 18px;

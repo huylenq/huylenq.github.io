@@ -36,10 +36,18 @@ const edges = graphFile.edges;
   </section>
 </PageLayout>
 
+<style is:global>
+  /* Prevent scroll on the thoughts graph page */
+  html:has(.listing-section .graph-desktop) {
+    overflow: hidden;
+  }
+</style>
+
 <style>
   /* Remove page-content padding so graph fills viewport below header */
   .listing-section {
-    margin-top: calc(-1 * var(--space-xl));
+    margin-top: calc(-1 * var(--space-3xl));
+    margin-bottom: calc(-1 * var(--space-3xl));
   }
 
   /* Break out of .page-content container to full width */

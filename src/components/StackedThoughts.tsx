@@ -187,6 +187,12 @@ export default function StackedThoughts({
       if (!(slug in graph)) return; // Not a known thought — let browser navigate
 
       e.preventDefault();
+
+      // Clear pending hover timeout so the ghost doesn't reappear after click
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = null;
+      }
       setForwardGhost(null);
 
       // Determine which pane the click came from

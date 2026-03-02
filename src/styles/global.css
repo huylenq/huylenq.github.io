@@ -8,6 +8,10 @@
   --ink-light: #8a8a8a;
   --ink-faint: #b0b0b0;
 
+  /* Color Palette - Accent */
+  --accent-yellow: #e0c44d;
+  --accent-yellow-dark: #d4a824;
+
   /* Color Palette - Paper */
   --paper: #fdfcf9;
   --paper-aged: #f8f6f1;
@@ -59,6 +63,9 @@
   --ink-medium: #908e89;
   --ink-light: #5a5856;
   --ink-faint: #3a3836;
+
+  --accent-yellow: #f0d86a;
+  --accent-yellow-dark: #e0b830;
 
   --paper: #1c1b1a;
   --paper-aged: #242321;

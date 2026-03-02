@@ -92,6 +92,10 @@
   margin: 0.3em 0;
 }
 
+.thought-content li::marker {
+  color: var(--ink-light);
+}
+
 .thought-content li > ul,
 .thought-content li > ol {
   margin: 0.2em 0 0;
@@ -129,7 +133,7 @@
 
 /* Forward links — internal [[wikilinks]] to other thoughts */
 .thought-content a[href^="/thoughts/"] {
-  text-decoration-color: color-mix(in srgb, var(--accent-yellow) 50%, transparent);
+  text-decoration-color: var(--accent-yellow);
   text-decoration-thickness: 2px;
 }
 
@@ -138,17 +142,17 @@
 .thought-content a[href^="/thoughts/"]::before {
   content: '';
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: .02em;
   width: 0.6em;
   height: 0.6em;
-  margin-right: 0.15em;
+  margin-right: 0.2em;
   background-color: var(--accent-yellow);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='0' y='5' width='7' height='2' fill='black'/%3E%3Cpolygon points='12,6 6,1 6,11' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='0' y='5' width='7' height='2' fill='black'/%3E%3Cpolygon points='12,6 6,1 6,11' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
 }
 
 .thought-content a[href^="/thoughts/"]:hover {
-  text-decoration-color: color-mix(in srgb, var(--accent-yellow-dark) 60%, transparent);
+  text-decoration-color: var(--accent-yellow-dark);
 }
 
 .thought-content a[href^="/thoughts/"]:hover::before {

@@ -3,9 +3,6 @@ title: "Programmable Self"
 slug: "programmable-self"
 maturity: "budding"
 ---
-
-- [ ] How does this relate to <span class="private-link">Operation Rules</span>
-
 ## The Mindset
 
 Just do it, feel it, get relieved of trusting your system.

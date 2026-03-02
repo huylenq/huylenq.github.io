@@ -19,7 +19,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "tweakpane": "^4.0.5"
   },
   "devDependencies": {
     "@types/d3-drag": "^3.0.7",

@@ -117,7 +117,7 @@ function useTweakpane(
     import("tweakpane").then(({ Pane }) => {
       if (disposed) return;
 
-      const pane = new Pane({ title: "Force Graph", expanded: true });
+      const pane = new Pane({ title: "Force Graph", expanded: false });
       paneRef.current = pane;
       pane.element.style.position = "fixed";
       pane.element.style.top = "8px";
