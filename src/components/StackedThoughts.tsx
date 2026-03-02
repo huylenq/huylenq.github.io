@@ -820,6 +820,12 @@ export default function StackedThoughts({
                     }}
                   >
                     <span className="ghost-pane-title">{bl.title}</span>
+                    {bl.context && (
+                      <div
+                        className="ghost-pane-context"
+                        dangerouslySetInnerHTML={{ __html: bl.context }}
+                      />
+                    )}
                   </div>
                 );
               })}
