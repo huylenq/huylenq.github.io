@@ -192,7 +192,6 @@ export default function StackedThoughts({
 
       e.preventDefault();
 
-      // Clear pending hover timeout so the ghost doesn't reappear after click
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
         hoverTimeoutRef.current = null;
@@ -261,6 +260,14 @@ export default function StackedThoughts({
 
   // Forward ghost pane — shown on hover over a forward link
   const [forwardGhost, setForwardGhost] = useState<ForwardGhost | null>(null);
+
+  // Invariant: never show a forward ghost for a slug already in the stack.
+  // Handles all race conditions between async pane addition and mouse events.
+  useLayoutEffect(() => {
+    if (forwardGhost && panes.some((p) => p.slug === forwardGhost.slug)) {
+      setForwardGhost(null);
+    }
+  }, [forwardGhost, panes]);
   const forwardGhostFetchRef = useRef<AbortController | null>(null);
   const forwardGhostCache = useRef<Map<string, ThoughtApiResponse>>(new Map());
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
