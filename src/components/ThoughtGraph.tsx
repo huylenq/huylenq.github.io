@@ -308,7 +308,8 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       .attr("stroke", "var(--ink-light)")
       .attr("stroke-width", 1)
       .attr("stroke-opacity", 0.5)
-      .attr("marker-end", "url(#arrowhead)");
+      .attr("marker-end", "url(#arrowhead)")
+      .style("transition", "stroke 450ms ease-out, stroke-width 450ms ease-out, stroke-opacity 450ms ease-out");
 
     // Render nodes as <a> wrapping <text>
     const nodeElements = nodeGroup
@@ -331,7 +332,8 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       .style("font-size", "0.85rem")
       .style("fill", (d) => MATURITY_FILL[d.maturity])
       .style("cursor", "pointer")
-      .style("user-select", "none");
+      .style("user-select", "none")
+      .style("transition", "fill 350ms cubic-bezier(0.25, 0.1, 0.25, 1)");
 
     // Hidden underline for click loading indicator
     nodeElements
@@ -345,20 +347,23 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       .attr("stroke-width", 1)
       .attr("stroke-opacity", 0);
 
-    // Hover highlight
+    // Hover highlight — fast in (~60ms), pleasant out (~350ms nodes, ~450ms edges)
     nodeElements
       .on("mouseenter", (_event, d) => {
         const neighbors = adjacency.get(d.id) ?? new Set<string>();
         const isRelevant = (n: GraphNode) => n.id === d.id || neighbors.has(n.id);
 
+        // Snap in fast
         nodeElements
           .select("text")
+          .style("transition-duration", "60ms")
           .style("fill", (n) =>
             isRelevant(n as GraphNode) ? "var(--ink-black)" : "var(--ink-faint)"
           )
           .style("font-weight", (n) => ((n as GraphNode).id === d.id ? "600" : ""));
 
         linkElements
+          .style("transition-duration", "80ms")
           .attr("stroke", (l) =>
             l.source.id === d.id || l.target.id === d.id
               ? "var(--ink-dark)"
@@ -377,12 +382,15 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
           );
       })
       .on("mouseleave", () => {
+        // Ease out gently
         nodeElements
           .select("text")
+          .style("transition-duration", "350ms")
           .style("fill", (n) => MATURITY_FILL[(n as GraphNode).maturity])
           .style("font-weight", "");
 
         linkElements
+          .style("transition-duration", "450ms")
           .attr("stroke", "var(--ink-light)")
           .attr("stroke-width", 1)
           .attr("stroke-opacity", 0.5)
