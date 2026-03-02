@@ -24,9 +24,13 @@ const CONTENT_THOUGHTS_DIR = path.join(PROJECT_ROOT, "content", "thoughts");
 const API_THOUGHTS_DIR = path.join(PROJECT_ROOT, "public", "api", "thoughts");
 const THOUGHT_ASSETS_DIR = path.join(PROJECT_ROOT, "public", "thought-assets");
 
+const REDIRECTS_FILE = path.join(CONTENT_THOUGHTS_DIR, "_redirects.json");
+
 const SKIP_DIRS = new Set(["node_modules"]);
 
 // ── Types ──────────────────────────────────────────────────────
+
+type RedirectMap = Map<string, string>; // old-slug → current publish-id
 
 interface VaultThought {
   title: string;
@@ -40,9 +44,11 @@ interface VaultThought {
 function scanVault(): {
   publicThoughts: Map<string, VaultThought>;
   filenameToId: Map<string, string>;
+  redirects: RedirectMap;
 } {
   const publicThoughts = new Map<string, VaultThought>();
   const filenameToId = new Map<string, string>();
+  const redirects: RedirectMap = new Map();
   const mdFiles = collectMarkdownFiles(VAULT_PATH);
 
   for (const filePath of mdFiles) {
@@ -98,9 +104,40 @@ function scanVault(): {
       frontmatter: fm,
     });
     filenameToId.set(title, publishId);
+
+    // Collect redirected-publish-ids
+    const rawRedirects = fm["redirected-publish-ids"];
+    if (rawRedirects) {
+      const oldSlugs = Array.isArray(rawRedirects)
+        ? rawRedirects.map(String)
+        : [String(rawRedirects)];
+      for (const oldSlug of oldSlugs) {
+        const claimedBy = redirects.get(oldSlug);
+        if (claimedBy) {
+          console.error(
+            `FATAL: redirected-publish-id "${oldSlug}" is claimed by multiple notes:`
+          );
+          console.error(`  1. publish-id "${claimedBy}"`);
+          console.error(`  2. publish-id "${publishId}" (${filePath})`);
+          process.exit(1);
+        }
+        redirects.set(oldSlug, publishId);
+      }
+    }
   }
 
-  return { publicThoughts, filenameToId };
+  // Fail fast: old slug collides with an active publish-id
+  for (const [oldSlug, claimedBy] of redirects) {
+    if (publicThoughts.has(oldSlug)) {
+      console.error(
+        `FATAL: redirected-publish-id "${oldSlug}" (from "${claimedBy}") collides with an active publish-id.`
+      );
+      console.error(`  → The note "${publicThoughts.get(oldSlug)!.vaultPath}" uses "${oldSlug}" as its publish-id.`);
+      process.exit(1);
+    }
+  }
+
+  return { publicThoughts, filenameToId, redirects };
 }
 
 function collectMarkdownFiles(dir: string): string[] {
@@ -383,7 +420,8 @@ async function writeOutputs(
   publicThoughts: Map<string, VaultThought>,
   transformedMarkdown: Map<string, string>,
   graph: ThoughtGraph,
-  edges: ThoughtEdge[]
+  edges: ThoughtEdge[],
+  redirects: RedirectMap
 ) {
   for (const [id, thought] of publicThoughts) {
     const md = transformedMarkdown.get(id)!;
@@ -420,6 +458,16 @@ async function writeOutputs(
     path.join(CONTENT_THOUGHTS_DIR, "_graph.json"),
     JSON.stringify(graphFile, null, 2)
   );
+
+  // content/thoughts/_redirects.json
+  const redirectEntries: Record<string, string> = {};
+  for (const [oldSlug, currentId] of redirects) {
+    redirectEntries[`/thoughts/${oldSlug}`] = `/thoughts/${currentId}`;
+  }
+  fs.writeFileSync(REDIRECTS_FILE, JSON.stringify(redirectEntries, null, 2));
+  if (redirects.size > 0) {
+    console.log(`  Wrote ${redirects.size} redirect(s) to _redirects.json`);
+  }
 }
 
 // ── Main ───────────────────────────────────────────────────────
@@ -427,7 +475,7 @@ async function writeOutputs(
 async function main() {
   console.log(`Scanning vault: ${VAULT_PATH}`);
 
-  const { publicThoughts, filenameToId } = scanVault();
+  const { publicThoughts, filenameToId, redirects } = scanVault();
   console.log(`Found ${publicThoughts.size} public thoughts.`);
 
   cleanOutputDirs();
@@ -438,6 +486,7 @@ async function main() {
       path.join(CONTENT_THOUGHTS_DIR, "_graph.json"),
       JSON.stringify(emptyGraphFile, null, 2)
     );
+    fs.writeFileSync(REDIRECTS_FILE, JSON.stringify({}, null, 2));
     console.log("No public thoughts found. Wrote empty graph. Done!");
     return;
   }
@@ -456,7 +505,7 @@ async function main() {
   const { graph, edges } = await buildGraph(publicThoughts, linkMap, transformedMarkdown);
 
   // Write outputs
-  await writeOutputs(publicThoughts, transformedMarkdown, graph, edges);
+  await writeOutputs(publicThoughts, transformedMarkdown, graph, edges, redirects);
 
   console.log("Done!");
 }
