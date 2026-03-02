@@ -26,7 +26,7 @@ const essays = Object.values(essayModules)
   </p>
 
   <section class="thoughts-section">
-    <h2>Thoughts</h2>
+    <h2><a href="/thoughts">Thoughts</a></h2>
     <p class="section-description">My shower thoughts, put together.</p>
     {thoughts.length > 0 ? (
       <>
@@ -47,7 +47,7 @@ const essays = Object.values(essayModules)
   </section>
 
   <section class="thoughts-section">
-    <h2>Essays</h2>
+    <h2><a href="/essays">Essays</a></h2>
     <p class="section-description">Interactive, play-able essays that I'm having fun making.</p>
     {essays.length > 0 ? (
       <ul class="thoughts-list">
@@ -97,6 +97,11 @@ const essays = Object.values(essayModules)
     margin-bottom: var(--space-lg);
     padding-bottom: var(--space-sm);
     border-bottom: 1px solid var(--ink-black);
+  }
+
+  .thoughts-section h2 a {
+    color: inherit;
+    text-decoration: none;
   }
 
   .thoughts-list {

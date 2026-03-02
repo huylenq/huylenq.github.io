@@ -70,6 +70,7 @@ export default function ThoughtPane({
                   href={`/thoughts/${bl.slug}`}
                   className="pane-backlink-card"
                   onClick={(e) => {
+                    if (window.innerWidth < 768) return; // let browser navigate
                     e.preventDefault();
                     e.stopPropagation();
                     onNavigateBacklink(bl.slug);

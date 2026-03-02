@@ -35,10 +35,11 @@ export default function StackedThoughts({
   const firstPaneStartLeft = useRef<number | null>(null);
   const initialPaneSlugs = useRef(new Set([initialSlug]));
 
-  // On mount: restore stacked panes from URL
+  // On mount: restore stacked panes from URL (desktop only)
   useEffect(() => {
     if (initializedRef.current) return;
     initializedRef.current = true;
+    if (window.innerWidth < 768) return;
 
     const params = new URLSearchParams(window.location.search);
     const stackedSlugs = params.getAll('stacked');
@@ -92,8 +93,9 @@ export default function StackedThoughts({
     }
   }, [panes.length]);
 
-  // Sync URL when panes change
+  // Sync URL when panes change (desktop only)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     const stackedSlugs = panes.slice(1).map((p) => p.slug);
     const url = new URL(window.location.href);
     url.searchParams.delete('stacked');
@@ -166,16 +168,12 @@ export default function StackedThoughts({
     [panes.length],
   );
 
-  // Mobile back: pop the last pane
-  const goBack = useCallback(() => {
-    setPanes((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
-  }, []);
-
   // Event delegation: intercept internal link clicks
   const handleContainerClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const anchor = (e.target as HTMLElement).closest('a');
       if (!anchor) return;
+      if (window.innerWidth < 768) return; // let browser navigate
 
       const href = anchor.getAttribute('href');
       if (!href || !href.startsWith('/thoughts/')) return;
@@ -238,8 +236,6 @@ export default function StackedThoughts({
   // Mobile: only show the last pane
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const visiblePanes = isMobile ? [panes[panes.length - 1]] : panes;
-  const mobileShowBack = isMobile && panes.length > 1;
-
   // Ghost backlinks from the last pane
   const lastPane = panes[panes.length - 1];
   const ghostBacklinks = lastPane.backlinks;
@@ -276,13 +272,6 @@ export default function StackedThoughts({
             <span className="collapsed-title">{pane.title}</span>
             {!isCollapsed && (
               <>
-                {mobileShowBack && isLastPane && (
-                  <div style={{ padding: '12px 24px 0' }}>
-                    <button className="mobile-back" onClick={goBack}>
-                      &larr; Back
-                    </button>
-                  </div>
-                )}
                 <ThoughtPane
                   slug={pane.slug}
                   title={pane.title}
@@ -294,25 +283,6 @@ export default function StackedThoughts({
                   onClose={() => closePane(realIndex)}
                   onNavigateBacklink={(slug) => openThought(slug, realIndex)}
                 />
-                {isMobile && isLastPane && pane.backlinks.length > 0 && (
-                  <div className="mobile-ghost-backlinks">
-                    {pane.backlinks.map((bl) => (
-                      <div
-                        key={bl.slug}
-                        className="mobile-ghost-card"
-                        onClick={() => openThought(bl.slug, realIndex)}
-                      >
-                        <span className="mobile-ghost-title">{bl.title}</span>
-                        {bl.context && (
-                          <div
-                            className="mobile-ghost-context"
-                            dangerouslySetInnerHTML={{ __html: bl.context }}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </>
             )}
           </div>
