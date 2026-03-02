@@ -36,10 +36,21 @@
 }
 
 /* Single pane: center the thought as a floating card */
-.stacked-container.single-pane,
-.stacked-container.single-pane-with-ghosts {
+.stacked-container.single-pane {
   justify-content: center;
   overflow-y: auto;
+}
+
+/* Single pane with backlink ghosts: safe center falls back to start on
+   overflow, so the pane is never clipped on the left.  The pane's horizontal
+   sticky is disabled (left:auto) so pane + ghost scroll together naturally. */
+.stacked-container.single-pane-with-ghosts {
+  justify-content: safe center;
+  overflow-y: auto;
+}
+
+.stacked-container.single-pane-with-ghosts .thought-pane {
+  left: auto;
 }
 
 /* Forward-ghost-only column in single-pane mode: position absolutely so it
@@ -392,13 +403,24 @@
   opacity: 1;
 }
 
-.ghost-pane:hover::after {
+.ghost-pane:not(.ghost-pane-linked):hover::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cmask id='m'%3E%3Ccircle cx='6' cy='6' r='5.5' fill='white'/%3E%3Crect x='5' y='2.5' width='2' height='7' fill='black'/%3E%3Crect x='2.5' y='5' width='7' height='2' fill='black'/%3E%3C/mask%3E%3Ccircle cx='6' cy='6' r='5.5' fill='%23b0b0b0' mask='url(%23m)'/%3E%3C/svg%3E");
 }
 
-/* Already-open ghost: keep the default link icon instead of switching to plus */
-.ghost-pane-linked:hover::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
+/* Already-open ghost pane — minimal style, title only */
+.ghost-pane-linked {
+  border: none;
+  box-shadow: none;
+  padding: var(--space-xs) var(--space-xs);
+  opacity: 0.5;
+}
+
+/* Bottom-aligned group for already-open backlink ghosts */
+.ghost-linked-group {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 .ghost-pane:hover .ghost-pane-title {
@@ -409,7 +431,9 @@
   color: var(--ink-dark);
 }
 
-/* Ghost column — vertical stack to the right of real panes */
+/* Ghost column — vertical stack to the right of real panes.
+   In multi-pane mode, position:sticky + left (set via inline style) keeps
+   the column from sliding behind sticky thought panes on narrow viewports. */
 .ghost-pane-column {
   display: flex;
   flex-direction: column;
@@ -418,6 +442,13 @@
   margin-left: 44px;
   margin-right: 2rem;
   position: relative;
+  flex-shrink: 0;
+}
+
+.ghost-pane-column.has-linked-ghosts {
+  align-self: stretch;
+  padding-top: var(--space-lg);
+  padding-bottom: var(--space-lg);
 }
 
 /* Connector line + arrowhead from ghost pane toward the thought pane */
@@ -446,6 +477,10 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.ghost-pane-linked::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cmask id='m'%3E%3Ccircle cx='6' cy='6' r='5.5' fill='white'/%3E%3Cpolyline points='3 6.5 5 8.5 9 3.5' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/mask%3E%3Ccircle cx='6' cy='6' r='5.5' fill='%23b0b0b0' mask='url(%23m)'/%3E%3C/svg%3E");
 }
 
 .ghost-pane-title {
@@ -488,7 +523,7 @@
   gap: var(--space-sm);
   white-space: nowrap;
   width: 240px;
-  margin-left: -10px;
+  margin-left: -18px;
   opacity: 0.7;
 }
 

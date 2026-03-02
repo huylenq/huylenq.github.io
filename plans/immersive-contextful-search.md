@@ -1,0 +1,3 @@
+- typing any where
+- filter out the current contextual view
+- group by category

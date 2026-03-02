@@ -559,7 +559,7 @@ export default function StackedThoughts({
       const existingIndex = panes.findIndex((p) => p.slug === slug);
       if (existingIndex >= 0) {
         const target = containerRef.current?.querySelectorAll('.thought-pane')[existingIndex] as HTMLElement | undefined;
-        if (target && !target.classList.contains('flash-highlight')) {
+        if (target && !target.classList.contains('flash-highlight') && !target.classList.contains('animate-in')) {
           hoveredPaneRef.current?.classList.remove('hover-highlight');
           target.classList.add('hover-highlight');
           hoveredPaneRef.current = target;
@@ -738,7 +738,7 @@ export default function StackedThoughts({
         );
       })}
       {!isMobile && hasGhostColumn && (
-        <div className="ghost-pane-column"
+        <div className={`ghost-pane-column${ghostBacklinks.some((bl) => panes.some((p) => p.slug === bl.slug)) ? ' has-linked-ghosts' : ''}`}
           ref={ghostColumnRef}
           onMouseEnter={cancelHideForwardGhost}
           onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
@@ -775,41 +775,56 @@ export default function StackedThoughts({
               )}
             </div>
           )}
-          {ghostBacklinks.length > 0 && (
-            <span className="ghost-section-label">Backlinks</span>
+          {ghostBacklinks.some((bl) => !panes.some((p) => p.slug === bl.slug)) && (
+            <>
+              <span className="ghost-section-label">Backlinks</span>
+              {ghostBacklinks.filter((bl) => !panes.some((p) => p.slug === bl.slug)).map((bl) => (
+                <div
+                  key={`ghost-${bl.slug}`}
+                  className="ghost-pane"
+                  data-ghost-slug={bl.slug}
+                  onClick={() => openThought(bl.slug, panes.length - 1)}
+                >
+                  <span className="ghost-pane-title">{bl.title}</span>
+                  {bl.context && (
+                    <div
+                      className="ghost-pane-context"
+                      dangerouslySetInnerHTML={{ __html: bl.context }}
+                    />
+                  )}
+                </div>
+              ))}
+            </>
           )}
-          {ghostBacklinks.map((bl) => {
-            const openIndex = panes.findIndex((p) => p.slug === bl.slug);
-            return (
-              <div
-                key={`ghost-${bl.slug}`}
-                className={`ghost-pane${openIndex >= 0 ? ' ghost-pane-linked' : ''}`}
-                data-ghost-slug={bl.slug}
-                onClick={() => openThought(bl.slug, panes.length - 1)}
-                onMouseEnter={() => {
-                  if (openIndex < 0) return;
-                  const target = containerRef.current?.querySelectorAll('.thought-pane')[openIndex] as HTMLElement | undefined;
-                  if (target && !target.classList.contains('flash-highlight')) {
-                    hoveredPaneRef.current?.classList.remove('hover-highlight');
-                    target.classList.add('hover-highlight');
-                    hoveredPaneRef.current = target;
-                  }
-                }}
-                onMouseLeave={() => {
-                  hoveredPaneRef.current?.classList.remove('hover-highlight');
-                  hoveredPaneRef.current = null;
-                }}
-              >
-                <span className="ghost-pane-title">{bl.title}</span>
-                {bl.context && (
+          {ghostBacklinks.some((bl) => panes.some((p) => p.slug === bl.slug)) && (
+            <div className="ghost-linked-group">
+              {ghostBacklinks.filter((bl) => panes.some((p) => p.slug === bl.slug)).map((bl) => {
+                const openIndex = panes.findIndex((p) => p.slug === bl.slug);
+                return (
                   <div
-                    className="ghost-pane-context"
-                    dangerouslySetInnerHTML={{ __html: bl.context }}
-                  />
-                )}
-              </div>
-            );
-          })}
+                    key={`ghost-${bl.slug}`}
+                    className="ghost-pane ghost-pane-linked"
+                    data-ghost-slug={bl.slug}
+                    onClick={() => openThought(bl.slug, panes.length - 1)}
+                    onMouseEnter={() => {
+                      const target = containerRef.current?.querySelectorAll('.thought-pane')[openIndex] as HTMLElement | undefined;
+                      if (target && !target.classList.contains('flash-highlight')) {
+                        hoveredPaneRef.current?.classList.remove('hover-highlight');
+                        target.classList.add('hover-highlight');
+                        hoveredPaneRef.current = target;
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      hoveredPaneRef.current?.classList.remove('hover-highlight');
+                      hoveredPaneRef.current = null;
+                    }}
+                  >
+                    <span className="ghost-pane-title">{bl.title}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

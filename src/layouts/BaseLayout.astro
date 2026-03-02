@@ -37,8 +37,8 @@ const { title = 'huylenq.com' } = Astro.props;
   <slot />
   <script>
     function initThemeToggle() {
-      const btn = document.getElementById('theme-toggle');
-      if (!btn) return;
+      const btns = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
+      if (!btns.length) return;
 
       const mq = matchMedia('(prefers-color-scheme: dark)');
 
@@ -56,11 +56,11 @@ const { title = 'huylenq.com' } = Astro.props;
         }
       }
 
-      btn.addEventListener('click', () => {
+      btns.forEach(btn => btn.addEventListener('click', () => {
         const next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
         localStorage.setItem('theme', next);
         applyTheme(next);
-      });
+      }));
 
       // If system preference changes while no explicit choice, follow it
       mq.addEventListener('change', () => {
