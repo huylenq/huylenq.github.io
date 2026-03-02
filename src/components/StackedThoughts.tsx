@@ -232,10 +232,11 @@ export default function StackedThoughts({
 
       try {
         const thought = await fetchThought(slug);
-        setPanes((prev) => {
-          const truncated = prev.slice(0, fromPaneIndex + 1);
-          return [...truncated, thought];
-        });
+        setPanes((prev) => [
+          ...prev.slice(0, fromPaneIndex + 1),
+          thought,
+          ...prev.slice(fromPaneIndex + 1),
+        ]);
         setScrollTarget({ index: fromPaneIndex + 1, mode: 'into-view' });
       } catch (err) {
         console.error('[StackedThoughts] Failed to open thought:', slug, err);
@@ -287,9 +288,6 @@ export default function StackedThoughts({
       if (!slug) return;
 
       e.preventDefault();
-
-      hoveredPaneRef.current?.classList.remove('hover-highlight');
-      hoveredPaneRef.current = null;
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
