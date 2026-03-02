@@ -187,7 +187,10 @@ export default function StackedThoughts({
         const leftOverlap = visibleLeft - paneRect.left;
 
         if (rightOverlap > PADDING) {
-          container.scrollBy({ left: -(rightOverlap + PADDING), behavior: 'smooth' });
+          // No next pane → pane extends past viewport right → scroll right to reveal
+          // Has next pane → pane covered by next pane's overlap → scroll left to separate
+          const direction = nextPane ? -1 : 1;
+          container.scrollBy({ left: direction * (rightOverlap + PADDING), behavior: 'smooth' });
         } else if (leftOverlap > PADDING) {
           container.scrollBy({ left: leftOverlap + PADDING, behavior: 'smooth' });
         }
