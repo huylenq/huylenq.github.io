@@ -168,8 +168,41 @@ function StockBox({
   const y = pos.y - BOX_H / 2;
   const fillHeight = Math.min(1, Math.max(0, value / max)) * (BOX_H - 4);
 
+  // Always call hooks unconditionally; readOnly boxes use a dummy key
+  const [, setValue] = useEssayVar(name ?? 'devs');
+  const dragRef = useRef<{ startY: number; startValue: number } | null>(null);
+  const pxPerStep = Math.max(1, 200 / ((max - min) / step));
+
+  const onPointerDown = !readOnly ? (e: PointerEvent<SVGGElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragRef.current = { startY: e.clientY, startValue: value };
+    (e.currentTarget as SVGGElement).setPointerCapture(e.pointerId);
+    document.body.style.userSelect = 'none';
+  } : undefined;
+
+  const onPointerMove = !readOnly ? (e: PointerEvent<SVGGElement>) => {
+    if (!dragRef.current) return;
+    const dy = -(e.clientY - dragRef.current.startY);
+    const steps = Math.round(dy / pxPerStep);
+    let next = dragRef.current.startValue + steps * step;
+    next = Math.max(min, Math.min(max, next));
+    setValue!(next);
+  } : undefined;
+
+  const onPointerUp = !readOnly ? () => {
+    dragRef.current = null;
+    document.body.style.userSelect = '';
+  } : undefined;
+
   return (
-    <g>
+    <g
+      className={readOnly ? undefined : 'essay-diagram-scrub'}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      style={readOnly ? undefined : { touchAction: 'none', cursor: 'ns-resize' }}
+    >
       {/* Box outline */}
       <rect
         x={x}
@@ -207,125 +240,36 @@ function StockBox({
       >
         {label}
       </text>
-      {/* Value — scrubbable if not readOnly */}
-      {readOnly ? (
-        <text
-          x={pos.x}
-          y={pos.y + 5}
-          style={{
-            fill: 'var(--ink-dark)',
-            fontSize: 18,
-            fontFamily: 'var(--font-mono)',
-            fontWeight: 600,
-            textAnchor: 'middle',
-          }}
-        >
-          {value % 1 === 0 ? value : value.toFixed(1)}
-        </text>
-      ) : (
-        <ScrubValue
-          cx={pos.x}
-          cy={pos.y + 5}
-          name={name!}
-          min={min}
-          max={max}
-          step={step}
-        />
-      )}
-    </g>
-  );
-}
-
-// ── ScrubValue ────────────────────────────────────────────────────
-// Duplicates Var.tsx pointer-drag pattern (scope discipline: no extraction)
-
-function ScrubValue({
-  cx,
-  cy,
-  name,
-  min,
-  max,
-  step,
-}: {
-  cx: number;
-  cy: number;
-  name: string;
-  min: number;
-  max: number;
-  step: number;
-}) {
-  const [value, setValue] = useEssayVar(name);
-  const dragRef = useRef<{ startY: number; startValue: number } | null>(null);
-  const pxPerStep = Math.max(1, 200 / ((max - min) / step));
-
-  const onPointerDown = (e: PointerEvent<SVGTextElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragRef.current = { startY: e.clientY, startValue: value };
-    (e.target as SVGTextElement).setPointerCapture(e.pointerId);
-    document.body.style.userSelect = 'none';
-  };
-
-  const onPointerMove = (e: PointerEvent<SVGTextElement>) => {
-    if (!dragRef.current) return;
-    // Negative because screen Y goes down but "up = increase"
-    const dy = -(e.clientY - dragRef.current.startY);
-    const steps = Math.round(dy / pxPerStep);
-    let next = dragRef.current.startValue + steps * step;
-    next = Math.max(min, Math.min(max, next));
-    setValue(next);
-  };
-
-  const onPointerUp = () => {
-    dragRef.current = null;
-    document.body.style.userSelect = '';
-  };
-
-  const textW = String(value).length * 10;
-
-  return (
-    <g
-      className="essay-diagram-scrub"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      style={{ touchAction: 'none' }}
-    >
-      {/* Invisible hit area for easier touch targeting */}
-      <rect
-        x={cx - textW / 2 - 6}
-        y={cy - 16}
-        width={textW + 12}
-        height={28}
-        style={{ fill: 'transparent' }}
-      />
+      {/* Value */}
       <text
-        x={cx}
-        y={cy}
+        x={pos.x}
+        y={pos.y + 5}
         style={{
           fill: 'var(--ink-dark)',
           fontSize: 18,
           fontFamily: 'var(--font-mono)',
           fontWeight: 600,
           textAnchor: 'middle',
-          cursor: 'ns-resize',
           userSelect: 'none',
           WebkitUserSelect: 'none',
         }}
       >
-        {value}
+        {value % 1 === 0 ? value : value.toFixed(1)}
       </text>
-      <line
-        x1={cx - textW / 2}
-        y1={cy + 6}
-        x2={cx + textW / 2}
-        y2={cy + 6}
-        style={{
-          stroke: 'var(--ink-medium)',
-          strokeWidth: 0.5,
-          strokeDasharray: '4,2',
-        }}
-      />
+      {/* Scrub underline hint */}
+      {!readOnly && (
+        <line
+          x1={pos.x - 15}
+          y1={pos.y + 11}
+          x2={pos.x + 15}
+          y2={pos.y + 11}
+          style={{
+            stroke: 'var(--ink-medium)',
+            strokeWidth: 0.5,
+            strokeDasharray: '4,2',
+          }}
+        />
+      )}
     </g>
   );
 }
