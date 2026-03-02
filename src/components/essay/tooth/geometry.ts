@@ -246,13 +246,16 @@ export function minBoundingRectPoints(
 export function correctionAngle(a: Point2D, b: Point2D, axis: 'z' | 'x' | 'y'): number {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
+  let angle: number;
   if (axis === 'z') {
-    return -(Math.atan2(dy, dx) * 180) / Math.PI;
+    angle = -(Math.atan2(dy, dx) * 180) / Math.PI;
+  } else if (axis === 'x') {
+    angle = (Math.atan2(dx, dy) * 180) / Math.PI;
+  } else {
+    angle = -(Math.atan2(dx, dy) * 180) / Math.PI;
   }
-  if (axis === 'x') {
-    // YZ projection: rotateAroundX sign is opposite to measured angle
-    return (Math.atan2(dx, dy) * 180) / Math.PI;
-  }
-  // 'y' — XZ projection
-  return -(Math.atan2(dx, dy) * 180) / Math.PI;
+  // Normalize to [-90, 90]: AB direction is arbitrary, we want minimum rotation
+  if (angle > 90) angle -= 180;
+  if (angle < -90) angle += 180;
+  return angle;
 }

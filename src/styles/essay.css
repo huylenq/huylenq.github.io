@@ -304,7 +304,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--ink-medium);
+  color: var(--ink-dark);
   margin-bottom: var(--space-xs);
 }
 
@@ -312,7 +312,7 @@
   position: absolute;
   right: calc(-1 * var(--space-sm) / 2 - 4px);
   top: 50%;
-  color: var(--ink-faint);
+  color: var(--ink-medium);
   font-size: 1.2rem;
 }
 

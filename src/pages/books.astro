@@ -38,8 +38,7 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
               <div
                 class="book"
                 style={`--h-offset: ${hOffset}px`}
-                data-title={book.title}
-                data-author={book.author}
+
               >
                 <img
                   src={`https://m.media-amazon.com/images/I/${book.cover}._SL500_.jpg`}
@@ -55,7 +54,6 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
     ))}
   </div>
 
-  <div class="tooltip" id="book-tooltip" aria-hidden="true"></div>
 </PageLayout>
 
 <style>
@@ -167,14 +165,16 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
     /* Stacked box-shadows: page layers create visible thickness */
     box-shadow:
       /* page layers — each offset creates a "page edge" */
-      1px 1px 0 0 #ebe7df,
-      2px 1px 0 0 #e5e1d9,
-      3px 2px 0 0 #e0dcd4,
-      4px 2px 0 0 #dbd7cf,
-      5px 3px 0 0 #d6d2ca,
+      1px 1px 0 0 #d5d0c8,
+      2px 1px 0 0 #cec9c1,
+      3px 2px 0 0 #c7c2ba,
+      4px 2px 0 0 #c0bbb3,
+      5px 3px 0 0 #b9b4ac,
+      /* edge shadow — soft shadow hugging the page stack */
+      5px 3px 4px 1px rgba(0, 0, 0, 0.35),
       /* depth shadows beyond the page stack */
-      7px 5px 4px rgba(0, 0, 0, 0.25),
-      10px 8px 15px rgba(0, 0, 0, 0.15);
+      8px 6px 8px rgba(0, 0, 0, 0.3),
+      12px 10px 20px rgba(0, 0, 0, 0.18);
   }
 
   /* Spine: left edge with rounded highlight */
@@ -202,13 +202,14 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
 
   .book:hover img {
     box-shadow:
-      1px 1px 0 0 #ebe7df,
-      2px 1px 0 0 #e5e1d9,
-      3px 2px 0 0 #e0dcd4,
-      4px 2px 0 0 #dbd7cf,
-      5px 3px 0 0 #d6d2ca,
-      8px 8px 8px rgba(0, 0, 0, 0.25),
-      14px 12px 25px rgba(0, 0, 0, 0.2);
+      1px 1px 0 0 #d5d0c8,
+      2px 1px 0 0 #cec9c1,
+      3px 2px 0 0 #c7c2ba,
+      4px 2px 0 0 #c0bbb3,
+      5px 3px 0 0 #b9b4ac,
+      5px 3px 4px 1px rgba(0, 0, 0, 0.35),
+      10px 8px 10px rgba(0, 0, 0, 0.3),
+      16px 14px 28px rgba(0, 0, 0, 0.18);
   }
 
   /* --- Shelf plank (3D skeuomorphic) --- */
@@ -279,32 +280,7 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
     pointer-events: none;
   }
 
-  /* --- Tooltip --- */
-  .tooltip {
-    position: fixed;
-    pointer-events: none;
-    background: rgba(30, 25, 20, 0.94);
-    color: #e8e4de;
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    line-height: 1.4;
-    padding: 8px 12px;
-    border-radius: 6px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    z-index: 100;
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-  }
-
-  .tooltip.visible {
-    opacity: 1;
-  }
-
-  /* --- Dark mode --- */
+/* --- Dark mode --- */
   :global([data-theme="dark"]) .bookshelf {
     filter: brightness(0.85);
     border-color: #2a2826 #333130 #3a3836 #333130;
@@ -338,12 +314,6 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
       width: 4px;
     }
 
-    .book::after {
-      height: 129px;
-      right: -4px;
-      width: 4px;
-    }
-
     .shelf-plank {
       height: 16px;
       border-bottom-width: 6px;
@@ -355,27 +325,3 @@ const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5, 3, -7];
     }
   }
 </style>
-
-<script>
-  const tooltip = document.getElementById('book-tooltip')!;
-
-  document.querySelectorAll('.book').forEach((book) => {
-    const el = book as HTMLElement;
-    const title = el.dataset.title;
-    const author = el.dataset.author;
-
-    el.addEventListener('mouseenter', () => {
-      tooltip.innerHTML = `<strong>${title}</strong><br>${author}`;
-      tooltip.classList.add('visible');
-    });
-
-    el.addEventListener('mousemove', (e) => {
-      tooltip.style.left = `${e.clientX + 12}px`;
-      tooltip.style.top = `${e.clientY - 40}px`;
-    });
-
-    el.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('visible');
-    });
-  });
-</script>
