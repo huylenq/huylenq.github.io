@@ -354,6 +354,67 @@ export default function StackedThoughts({
 
   const hasGhostColumn = ghostBacklinks.length > 0 || !!forwardGhost;
 
+  // FLIP animation for backward ghost panes when forward ghost appears/disappears
+  const ghostColumnRef = useRef<HTMLDivElement>(null);
+  const backwardGhostPositions = useRef<Map<string, number>>(new Map());
+  const prevForwardGhostSlug = useRef<string | null>(null);
+
+  // Snapshot backward ghost positions after each paint — ready for the NEXT render's FLIP
+  useEffect(() => {
+    const col = ghostColumnRef.current;
+    if (!col) return;
+    const ghosts = col.querySelectorAll<HTMLElement>('.ghost-pane:not(.forward-ghost-pane)');
+    const positions = new Map<string, number>();
+    ghosts.forEach((el) => {
+      const key = el.dataset.ghostSlug;
+      if (key) positions.set(key, el.getBoundingClientRect().top);
+    });
+    backwardGhostPositions.current = positions;
+  });
+
+  // After DOM update: FLIP animate backward ghosts if forwardGhost toggled on/off
+  useLayoutEffect(() => {
+    const prevSlug = prevForwardGhostSlug.current;
+    const curSlug = forwardGhost?.slug ?? null;
+    prevForwardGhostSlug.current = curSlug;
+
+    // Only animate when forward ghost appears or disappears (not slug changes)
+    const wasVisible = prevSlug !== null;
+    const isVisible = curSlug !== null;
+    if (wasVisible === isVisible) return;
+
+    const col = ghostColumnRef.current;
+    if (!col) return;
+
+    const oldPositions = backwardGhostPositions.current;
+    if (oldPositions.size === 0) return;
+
+    const ghosts = col.querySelectorAll<HTMLElement>('.ghost-pane:not(.forward-ghost-pane)');
+    ghosts.forEach((el) => {
+      const key = el.dataset.ghostSlug;
+      if (!key) return;
+      const oldTop = oldPositions.get(key);
+      if (oldTop === undefined) return;
+
+      const newTop = el.getBoundingClientRect().top;
+      const deltaY = oldTop - newTop;
+      if (Math.abs(deltaY) < 1) return;
+
+      el.style.transition = 'none';
+      el.style.transform = `translateY(${deltaY}px)`;
+
+      requestAnimationFrame(() => {
+        el.style.transition = 'transform 0.2s ease';
+        el.style.transform = '';
+        const cleanup = () => {
+          el.style.transition = '';
+          el.removeEventListener('transitionend', cleanup);
+        };
+        el.addEventListener('transitionend', cleanup);
+      });
+    });
+  }, [forwardGhost]);
+
   // Stabilize scroll position when ghost column appears/disappears
   // (prevents horizontal scroll jump when column is added/removed from flex layout)
   const prevHasGhostColumn = useRef(hasGhostColumn);
@@ -420,6 +481,7 @@ export default function StackedThoughts({
       })}
       {!isMobile && hasGhostColumn && (
         <div className="ghost-pane-column"
+          ref={ghostColumnRef}
           onMouseEnter={cancelHideForwardGhost}
           onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
         >
@@ -459,6 +521,7 @@ export default function StackedThoughts({
             <div
               key={`ghost-${bl.slug}`}
               className="ghost-pane"
+              data-ghost-slug={bl.slug}
               onClick={() => openThought(bl.slug, panes.length - 1)}
             >
               <span className="ghost-pane-title">{bl.title}</span>
