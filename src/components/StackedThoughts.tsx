@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import type { ThoughtGraph, BacklinkEntry } from '../lib/types';
+import type { ThoughtGraph, BacklinkEntry, ThoughtApiResponse } from '../lib/types';
 import { fetchThought } from '../lib/thoughts';
 import ThoughtPane from './ThoughtPane';
 
@@ -8,6 +8,11 @@ interface Pane {
   title: string;
   html: string;
   backlinks: BacklinkEntry[];
+}
+
+interface ForwardGhost {
+  slug: string;
+  thought: ThoughtApiResponse | null; // null while loading
 }
 
 interface StackedThoughtsProps {
@@ -182,6 +187,7 @@ export default function StackedThoughts({
       if (!(slug in graph)) return; // Not a known thought — let browser navigate
 
       e.preventDefault();
+      setForwardGhost(null);
 
       // Determine which pane the click came from
       const paneEl = anchor.closest<HTMLElement>('.thought-pane');
@@ -240,15 +246,139 @@ export default function StackedThoughts({
   const lastPane = panes[panes.length - 1];
   const ghostBacklinks = lastPane.backlinks;
 
-  // Single-pane mode only when no ghost backlinks exist
-  const isSinglePane = panes.length === 1 && ghostBacklinks.length === 0;
-  const isSinglePaneWithGhosts = panes.length === 1 && ghostBacklinks.length > 0;
+  // Forward ghost pane — shown on hover over a forward link
+  const [forwardGhost, setForwardGhost] = useState<ForwardGhost | null>(null);
+  const forwardGhostFetchRef = useRef<AbortController | null>(null);
+  const forwardGhostCache = useRef<Map<string, ThoughtApiResponse>>(new Map());
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showForwardGhost = useCallback(
+    (slug: string) => {
+      // Check cache first
+      const cached = forwardGhostCache.current.get(slug);
+      if (cached) {
+        setForwardGhost({ slug, thought: cached });
+        return;
+      }
+
+      // Show ghost immediately (loading state), then fetch
+      setForwardGhost({ slug, thought: null });
+
+      forwardGhostFetchRef.current?.abort();
+      const controller = new AbortController();
+      forwardGhostFetchRef.current = controller;
+
+      fetchThought(slug).then((thought) => {
+        if (controller.signal.aborted) return;
+        forwardGhostCache.current.set(slug, thought);
+        setForwardGhost((prev) => (prev?.slug === slug ? { ...prev, thought } : prev));
+      }).catch(() => {
+        if (!controller.signal.aborted) {
+          setForwardGhost((prev) => (prev?.slug === slug ? null : prev));
+        }
+      });
+    },
+    [],
+  );
+
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const hideForwardGhost = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    // Small delay so the user can cross the gap between pane edge and ghost
+    hideTimeoutRef.current = setTimeout(() => {
+      forwardGhostFetchRef.current?.abort();
+      setForwardGhost(null);
+    }, 100);
+  }, []);
+
+  const cancelHideForwardGhost = useCallback(() => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Event delegation for hover on forward links
+  const handleContainerMouseOver = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isMobile) return;
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      if (!href || !href.startsWith('/thoughts/')) return;
+
+      const slug = href.replace(/^\/thoughts\//, '').replace(/\/$/, '');
+      if (!(slug in graph)) return;
+
+      // Don't show ghost if this slug is already open as the next pane
+      const paneEl = anchor.closest<HTMLElement>('.thought-pane');
+      if (paneEl && containerRef.current) {
+        const paneEls = Array.from(containerRef.current.querySelectorAll('.thought-pane'));
+        const idx = paneEls.indexOf(paneEl);
+        if (idx >= 0 && panes[idx + 1]?.slug === slug) return;
+      }
+
+      // Cancel any pending hide
+      cancelHideForwardGhost();
+
+      // Debounce slightly to avoid flicker on fast mouse moves
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = setTimeout(() => {
+        showForwardGhost(slug);
+      }, 80);
+    },
+    [graph, panes, isMobile, showForwardGhost, cancelHideForwardGhost],
+  );
+
+  const handleContainerMouseOut = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      if (!href || !href.startsWith('/thoughts/')) return;
+
+      // Check if we're moving to the ghost pane itself — if so, keep it visible
+      const related = e.relatedTarget as HTMLElement | null;
+      if (related?.closest('.forward-ghost-pane')) return;
+
+      hideForwardGhost();
+    },
+    [hideForwardGhost],
+  );
+
+  const hasGhostColumn = ghostBacklinks.length > 0 || !!forwardGhost;
+
+  // Stabilize scroll position when ghost column appears/disappears
+  // (prevents horizontal scroll jump when column is added/removed from flex layout)
+  const prevHasGhostColumn = useRef(hasGhostColumn);
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const wasVisible = prevHasGhostColumn.current;
+    prevHasGhostColumn.current = hasGhostColumn;
+    if (wasVisible !== hasGhostColumn) {
+      // Pin scrollLeft — the column change may have shifted scrollWidth
+      container.scrollLeft = container.scrollLeft;
+    }
+  }, [hasGhostColumn]);
+
+  // Single-pane mode only when no ghost column content exists
+  const isSinglePane = panes.length === 1 && !hasGhostColumn;
+  const isSinglePaneWithGhosts = panes.length === 1 && hasGhostColumn;
 
   return (
     <div
       className={`stacked-container${isSinglePane ? ' single-pane' : ''}${isSinglePaneWithGhosts ? ' single-pane-with-ghosts' : ''}`}
       ref={containerRef}
       onClick={handleContainerClick}
+      onMouseOver={handleContainerMouseOver}
+      onMouseOut={handleContainerMouseOut}
     >
       {visiblePanes.map((pane, visualIndex) => {
         const realIndex = isMobile ? panes.length - 1 : visualIndex;
@@ -288,8 +418,43 @@ export default function StackedThoughts({
           </div>
         );
       })}
-      {!isMobile && ghostBacklinks.length > 0 && (
-        <div className="ghost-pane-column">
+      {!isMobile && hasGhostColumn && (
+        <div className="ghost-pane-column"
+          onMouseEnter={cancelHideForwardGhost}
+          onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
+        >
+          {forwardGhost && (
+            <div
+              className="ghost-pane forward-ghost-pane"
+              onClick={() => {
+                const slug = forwardGhost.slug;
+                // Find which pane contains the link to this slug
+                const paneEl = containerRef.current?.querySelector(
+                  `.thought-pane:has(a[href="/thoughts/${slug}"])`,
+                );
+                let fromIndex = panes.length - 1;
+                if (paneEl && containerRef.current) {
+                  const paneEls = Array.from(containerRef.current.querySelectorAll('.thought-pane'));
+                  const idx = paneEls.indexOf(paneEl);
+                  if (idx >= 0) fromIndex = idx;
+                }
+                hideForwardGhost();
+                openThought(slug, fromIndex);
+              }}
+            >
+              {forwardGhost.thought ? (
+                <>
+                  <span className="ghost-pane-title">{forwardGhost.thought.title}</span>
+                  <div
+                    className="ghost-pane-context forward-ghost-content"
+                    dangerouslySetInnerHTML={{ __html: forwardGhost.thought.html }}
+                  />
+                </>
+              ) : (
+                <span className="ghost-pane-title" style={{ fontStyle: 'italic', color: 'var(--ink-light)' }}>Loading…</span>
+              )}
+            </div>
+          )}
           {ghostBacklinks.map((bl) => (
             <div
               key={`ghost-${bl.slug}`}

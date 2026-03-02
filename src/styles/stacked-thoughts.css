@@ -95,13 +95,6 @@
   background: linear-gradient(to top, var(--pane-bg), transparent);
 }
 
-/* Hide scroll fades in single-pane mode (page scrolls naturally) */
-.stacked-container.single-pane .thought-pane-fade,
-.stacked-container.single-pane-with-ghosts .thought-pane-fade,
-.stacked-container.single-pane .thought-pane-header::after,
-.stacked-container.single-pane-with-ghosts .thought-pane-header::after {
-  display: none;
-}
 
 .thought-pane-header {
   z-index: 4;
@@ -134,22 +127,9 @@
   transform: rotate(var(--tilt));
 }
 
-/* Top scroll fade — extends below the sticky header */
-.thought-pane-header::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 48px;
-  background: linear-gradient(to bottom, var(--pane-bg), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.thought-pane-header.scrolled::after {
-  opacity: 1;
+.thought-pane-header.scrolled {
+  border-bottom-color: var(--pane-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .thought-pane-title {
@@ -334,6 +314,10 @@
   opacity: 1;
 }
 
+.ghost-pane:hover::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cmask id='m'%3E%3Ccircle cx='6' cy='6' r='5.5' fill='white'/%3E%3Crect x='5' y='2.5' width='2' height='7' fill='black'/%3E%3Crect x='2.5' y='5' width='7' height='2' fill='black'/%3E%3C/mask%3E%3Ccircle cx='6' cy='6' r='5.5' fill='%23b0b0b0' mask='url(%23m)'/%3E%3C/svg%3E");
+}
+
 .ghost-pane:hover .ghost-pane-title {
   color: var(--ink-black);
 }
@@ -348,7 +332,7 @@
   flex-direction: column;
   gap: var(--space-lg);
   align-self: center;
-  margin-left: 56px;
+  margin-left: 44px;
   margin-right: 2rem;
   position: relative;
 }
@@ -357,19 +341,19 @@
 .ghost-pane::before {
   content: '';
   position: absolute;
-  right: calc(100% + 6px);
+  right: calc(100% + 4px);
   top: 50%;
-  width: 50px;
+  width: 40px;
   height: 10px;
   border: none;
   transform: translateY(-50%);
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='10'%3E%3Cline x1='7' y1='5' x2='50' y2='5' stroke='%23b0b0b0' stroke-width='1'/%3E%3Cpath d='M0,5 7,2 7,8z' fill='%23b0b0b0'/%3E%3C/svg%3E") no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10'%3E%3Cline x1='7' y1='5' x2='40' y2='5' stroke='%23b0b0b0' stroke-width='1'/%3E%3Cpath d='M0,5 7,2 7,8z' fill='%23b0b0b0'/%3E%3C/svg%3E") no-repeat;
 }
 
 .ghost-pane::after {
   content: '';
   position: absolute;
-  right: calc(100% + 18px);
+  right: calc(100% + 11px);
   top: 50%;
   width: 20px;
   height: 20px;
@@ -407,6 +391,60 @@
   pointer-events: none;
 }
 
+
+/* Forward ghost pane — preview for forward links, placed in ghost-pane-column above backlinks.
+   No overflow:hidden here — arrows (::before/::after) are positioned outside and need to be visible. */
+.forward-ghost-pane {
+  animation: forward-ghost-in 0.15s ease both;
+}
+
+@keyframes forward-ghost-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Right-pointing arrow line (mirrored from backlink's left-pointing arrow) */
+.forward-ghost-pane::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10'%3E%3Cline x1='0' y1='5' x2='33' y2='5' stroke='%23b0b0b0' stroke-width='1'/%3E%3Cpath d='M40,5 33,2 33,8z' fill='%23b0b0b0'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* Always show plus icon, shifted left to leave room for right-pointing arrowhead */
+.forward-ghost-pane::after {
+  right: calc(100% + 18px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cmask id='m'%3E%3Ccircle cx='6' cy='6' r='5.5' fill='white'/%3E%3Crect x='5' y='2.5' width='2' height='7' fill='black'/%3E%3Crect x='2.5' y='5' width='7' height='2' fill='black'/%3E%3C/mask%3E%3Ccircle cx='6' cy='6' r='5.5' fill='%23b0b0b0' mask='url(%23m)'/%3E%3C/svg%3E");
+}
+
+/* Constrain content height with fade mask — on the inner div, not the ghost-pane itself */
+.forward-ghost-content {
+  max-height: 160px;
+  overflow: hidden;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.forward-ghost-content h1,
+.forward-ghost-content h2,
+.forward-ghost-content h3,
+.forward-ghost-content h4 {
+  font-size: 0.8rem;
+  margin: var(--space-xs) 0;
+  border: none;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.forward-ghost-content img {
+  display: none;
+}
 
 /* Inline backlinks at bottom of non-rightmost panes */
 .pane-backlinks {
