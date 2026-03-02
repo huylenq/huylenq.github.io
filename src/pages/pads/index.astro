@@ -1,0 +1,53 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+
+const padModules = import.meta.glob('../../pads/*.mdx', { eager: true }) as Record<string, any>;
+const pads = Object.values(padModules).filter((m) => m.meta?.slug);
+---
+<PageLayout title="Pads — huylenq.com" section="Pad">
+  <section>
+    {pads.length > 0 ? (
+      <ul class="listing">
+        {pads.map((pad) => (
+          <li>
+            <a href={`/pads/${pad.meta.slug}`}>{pad.meta.title}</a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">No pads yet.</p>
+    )}
+  </section>
+</PageLayout>
+
+<style>
+  .listing {
+    list-style: none;
+    padding: 0;
+  }
+
+  .listing li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  .listing li:last-child {
+    border-bottom: none;
+  }
+
+  .listing a {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--ink-dark);
+    text-decoration: none;
+  }
+
+  .listing a:hover {
+    color: var(--ink-black);
+  }
+
+  .empty {
+    color: var(--ink-light);
+    font-style: italic;
+  }
+</style>

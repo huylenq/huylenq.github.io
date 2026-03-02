@@ -1,0 +1,19 @@
+---
+import EssayLayout from '../../layouts/EssayLayout.astro';
+import PadRenderer from '../../components/PadRenderer.tsx';
+
+export function getStaticPaths() {
+  const mods = import.meta.glob('../../pads/*.mdx', { eager: true }) as Record<string, any>;
+  return Object.values(mods)
+    .filter((m) => m.meta?.slug)
+    .map((m) => ({
+      params: { slug: m.meta.slug },
+      props: { meta: m.meta },
+    }));
+}
+
+const { meta } = Astro.props;
+---
+<EssayLayout title={meta.title} section="Pads" showTitle={false}>
+  <PadRenderer client:load slug={meta.slug} />
+</EssayLayout>

@@ -5,13 +5,14 @@ import Header from '../components/Header.astro';
 interface Props {
   title?: string;
   section?: string;
+  showTitle?: boolean;
 }
-const { title, section } = Astro.props;
+const { title, section, showTitle = true } = Astro.props;
 ---
 <BaseLayout title={title}>
   <Header section={section} />
   <main class="essay-page">
-    {title && <h1 class="essay-title">{title}</h1>}
+    {showTitle && title && <h1 class="essay-title">{title}</h1>}
     <slot />
   </main>
 </BaseLayout>
