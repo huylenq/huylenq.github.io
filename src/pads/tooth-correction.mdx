@@ -1,0 +1,64 @@
+import { Essay, Slider, Reactive, RadioGroup } from "../components/essay";
+import { ProjectionCanvas } from "../components/essay/tooth/ProjectionCanvas";
+import { CorrectionStepper } from "../components/essay/tooth/CorrectionStepper";
+
+export const meta = {
+  title: "Tooth Position Correction in CBCT Imaging",
+  slug: "tooth-correction",
+};
+
+<Essay initialState={{ tiltZ: 25, tiltX: 15, tiltY: 10, step: 0, method: 0, toothType: 0 }}>
+
+# Correcting Tooth Orientation in CBCT Imaging
+
+In cone-beam CT imaging, teeth don't sit neatly aligned with the scan axes. The jaw curves, the tooth tilts, and the resulting cross-sections are skewed — making measurements unreliable.
+
+The fix is a sequential 3-axis rotation correction: project the tooth onto a plane, find reference points on its convex hull, and rotate to align. Repeat for each axis.
+
+## The Problem: Tilted Projections
+
+Drag the tilt to see how rotation distorts the projected shape. Even moderate tilt makes the cross-section look nothing like the actual crown outline.
+
+<Slider name="tiltZ" min={-45} max={45} label="Tilt Z" />
+<Slider name="tiltX" min={-45} max={45} label="Tilt X" />
+<Slider name="tiltY" min={-45} max={45} label="Tilt Y" />
+
+<ProjectionCanvas projection="xy" />
+
+The convex hull of the projection (outline) shows how the apparent shape deforms. Points **A** and **B** are the reference points used to compute the correction angle.
+
+## Finding Reference Points
+
+Three methods for identifying the orientation axis from the hull:
+
+<RadioGroup name="method" options={["Farthest hull", "Restricted edge", "Bounding rect"]} />
+
+**Farthest hull point** divides the hull into quadrants from the centroid and picks the farthest point in each, then takes the pair with maximum separation. Simple but sensitive to outliers.
+
+**Restricted edge hull point** filters to points beyond 50% of the maximum distance in their quadrant before picking the farthest pair. More robust against noise.
+
+**Minimum bounding rectangle** fits the smallest enclosing rectangle (rotating calipers) and derives orientation from its long axis. Most stable, works well for elongated crowns.
+
+Try switching methods above — notice how A and B shift, changing the computed angle.
+
+## Step-by-Step Correction
+
+The correction applies sequentially: first align on the Z-axis (using the X-Y projection), then X-axis (Y-Z), then Y-axis (X-Z). Each step uses the already-corrected points from prior steps.
+
+<Slider name="step" min={0} max={3} step={1} label="Correction step" />
+
+At step <Reactive derive={(get) => get("step")} />:
+
+<CorrectionStepper />
+
+Step through from 0 to 3. Watch each projection's angle shrink as the tooth aligns with the scan axes. Panels ahead of the current step are dimmed — they show what the uncorrected projection looks like at that stage.
+
+## Try Different Teeth
+
+Different tooth morphologies respond differently to each method. Incisors are elongated (bounding rect works well), molars are more square (quadrant methods may be better).
+
+<RadioGroup name="toothType" options={["Incisor", "Premolar", "Molar"]} />
+
+Go back and adjust the tilt, method, and steps to see how each combination behaves. The "best" method depends on the tooth shape and the degree of tilt.
+
+</Essay>

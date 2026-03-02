@@ -212,6 +212,110 @@
   text-align: center;
 }
 
+/* ── RadioGroup (segmented buttons) ─────────────────── */
+
+.essay-radio-group {
+  display: inline-flex;
+  border: 1px solid var(--ink-faint);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  margin: var(--space-sm) 0;
+}
+
+.essay-radio {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border: none;
+  border-right: 1px solid var(--ink-faint);
+  background: var(--paper);
+  color: var(--ink-medium);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.essay-radio:last-child {
+  border-right: none;
+}
+
+.essay-radio:hover {
+  background: color-mix(in srgb, var(--ink-faint) 20%, var(--paper));
+  color: var(--ink-dark);
+}
+
+.essay-radio-active {
+  background: var(--ink-dark);
+  color: var(--paper);
+}
+
+.essay-radio-active:hover {
+  background: var(--ink-black);
+  color: var(--paper);
+}
+
+/* ── Tooth ProjectionCanvas ─────────────────────────── */
+
+.tooth-canvas {
+  display: inline-block;
+  margin: var(--space-sm) 0;
+}
+
+.tooth-canvas svg {
+  max-width: 200px;
+  height: auto;
+}
+
+.tooth-canvas-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-medium);
+  max-width: 200px;
+}
+
+.tooth-canvas-angle {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── CorrectionStepper ──────────────────────────────── */
+
+.essay-stepper {
+  display: flex;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+  align-items: flex-start;
+}
+
+.essay-stepper-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.essay-stepper-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-medium);
+  margin-bottom: var(--space-xs);
+}
+
+.essay-stepper-arrow {
+  position: absolute;
+  right: calc(-1 * var(--space-sm) / 2 - 4px);
+  top: 50%;
+  color: var(--ink-faint);
+  font-size: 1.2rem;
+}
+
 @media (max-width: 600px) {
   .essay-page {
     padding: var(--space-xl) var(--space-md);
@@ -224,5 +328,16 @@
 
   .essay-scenario {
     flex-direction: column;
+  }
+
+  .essay-stepper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .essay-stepper-arrow {
+    position: static;
+    transform: rotate(90deg);
+    margin: var(--space-xs) 0;
   }
 }
