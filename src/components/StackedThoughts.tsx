@@ -137,12 +137,16 @@ export default function StackedThoughts({
         }
       }
 
-      const thought = await fetchThought(slug);
-      setPanes((prev) => {
-        const truncated = prev.slice(0, fromPaneIndex + 1);
-        return [...truncated, thought];
-      });
-      setScrollTarget(fromPaneIndex + 1);
+      try {
+        const thought = await fetchThought(slug);
+        setPanes((prev) => {
+          const truncated = prev.slice(0, fromPaneIndex + 1);
+          return [...truncated, thought];
+        });
+        setScrollTarget(fromPaneIndex + 1);
+      } catch (err) {
+        console.error('[StackedThoughts] Failed to open thought:', slug, err);
+      }
     },
     [panes],
   );
@@ -266,12 +270,13 @@ export default function StackedThoughts({
       // Check cache first
       const cached = forwardGhostCache.current.get(slug);
       if (cached) {
-        setForwardGhost({ slug, thought: cached });
+        // Avoid re-render if already showing this slug
+        setForwardGhost((prev) => (prev?.slug === slug && prev.thought === cached ? prev : { slug, thought: cached }));
         return;
       }
 
       // Show ghost immediately (loading state), then fetch
-      setForwardGhost({ slug, thought: null });
+      setForwardGhost((prev) => (prev?.slug === slug ? prev : { slug, thought: null }));
 
       forwardGhostFetchRef.current?.abort();
       const controller = new AbortController();
@@ -352,8 +357,10 @@ export default function StackedThoughts({
       const href = anchor.getAttribute('href');
       if (!href || !href.startsWith('/thoughts/')) return;
 
-      // Check if we're moving to the ghost pane itself — if so, keep it visible
       const related = e.relatedTarget as HTMLElement | null;
+      // Still inside the same link (moved between child elements) — ignore
+      if (related && anchor.contains(related)) return;
+      // Moving to the ghost pane itself — keep it visible
       if (related?.closest('.forward-ghost-pane')) return;
 
       hideForwardGhost();
