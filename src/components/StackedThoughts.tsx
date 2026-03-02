@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
 import type { ThoughtGraph, BacklinkEntry, ThoughtApiResponse } from '../lib/types';
 import { fetchThought } from '../lib/thoughts';
 import ThoughtPane from './ThoughtPane';
@@ -13,6 +13,94 @@ interface Pane {
 interface ForwardGhost {
   slug: string;
   thought: ThoughtApiResponse | null; // null while loading
+}
+
+function isOverText(x: number, y: number): boolean {
+  const range = document.caretRangeFromPoint(x, y);
+  if (!range) return false;
+  const node = range.startContainer;
+  if (node.nodeType !== Node.TEXT_NODE) return false;
+  if (!node.textContent?.trim()) return false;
+
+  const offset = range.startOffset;
+  const textLen = node.textContent.length;
+  const charRange = document.createRange();
+  if (offset < textLen) {
+    charRange.setStart(node, offset);
+    charRange.setEnd(node, offset + 1);
+  } else if (offset > 0) {
+    charRange.setStart(node, offset - 1);
+    charRange.setEnd(node, offset);
+  } else {
+    return false;
+  }
+
+  const rect = charRange.getBoundingClientRect();
+  const tolerance = 5;
+  return (
+    x >= rect.left - tolerance && x <= rect.right + tolerance &&
+    y >= rect.top - tolerance && y <= rect.bottom + tolerance
+  );
+}
+
+function isGrabbable(target: HTMLElement, container: HTMLElement, x: number, y: number): boolean {
+  if (target === container) return true;
+  if (target.closest('.thought-pane-body')) {
+    if (target.closest('a') || target.closest('button')) return false;
+    return !isOverText(x, y);
+  }
+  if (target.closest('.ghost-pane-column')) return false;
+  if (target.closest('a') || target.closest('button')) return false;
+  if (target.closest('.thought-pane-title')) return false;
+  if (target.closest('.thought-pane-header')) return true;
+  const pane = target.closest('.thought-pane');
+  if (pane && !pane.classList.contains('collapsed') && target === pane) return true;
+  return false;
+}
+
+function getClippedSide(
+  paneEl: HTMLElement,
+  containerEl: HTMLElement,
+  paneIndex: number,
+): 'left' | 'right' | null {
+  const containerRect = containerEl.getBoundingClientRect();
+  const paneRect = paneEl.getBoundingClientRect();
+  const stickyOffset = paneIndex * 40;
+  const effectiveLeftMin = containerRect.left + stickyOffset;
+  const PADDING = 8;
+
+  if (paneRect.right > containerRect.right + PADDING) return 'right';
+  if (paneRect.left < effectiveLeftMin - PADDING) return 'left';
+  return null;
+}
+
+function revealPane(
+  paneEl: HTMLElement,
+  containerEl: HTMLElement,
+  paneIndex: number,
+): void {
+  const clipped = getClippedSide(paneEl, containerEl, paneIndex);
+  if (!clipped) return;
+
+  const containerRect = containerEl.getBoundingClientRect();
+  const paneRect = paneEl.getBoundingClientRect();
+  const REVEAL_PADDING = 16;
+
+  if (clipped === 'right') {
+    const delta = paneRect.right - containerRect.right + REVEAL_PADDING;
+    containerEl.scrollBy({ left: delta, behavior: 'smooth' });
+  } else {
+    const stickyOffset = paneIndex * 40;
+    const targetLeft = containerRect.left + stickyOffset + REVEAL_PADDING;
+    const delta = paneRect.left - targetLeft;
+    containerEl.scrollBy({ left: delta, behavior: 'smooth' });
+  }
+}
+
+function thoughtSlugFromHref(href: string | null, graph: ThoughtGraph): string | null {
+  if (!href || !href.startsWith('/thoughts/')) return null;
+  const slug = href.replace(/^\/thoughts\//, '').replace(/\/$/, '');
+  return slug in graph ? slug : null;
 }
 
 interface StackedThoughtsProps {
@@ -34,11 +122,12 @@ export default function StackedThoughts({
     { slug: initialSlug, title: initialTitle, html: initialHtml, backlinks: initialBacklinks },
   ]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollTarget, setScrollTarget] = useState<number | null>(null);
+  const [scrollTarget, setScrollTarget] = useState<{ index: number; mode: 'into-view' | 'reveal' } | null>(null);
   const initializedRef = useRef(false);
   const prevPaneCountRef = useRef(1);
   const firstPaneStartLeft = useRef<number | null>(null);
   const initialPaneSlugs = useRef(new Set([initialSlug]));
+  const suppressNextClickRef = useRef(false);
 
   // On mount: restore stacked panes from URL (desktop only)
   useEffect(() => {
@@ -108,22 +197,65 @@ export default function StackedThoughts({
     history.replaceState(null, '', url.toString());
   }, [panes]);
 
-  // Scroll to newly added pane
+  // Scroll to a pane — two modes:
+  // 'into-view': new pane added to the right, use scrollIntoView
+  // 'reveal': existing pane in the stack, use overlap detection
   useEffect(() => {
     if (scrollTarget === null || !containerRef.current) return;
-    const paneEls = containerRef.current.querySelectorAll('.thought-pane');
-    const target = paneEls[scrollTarget] as HTMLElement | undefined;
+    const container = containerRef.current;
+    const paneEls = container.querySelectorAll('.thought-pane');
+    const target = paneEls[scrollTarget.index] as HTMLElement | undefined;
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      if (scrollTarget.mode === 'into-view') {
+        target.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      } else {
+        const containerRect = container.getBoundingClientRect();
+        const paneRect = target.getBoundingClientRect();
+        const stickyOffset = scrollTarget.index * 40;
+        const PADDING = 16;
+
+        // Right side: covered by the next pane?
+        const nextPane = paneEls[scrollTarget.index + 1] as HTMLElement | undefined;
+        const rightBound = nextPane
+          ? nextPane.getBoundingClientRect().left
+          : containerRect.right;
+        const rightOverlap = paneRect.right - rightBound;
+
+        // Left side: behind sticky strips?
+        const visibleLeft = containerRect.left + stickyOffset;
+        const leftOverlap = visibleLeft - paneRect.left;
+
+        if (rightOverlap > PADDING) {
+          container.scrollBy({ left: -(rightOverlap + PADDING), behavior: 'smooth' });
+        } else if (leftOverlap > PADDING) {
+          container.scrollBy({ left: leftOverlap + PADDING, behavior: 'smooth' });
+        }
+      }
     }
     setScrollTarget(null);
   }, [scrollTarget]);
 
+  // Flash highlight on an existing pane when navigated to via link click
+  const flashPane = useCallback((index: number) => {
+    const container = containerRef.current;
+    if (!container) return;
+    const target = container.querySelectorAll('.thought-pane')[index] as HTMLElement | undefined;
+    if (!target) return;
+    target.classList.remove('flash-highlight'); // reset if already flashing
+    void target.offsetWidth; // force reflow to restart animation
+    target.classList.add('flash-highlight');
+    target.addEventListener('animationend', () => {
+      target.classList.remove('flash-highlight');
+    }, { once: true });
+  }, []);
+
   const openThought = useCallback(
     async (slug: string, fromPaneIndex: number) => {
-      // Already the next pane? Just scroll to it.
-      if (panes[fromPaneIndex + 1]?.slug === slug) {
-        setScrollTarget(fromPaneIndex + 1);
+      // Already open in the stack? Scroll to it and flash.
+      const existingIndex = panes.findIndex((p) => p.slug === slug);
+      if (existingIndex >= 0) {
+        setScrollTarget({ index: existingIndex, mode: 'reveal' });
+        flashPane(existingIndex);
         return;
       }
 
@@ -143,7 +275,7 @@ export default function StackedThoughts({
           const truncated = prev.slice(0, fromPaneIndex + 1);
           return [...truncated, thought];
         });
-        setScrollTarget(fromPaneIndex + 1);
+        setScrollTarget({ index: fromPaneIndex + 1, mode: 'into-view' });
       } catch (err) {
         console.error('[StackedThoughts] Failed to open thought:', slug, err);
       }
@@ -180,17 +312,23 @@ export default function StackedThoughts({
   // Event delegation: intercept internal link clicks
   const handleContainerClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
+      if (suppressNextClickRef.current) {
+        suppressNextClickRef.current = false;
+        e.preventDefault();
+        return;
+      }
+
       const anchor = (e.target as HTMLElement).closest('a');
       if (!anchor) return;
       if (window.innerWidth < 768) return; // let browser navigate
 
-      const href = anchor.getAttribute('href');
-      if (!href || !href.startsWith('/thoughts/')) return;
-
-      const slug = href.replace(/^\/thoughts\//, '').replace(/\/$/, '');
-      if (!(slug in graph)) return; // Not a known thought — let browser navigate
+      const slug = thoughtSlugFromHref(anchor.getAttribute('href'), graph);
+      if (!slug) return;
 
       e.preventDefault();
+
+      hoveredPaneRef.current?.classList.remove('hover-highlight');
+      hoveredPaneRef.current = null;
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
@@ -248,15 +386,38 @@ export default function StackedThoughts({
     return () => container.removeEventListener('scroll', updateCollapsed);
   }, [panes.length]);
 
+  // Toggle .scrollable class when container content overflows
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const update = () => {
+      container.classList.toggle('scrollable', container.scrollWidth > container.clientWidth);
+    };
+    const ro = new ResizeObserver(update);
+    ro.observe(container);
+    update();
+    return () => ro.disconnect();
+  }, [panes.length]);
+
   // Mobile: only show the last pane (determined after mount to avoid hydration mismatch)
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
   const visiblePanes = isMobile ? [panes[panes.length - 1]] : panes;
-  // Ghost backlinks from the last pane
+  // Ghost backlinks from the last pane, excluding thoughts already linked in its content
   const lastPane = panes[panes.length - 1];
-  const ghostBacklinks = lastPane.backlinks;
+  const ghostBacklinks = useMemo(() => {
+    const forwardSlugs = new Set<string>();
+    const re = /href="\/thoughts\/([^"]+)"/g;
+    let m;
+    while ((m = re.exec(lastPane.html)) !== null) {
+      forwardSlugs.add(m[1].replace(/\/$/, ''));
+    }
+    return forwardSlugs.size > 0
+      ? lastPane.backlinks.filter((bl) => !forwardSlugs.has(bl.slug))
+      : lastPane.backlinks;
+  }, [lastPane.html, lastPane.backlinks]);
 
   // Forward ghost pane — shown on hover over a forward link
   const [forwardGhost, setForwardGhost] = useState<ForwardGhost | null>(null);
@@ -271,6 +432,7 @@ export default function StackedThoughts({
   const forwardGhostFetchRef = useRef<AbortController | null>(null);
   const forwardGhostCache = useRef<Map<string, ThoughtApiResponse>>(new Map());
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoveredPaneRef = useRef<HTMLElement | null>(null);
 
   const showForwardGhost = useCallback(
     (slug: string) => {
@@ -323,25 +485,136 @@ export default function StackedThoughts({
     }
   }, []);
 
+  // Dynamic grab cursor over blank areas in pane body
+  useEffect(() => {
+    if (isMobile) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    let rafId = 0;
+    const onMouseMove = (e: MouseEvent) => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        const target = e.target as HTMLElement;
+        const body = target.closest('.thought-pane-body') as HTMLElement | null;
+        if (!body) return;
+        const scrollable = container.classList.contains('scrollable');
+        body.style.cursor = (!scrollable || isOverText(e.clientX, e.clientY)) ? '' : 'grab';
+      });
+    };
+
+    const onMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const body = target.closest('.thought-pane-body') as HTMLElement | null;
+      if (body) body.style.cursor = '';
+    };
+
+    container.addEventListener('mousemove', onMouseMove, { passive: true });
+    container.addEventListener('mouseout', onMouseOut, { passive: true });
+    return () => {
+      container.removeEventListener('mousemove', onMouseMove);
+      container.removeEventListener('mouseout', onMouseOut);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isMobile]);
+
+  // Drag-to-scroll on structural areas + click-to-reveal partially-visible panes
+  const handleContainerMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isMobile) return;
+      if (e.button !== 0) return;
+      const container = containerRef.current;
+      if (!container) return;
+
+      if (container.scrollWidth <= container.clientWidth) return;
+
+      const target = e.target as HTMLElement;
+      if (!isGrabbable(target, container, e.clientX, e.clientY)) return;
+
+      const paneEl = target.closest('.thought-pane') as HTMLElement | null;
+      let paneIndex = -1;
+      if (paneEl) {
+        const paneEls = Array.from(container.querySelectorAll('.thought-pane'));
+        paneIndex = paneEls.indexOf(paneEl);
+      }
+
+      const startX = e.clientX;
+      const startScrollLeft = container.scrollLeft;
+      let state: 'PENDING' | 'DRAGGING' = 'PENDING';
+      let lastX = startX;
+      let lastTime = performance.now();
+      let velocity = 0;
+
+      const onMouseMove = (ev: MouseEvent) => {
+        const deltaX = ev.clientX - startX;
+        if (state === 'PENDING') {
+          if (Math.abs(deltaX) <= 5) return;
+          state = 'DRAGGING';
+          container.classList.add('dragging');
+          container.style.scrollBehavior = 'auto';
+        }
+        const now = performance.now();
+        const dt = now - lastTime;
+        if (dt > 0) velocity = (ev.clientX - lastX) / dt;
+        lastX = ev.clientX;
+        lastTime = now;
+        container.scrollLeft = startScrollLeft - deltaX;
+      };
+
+      const onMouseUp = () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+        container.classList.remove('dragging');
+
+        if (state === 'DRAGGING') {
+          suppressNextClickRef.current = true;
+          // Momentum: coast in the drag direction
+          const momentum = -velocity * 300;
+          if (Math.abs(momentum) > 10) {
+            container.style.scrollBehavior = 'smooth';
+            container.scrollBy({ left: momentum });
+          }
+          container.style.scrollBehavior = '';
+          return;
+        }
+
+        container.style.scrollBehavior = '';
+
+        // PENDING → click: reveal partially-visible pane
+        if (paneEl && paneIndex >= 0 && !paneEl.classList.contains('collapsed')) {
+          revealPane(paneEl, container, paneIndex);
+        }
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+      e.preventDefault();
+    },
+    [isMobile],
+  );
+
   // Event delegation for hover on forward links
   const handleContainerMouseOver = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (isMobile) return;
+      if (containerRef.current?.classList.contains('dragging')) return;
       const anchor = (e.target as HTMLElement).closest('a');
       if (!anchor) return;
 
-      const href = anchor.getAttribute('href');
-      if (!href || !href.startsWith('/thoughts/')) return;
+      const slug = thoughtSlugFromHref(anchor.getAttribute('href'), graph);
+      if (!slug) return;
 
-      const slug = href.replace(/^\/thoughts\//, '').replace(/\/$/, '');
-      if (!(slug in graph)) return;
-
-      // Don't show ghost if this slug is already open as the next pane
-      const paneEl = anchor.closest<HTMLElement>('.thought-pane');
-      if (paneEl && containerRef.current) {
-        const paneEls = Array.from(containerRef.current.querySelectorAll('.thought-pane'));
-        const idx = paneEls.indexOf(paneEl);
-        if (idx >= 0 && panes[idx + 1]?.slug === slug) return;
+      // Already open in the stack? Show a soft glow hint instead of a ghost.
+      const existingIndex = panes.findIndex((p) => p.slug === slug);
+      if (existingIndex >= 0) {
+        const target = containerRef.current?.querySelectorAll('.thought-pane')[existingIndex] as HTMLElement | undefined;
+        if (target && !target.classList.contains('flash-highlight')) {
+          hoveredPaneRef.current?.classList.remove('hover-highlight');
+          target.classList.add('hover-highlight');
+          hoveredPaneRef.current = target;
+        }
+        return;
       }
 
       // Cancel any pending hide
@@ -369,6 +642,10 @@ export default function StackedThoughts({
       if (related && anchor.contains(related)) return;
       // Moving to the ghost pane itself — keep it visible
       if (related?.closest('.forward-ghost-pane')) return;
+
+      // Clear hover highlight
+      hoveredPaneRef.current?.classList.remove('hover-highlight');
+      hoveredPaneRef.current = null;
 
       hideForwardGhost();
     },
@@ -463,6 +740,7 @@ export default function StackedThoughts({
       className={`stacked-container${isSinglePane ? ' single-pane' : ''}${isSinglePaneWithGhosts ? ' single-pane-with-ghosts' : ''}`}
       ref={containerRef}
       onClick={handleContainerClick}
+      onMouseDown={handleContainerMouseDown}
       onMouseOver={handleContainerMouseOver}
       onMouseOut={handleContainerMouseOut}
     >
@@ -475,12 +753,17 @@ export default function StackedThoughts({
           <div
             key={pane.slug}
             className={`thought-pane${isCollapsed ? ' collapsed' : ''}${!initialPaneSlugs.current.has(pane.slug) ? ' animate-in' : ''}`}
+            onAnimationEnd={(e) => {
+              if (e.animationName === 'pane-pop') {
+                e.currentTarget.classList.remove('animate-in');
+              }
+            }}
             style={{ left: `${realIndex * 40}px` }}
             onClick={
               isCollapsed
                 ? () => {
                     // Un-collapse: scroll to this pane
-                    setScrollTarget(realIndex);
+                    setScrollTarget({ index: realIndex, mode: 'reveal' });
                   }
                 : undefined
             }

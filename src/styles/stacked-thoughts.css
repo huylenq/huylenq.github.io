@@ -8,6 +8,33 @@
   padding: var(--space-lg) 0;
 }
 
+/* Drag-to-scroll cursors — only when container is actually scrollable */
+@media (min-width: 768px) {
+  .stacked-container.scrollable {
+    cursor: grab;
+  }
+
+  .stacked-container.scrollable .thought-pane-body > *,
+  .stacked-container.scrollable .thought-pane-title {
+    cursor: auto;
+  }
+
+  .stacked-container.scrollable a,
+  .stacked-container.scrollable button {
+    cursor: pointer;
+  }
+
+  .stacked-container.dragging,
+  .stacked-container.dragging * {
+    cursor: grabbing !important;
+  }
+
+  .stacked-container.dragging {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
 /* Single pane: center the thought as a floating card */
 .stacked-container.single-pane,
 .stacked-container.single-pane-with-ghosts {
@@ -78,6 +105,21 @@
 
 .thought-pane.animate-in {
   animation: pane-pop 0.25s ease-out backwards;
+}
+
+@keyframes pane-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(212, 180, 60, 0); }
+  20%  { box-shadow: 0 0 14px 5px rgba(212, 180, 60, 0.5); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 180, 60, 0); }
+}
+
+.thought-pane.flash-highlight {
+  animation: pane-flash 1s ease-out forwards;
+}
+
+.thought-pane.hover-highlight {
+  outline: 2px solid rgba(212, 180, 60, 0.35);
+  outline-offset: -1px;
 }
 
 .thought-pane.closing {
