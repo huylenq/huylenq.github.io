@@ -1,6 +1,7 @@
 ---
 title: "The trap of information consumption without action"
 slug: "the-trap-of-information-consumption"
+maturity: "evergreen"
 ---
 
 A common failure mode in learning where we accumulate knowledge without progressing through the <span class="private-link">KUB - Three stages of comprehension</span> framework.
@@ -26,3 +27,8 @@ A common failure mode in learning where we accumulate knowledge without progress
 ### Related concepts
 - <span class="private-link">Why thinking?</span> - Purposeful vs busy thinking
 - <span class="private-link">States of Mind</span> - Balance contemplation with flow/action
+
+---
+
+- [When thinking becomes the excuse](/thoughts/thinking-excuses)
+- [What is the line between Knowledge and Skill?](/thoughts/5d29c52e-e127-40b4-9348-7229370a3fed)

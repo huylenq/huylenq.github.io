@@ -1,12 +1,18 @@
 {
   "slug": "sense",
   "title": "Sense",
-  "html": "<p>Outside of our neural sensory. There’s an internal “sixth sense” when the brain <em>feels</em> itself. It is fired up as unique color, non-verbal concrete <strong>signal</strong> to our conscious. But how and when is not up to the present conscious.</p>\n<p>Those senses are the product of <strong>cumulative</strong> years of experiences with long-term feedbacks.</p>\n<p>Sense must be build by action and thinking mutually, with feel the action precede reflection thoughts.</p>",
+  "html": "<p>Outside of our neural sensory. There’s an internal “sixth sense” when the brain <em>feels</em> itself. It is fired up as unique color, non-verbal concrete <strong>signal</strong> to our conscious. But how and when is not up to the present conscious.</p>\n<p>Those senses are the product of <strong>cumulative</strong> years of experiences with long-term feedbacks.</p>\n<p>Sense must be build by action and thinking mutually, with feel the action precede reflection thoughts.</p>\n<hr>\n<ul>\n<li><a href=\"/thoughts/feel-the-sensation\">Feel the Sensation</a></li>\n</ul>",
   "backlinks": [
     {
       "slug": "be-mindful-of-what-you-put-into-your-bucket",
       "title": "Be mindful of what you put into your bucket",
       "context": "<p>Probably would be a great <a href=\"/thoughts/sense\">Sense</a>.</p>"
+    },
+    {
+      "slug": "feel-the-sensation",
+      "title": "Feel the Sensation",
+      "context": "<ul>\n<li><a href=\"/thoughts/sense\">Sense</a></li>\n</ul>"
     }
-  ]
+  ],
+  "maturity": "seed"
 }

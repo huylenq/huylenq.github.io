@@ -1,6 +1,7 @@
 ---
 title: "What if I found a startup"
 slug: "what-if-i-found-a-startup"
+maturity: "evergreen"
 ---
 
 If I founded a software company tomorrow, these are the principles I'd encode into its DNA before writing a single line of code.

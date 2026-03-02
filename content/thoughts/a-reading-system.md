@@ -1,6 +1,7 @@
 ---
 title: "A Reading System"
 slug: "a-reading-system"
+maturity: "evergreen"
 ---
 
 Some friends asked me about how I read my books, instead of repeating myself, I decided to capture the process here.

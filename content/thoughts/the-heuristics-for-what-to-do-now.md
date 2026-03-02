@@ -1,6 +1,7 @@
 ---
 title: "The heuristics for what to do now"
 slug: "the-heuristics-for-what-to-do-now"
+maturity: "budding"
 ---
  
 
@@ -11,3 +12,7 @@ Deep down you know what’s right to do. You just don’t usually listen. So, li
 - Things that you **dream** of but don’t believe you can reach.
 
 Those are *the North* of your compass
+
+---
+
+- [Feel the Sensation](/thoughts/feel-the-sensation)

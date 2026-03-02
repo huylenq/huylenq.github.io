@@ -11,12 +11,37 @@ import {
 import { select } from "d3-selection";
 import "d3-transition";
 import { drag as d3Drag } from "d3-drag";
-import type { PublicThought, ThoughtEdge } from "../lib/types";
+import type { PublicThought, ThoughtEdge, Maturity } from "../lib/types";
+
+interface ForceParams {
+  linkStrength: number;
+  linkDistance: number;
+  chargeStrength: number;
+  centerXStrength: number;
+  centerYStrength: number;
+  collisionPadX: number;
+  collisionPadY: number;
+  alphaDecay: number;
+  velocityDecay: number;
+}
+
+const DEFAULT_FORCE_PARAMS: ForceParams = {
+  "linkStrength": 0.1,
+  "linkDistance": 20,
+  "chargeStrength": 0,
+  "centerXStrength": 0.005,
+  "centerYStrength": 0.02,
+  "collisionPadX": 8,
+  "collisionPadY": 27,
+  "alphaDecay": 0.02,
+  "velocityDecay": 0.2
+};
 
 interface GraphNode extends SimulationNodeDatum {
   id: string;
   title: string;
   connected: boolean;
+  maturity: Maturity;
   textWidth: number;
 }
 
@@ -78,14 +103,92 @@ function forceRectCollide(nodes: GraphNode[], padX: number, padY: number) {
   };
 }
 
+function useTweakpane(
+  paramsRef: React.MutableRefObject<ForceParams>,
+  onParamsChange: () => void
+) {
+  const paneRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
+    let disposed = false;
+
+    import("tweakpane").then(({ Pane }) => {
+      if (disposed) return;
+
+      const pane = new Pane({ title: "Force Graph", expanded: true });
+      paneRef.current = pane;
+      pane.element.style.position = "fixed";
+      pane.element.style.top = "8px";
+      pane.element.style.right = "8px";
+      pane.element.style.zIndex = "9999";
+
+      const link = pane.addFolder({ title: "Link Force" });
+      link.addBinding(paramsRef.current, "linkStrength", { min: 0, max: 1, step: 0.01 });
+      link.addBinding(paramsRef.current, "linkDistance", { min: 1, max: 200, step: 1 });
+
+      const charge = pane.addFolder({ title: "Charge" });
+      charge.addBinding(paramsRef.current, "chargeStrength", { min: -300, max: 100, step: 1 });
+
+      const center = pane.addFolder({ title: "Centering" });
+      center.addBinding(paramsRef.current, "centerXStrength", { min: 0, max: 0.5, step: 0.005 });
+      center.addBinding(paramsRef.current, "centerYStrength", { min: 0, max: 0.5, step: 0.005 });
+
+      const collision = pane.addFolder({ title: "Collision Padding" });
+      collision.addBinding(paramsRef.current, "collisionPadX", { min: 0, max: 60, step: 1 });
+      collision.addBinding(paramsRef.current, "collisionPadY", { min: 0, max: 60, step: 1 });
+
+      const sim = pane.addFolder({ title: "Simulation" });
+      sim.addBinding(paramsRef.current, "alphaDecay", { min: 0, max: 0.1, step: 0.001 });
+      sim.addBinding(paramsRef.current, "velocityDecay", { min: 0, max: 1, step: 0.01 });
+
+      pane.addBlade({ view: "separator" });
+      pane.addButton({ title: "Copy as defaults" }).on("click", () => {
+        const p = paramsRef.current;
+        const code = `const DEFAULT_FORCE_PARAMS: ForceParams = ${JSON.stringify(p, null, 2)};`;
+        navigator.clipboard.writeText(code).then(() => {
+          // Brief flash on the button to confirm
+          const btn = pane.element.querySelector<HTMLElement>(".tp-btnv_b:last-of-type");
+          if (btn) {
+            const orig = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = orig; }, 1000);
+          }
+        });
+      });
+
+      pane.on("change", onParamsChange);
+    });
+
+    return () => {
+      disposed = true;
+      paneRef.current?.dispose();
+      paneRef.current = null;
+    };
+  }, []);
+}
+
+const MATURITY_FILL: Record<Maturity, string> = {
+  evergreen: "var(--ink-dark)",
+  budding: "var(--ink-medium)",
+  seed: "var(--ink-faint)",
+};
+
 export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const simulationRef = useRef<ReturnType<typeof forceSimulation<GraphNode>> | null>(null);
+  const forceParamsRef = useRef<ForceParams>({ ...DEFAULT_FORCE_PARAMS });
 
   const fallbackHeight = Math.max(400, Math.min(thoughts.length * 60, 600));
 
   const getHeight = useCallback(() => {
     if (!fillViewport || typeof window === "undefined") return fallbackHeight;
+    const container = containerRef.current;
+    if (container) {
+      const top = container.getBoundingClientRect().top;
+      return Math.max(400, window.innerHeight - top);
+    }
     const headerOffset = 50;
     return Math.max(400, window.innerHeight - headerOffset);
   }, [fillViewport, fallbackHeight]);
@@ -121,9 +224,10 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       id: t.slug,
       title: t.title,
       connected: connectedSlugs.has(t.slug),
+      maturity: t.maturity ?? "seed",
       textWidth: textWidths.get(t.slug) ?? 60,
-      x: width * 0.2 + Math.random() * width * 0.6,
-      y: height * 0.2 + Math.random() * height * 0.6,
+      x: Math.random() * width,
+      y: height * 0.3 + Math.random() * height * 0.4,
     }));
 
     const nodeMap = new Map(nodes.map((n) => [n.id, n]));
@@ -225,7 +329,7 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       .attr("dominant-baseline", "central")
       .style("font-family", "var(--font-serif)")
       .style("font-size", "0.85rem")
-      .style("fill", (d) => (d.connected ? "var(--ink-dark)" : "var(--ink-medium)"))
+      .style("fill", (d) => MATURITY_FILL[d.maturity])
       .style("cursor", "pointer")
       .style("user-select", "none");
 
@@ -275,9 +379,7 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       .on("mouseleave", () => {
         nodeElements
           .select("text")
-          .style("fill", (n) =>
-            (n as GraphNode).connected ? "var(--ink-dark)" : "var(--ink-medium)"
-          )
+          .style("fill", (n) => MATURITY_FILL[(n as GraphNode).maturity])
           .style("font-weight", "");
 
         linkElements
@@ -332,21 +434,27 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
     });
 
     // Force simulation
+    const p = forceParamsRef.current;
     const simulation = forceSimulation<GraphNode>(nodes)
       .force(
         "link",
         forceLink<GraphNode, GraphLink>(links)
           .id((d) => d.id)
-          .strength(0.1)
-          .distance(20)
+          .strength(p.linkStrength)
+          .distance(p.linkDistance)
       )
-      .force("charge", forceManyBody<GraphNode>().strength(0))
-      .force("x", forceX<GraphNode>(width / 2).strength(0.02))
-      .force("y", forceY<GraphNode>(height / 2).strength(0.02))
-      .force("rectCollide", forceRectCollide(nodes, 24, 18))
-      .alphaDecay(0.02)
-      .velocityDecay(0.2)
-      .on("tick", () => {
+      .force("charge", forceManyBody<GraphNode>().strength(p.chargeStrength))
+      .force("x", forceX<GraphNode>(width / 2).strength(p.centerXStrength))
+      .force("y", forceY<GraphNode>(height / 2).strength(p.centerYStrength))
+      .force("rectCollide", forceRectCollide(nodes, forceParamsRef.current.collisionPadX, forceParamsRef.current.collisionPadY))
+      .alphaDecay(forceParamsRef.current.alphaDecay)
+      .velocityDecay(forceParamsRef.current.velocityDecay)
+      .stop(); // don't auto-start — we pre-tick first
+
+    // Pre-tick to settle layout before first paint
+    for (let i = 0; i < 150; i++) simulation.tick();
+
+    simulation.on("tick", () => {
         // Offset edge endpoints to stop at text bounding box
         // Uses ray-rectangle intersection: half-width × half-height box around each node
         const textHeight = 14; // approximate line height for 0.85rem
@@ -367,11 +475,11 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
         }
 
         // Clamp nodes within SVG bounds (account for text width)
+        const edgePadY = 40; // vertical "wall" to keep nodes from hugging top/bottom
         for (const d of nodes) {
           const hw = d.textWidth / 2 + pad;
-          const hh = textHeight / 2 + pad;
           d.x = Math.max(hw, Math.min(width - hw, d.x!));
-          d.y = Math.max(hh, Math.min(height - hh, d.y!));
+          d.y = Math.max(edgePadY, Math.min(height - edgePadY, d.y!));
         }
 
         linkElements
@@ -383,8 +491,42 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
         nodeElements.attr("transform", (d) => `translate(${d.x},${d.y})`);
       });
 
+    // Restart gently — first tick paints the pre-settled positions
+    simulation.alpha(0.1).restart();
+
     simulationRef.current = simulation;
   }, [thoughts, edges, height]);
+
+  const applyForceParams = useCallback(() => {
+    const sim = simulationRef.current;
+    if (!sim) return;
+    const p = forceParamsRef.current;
+
+    const linkForce = sim.force("link") as ReturnType<typeof forceLink<GraphNode, GraphLink>> | undefined;
+    if (linkForce) {
+      linkForce.strength(p.linkStrength).distance(p.linkDistance);
+    }
+
+    const chargeForce = sim.force("charge") as ReturnType<typeof forceManyBody<GraphNode>> | undefined;
+    if (chargeForce) {
+      chargeForce.strength(p.chargeStrength);
+    }
+
+    const xForce = sim.force("x") as ReturnType<typeof forceX<GraphNode>> | undefined;
+    if (xForce) xForce.strength(p.centerXStrength);
+
+    const yForce = sim.force("y") as ReturnType<typeof forceY<GraphNode>> | undefined;
+    if (yForce) yForce.strength(p.centerYStrength);
+
+    // Collision padding requires rebuilding the force (it's a closure)
+    const nodes = sim.nodes();
+    sim.force("rectCollide", forceRectCollide(nodes, p.collisionPadX, p.collisionPadY));
+
+    sim.alphaDecay(p.alphaDecay).velocityDecay(p.velocityDecay);
+    sim.alpha(0.3).restart();
+  }, []);
+
+  useTweakpane(forceParamsRef, applyForceParams);
 
   useEffect(() => {
     // Wait for fonts before measuring text

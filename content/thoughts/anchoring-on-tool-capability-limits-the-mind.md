@@ -1,6 +1,7 @@
 ---
 title: "Anchoring on tool capability limit the mind"
 slug: "anchoring-on-tool-capability-limits-the-mind"
+maturity: "budding"
 ---
 
 It doesn’t matter how good a tool is; the **bandwidth** of the brain is always the delimiting plateau.

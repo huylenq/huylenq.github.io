@@ -1,6 +1,7 @@
 ---
 title: "Are there recognizable patterns or signals of valuable thoughts"
 slug: "recognizable-patterns-of-valuable-thoughts"
+maturity: "budding"
 ---
  
 

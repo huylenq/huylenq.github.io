@@ -6,6 +6,7 @@ const thoughts = defineCollection({
   schema: z.object({
     title: z.string(),
     slug: z.string(),
+    maturity: z.enum(["seed", "budding", "evergreen"]).default("seed"),
   }),
 });
 

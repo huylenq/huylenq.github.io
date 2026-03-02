@@ -1,6 +1,7 @@
 ---
 title: "Life Running Digital Engine"
 slug: "life-running-digital-engine"
+maturity: "evergreen"
 ---
 
 Comprehensively composed of all the sub-systems for how I run most aspects of my life where a rule-engine system is employable.
@@ -45,3 +46,7 @@ There are three cycles, **daily**, **weekly** and **monthly**. They are schedule
 - <span class="private-link">The Day</span>
 - <span class="private-link">Weekly Reflection</span>
 - <span class="private-link">Monthly Reflection</span>
+
+---
+
+- [Programmable Self](/thoughts/programmable-self)

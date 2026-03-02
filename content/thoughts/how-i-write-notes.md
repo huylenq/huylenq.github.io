@@ -1,6 +1,7 @@
 ---
 title: "How I Write Notes"
 slug: "how-i-write-notes"
+maturity: "evergreen"
 ---
 
 I've been maintaining a personal knowledge vault in Obsidian for a few years now. These are the principles I've settled on — not a system I planned upfront, but habits that survived contact with reality.
@@ -35,3 +36,7 @@ I've been maintaining a personal knowledge vault in Obsidian for a few years now
 
 Writing in the vault is its own reward. The collection of **intermediate artifacts** grows over time. Ideas solidify, become **tangible** — and the fragmented starts forming into a holistic whole.
 
+---
+
+- [Why taking notes?](/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331)
+- [Articulation is the validation of thinking](/thoughts/96524a51-8a13-4db4-950c-e365c69a017d)

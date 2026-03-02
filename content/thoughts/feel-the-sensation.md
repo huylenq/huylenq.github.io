@@ -1,6 +1,7 @@
 ---
 title: "Feel the Sensation"
 slug: "feel-the-sensation"
+maturity: "budding"
 ---
 
 What we live for, no matter what the higher-order purpose we think of, is all about seeking and experiencing the sensation.
@@ -15,5 +16,9 @@ The emotional sensations, the core “good” feelings that you (up to a certain
 	- You can feel the imbalance happening. You by instinct, feel the urge to restore the balance, you like things balanced.
 	- You feel the debts accumulated, and you like releasing them.
 	- **Where there is expectation, there is debt**
+
+---
+
+- [Sense](/thoughts/sense)
 
 

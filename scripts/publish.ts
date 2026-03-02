@@ -12,6 +12,7 @@ import type {
   ThoughtApiResponse,
   BacklinkEntry,
   PublicThought,
+  Maturity,
 } from "../src/lib/types.js";
 
 // ── Configuration ──────────────────────────────────────────────
@@ -32,11 +33,14 @@ const SKIP_DIRS = new Set(["node_modules"]);
 
 type RedirectMap = Map<string, string>; // old-slug → current publish-id
 
+const VALID_MATURITIES = new Set<Maturity>(["seed", "budding", "evergreen"]);
+
 interface VaultThought {
   title: string;
   vaultPath: string;
   rawContent: string;
   frontmatter: Record<string, unknown>;
+  maturity: Maturity;
 }
 
 // ── Step 1: Scan vault for public thoughts ────────────────────
@@ -96,12 +100,19 @@ function scanVault(): {
       process.exit(1);
     }
 
+    const rawMaturity = fm.maturity as string | undefined;
+    const maturity: Maturity =
+      rawMaturity && VALID_MATURITIES.has(rawMaturity as Maturity)
+        ? (rawMaturity as Maturity)
+        : "seed";
+
     const title = path.basename(filePath, ".md");
     publicThoughts.set(publishId, {
       title,
       vaultPath: filePath,
       rawContent: content, // gray-matter already strips frontmatter from `content`
       frontmatter: fm,
+      maturity,
     });
     filenameToId.set(title, publishId);
 
@@ -321,6 +332,7 @@ async function buildGraph(
       slug: id,
       title: thought.title,
       backlinks: backlinksMap.get(id) ?? [],
+      maturity: thought.maturity,
     };
     graph[id] = publicThought;
   }
@@ -432,6 +444,7 @@ async function writeOutputs(
       "---",
       `title: "${thought.title.replace(/"/g, '\\"')}"`,
       `slug: "${id}"`,
+      `maturity: "${thought.maturity}"`,
       "---",
       md,
     ].join("\n");
@@ -445,6 +458,7 @@ async function writeOutputs(
       title: thought.title,
       html,
       backlinks,
+      maturity: thought.maturity,
     };
     fs.writeFileSync(
       path.join(API_THOUGHTS_DIR, `${id}.json`),

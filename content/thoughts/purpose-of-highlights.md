@@ -1,6 +1,7 @@
 ---
 title: "Purpose of of highlights"
 slug: "purpose-of-highlights"
+maturity: "budding"
 ---
  
 
@@ -16,3 +17,8 @@ Why should I make highlights while reading? And what should be highlighted? How 
 ### When to make  Highlights
 
 Highlights should serve a purpose for **future action**, not to collect from the **fear of missing out**.
+
+---
+
+- [A Reading System](/thoughts/a-reading-system)
+- [The trap of information consumption without action](/thoughts/the-trap-of-information-consumption)

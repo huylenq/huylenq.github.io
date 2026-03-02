@@ -36,7 +36,7 @@ const essays = Object.values(essayModules)
         <ul class="thoughts-list graph-mobile">
           {thoughts.map((thought) => (
             <li>
-              <a href={`/thoughts/${thought.slug}`}>{thought.title}</a>
+              <a href={`/thoughts/${thought.slug}`} data-maturity={thought.maturity ?? "seed"}>{thought.title}</a>
             </li>
           ))}
         </ul>
@@ -123,6 +123,14 @@ const essays = Object.values(essayModules)
     font-size: 0.95rem;
     color: var(--ink-dark);
     text-decoration: none;
+  }
+
+  .thoughts-list a[data-maturity="seed"] {
+    color: var(--ink-faint);
+  }
+
+  .thoughts-list a[data-maturity="budding"] {
+    color: var(--ink-medium);
   }
 
   .thoughts-list a:hover {

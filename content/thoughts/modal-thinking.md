@@ -1,6 +1,7 @@
 ---
 title: "Modal thinking - Separate decision making and execution"
 slug: "modal-thinking"
+maturity: "budding"
 ---
 
 Decision Mode:
@@ -14,3 +15,7 @@ Execution Mode:
 - Even it turns out to be a bad decision, the outcome of strengthen your adherence, self-worth, and trust in the heuristic is long term yield.
 
 This way, you saved it tons of mental energy from bounced thinking.
+
+---
+
+- [Programmable Self](/thoughts/programmable-self)

@@ -1,3 +1,5 @@
+export type Maturity = "seed" | "budding" | "evergreen";
+
 /** Metadata for a single public thought (used in graph and API responses) */
 export interface PublicThought {
   /** The publish-id UUID used as URL slug */
@@ -6,6 +8,7 @@ export interface PublicThought {
   title: string;
   /** Backlinks from other public thoughts */
   backlinks: BacklinkEntry[];
+  maturity: Maturity;
 }
 
 /** A single backlink reference */
@@ -40,4 +43,5 @@ export interface ThoughtApiResponse {
   /** Pre-rendered HTML content */
   html: string;
   backlinks: BacklinkEntry[];
+  maturity: Maturity;
 }

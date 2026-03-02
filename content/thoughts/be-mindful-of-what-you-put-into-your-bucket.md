@@ -1,6 +1,7 @@
 ---
 title: "Be mindful of what you put into your bucket"
 slug: "be-mindful-of-what-you-put-into-your-bucket"
+maturity: "budding"
 ---
  
 

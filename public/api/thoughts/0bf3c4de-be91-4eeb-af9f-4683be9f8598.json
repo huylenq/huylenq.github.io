@@ -2,5 +2,6 @@
   "slug": "0bf3c4de-be91-4eeb-af9f-4683be9f8598",
   "title": "How I review Flashcards",
   "html": "<ul>\n<li>If a card feels <strong>boring, delete</strong> them. The cost of loading uninteresting facts outweighs the risk of forgetting them in an imaginary scenario.</li>\n<li><strong>Recognizing</strong> whether there’s a meaningful connection to the Vault</li>\n<li>(experimental) <strong>Drawing</strong> and making connection in the Vault with Excalidraw.</li>\n</ul>",
-  "backlinks": []
+  "backlinks": [],
+  "maturity": "seed"
 }

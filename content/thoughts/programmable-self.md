@@ -1,6 +1,7 @@
 ---
 title: "Programmable Self"
 slug: "programmable-self"
+maturity: "budding"
 ---
 
 - [ ] How does this relate to <span class="private-link">Operation Rules</span>
@@ -26,3 +27,7 @@ There are a couple of programmatic MindOS components:
 ## Qualities
 
 - **Reliability**: how instructions are adhered to. In other words, discipline.
+
+---
+
+- [Life Running Digital Engine](/thoughts/life-running-digital-engine)
