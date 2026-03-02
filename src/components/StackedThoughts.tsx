@@ -58,45 +58,6 @@ function isGrabbable(target: HTMLElement, container: HTMLElement, x: number, y: 
   return false;
 }
 
-function getClippedSide(
-  paneEl: HTMLElement,
-  containerEl: HTMLElement,
-  paneIndex: number,
-): 'left' | 'right' | null {
-  const containerRect = containerEl.getBoundingClientRect();
-  const paneRect = paneEl.getBoundingClientRect();
-  const stickyOffset = paneIndex * 40;
-  const effectiveLeftMin = containerRect.left + stickyOffset;
-  const PADDING = 8;
-
-  if (paneRect.right > containerRect.right + PADDING) return 'right';
-  if (paneRect.left < effectiveLeftMin - PADDING) return 'left';
-  return null;
-}
-
-function revealPane(
-  paneEl: HTMLElement,
-  containerEl: HTMLElement,
-  paneIndex: number,
-): void {
-  const clipped = getClippedSide(paneEl, containerEl, paneIndex);
-  if (!clipped) return;
-
-  const containerRect = containerEl.getBoundingClientRect();
-  const paneRect = paneEl.getBoundingClientRect();
-  const REVEAL_PADDING = 16;
-
-  if (clipped === 'right') {
-    const delta = paneRect.right - containerRect.right + REVEAL_PADDING;
-    containerEl.scrollBy({ left: delta, behavior: 'smooth' });
-  } else {
-    const stickyOffset = paneIndex * 40;
-    const targetLeft = containerRect.left + stickyOffset + REVEAL_PADDING;
-    const delta = paneRect.left - targetLeft;
-    containerEl.scrollBy({ left: delta, behavior: 'smooth' });
-  }
-}
-
 function thoughtSlugFromHref(href: string | null, graph: ThoughtGraph): string | null {
   if (!href || !href.startsWith('/thoughts/')) return null;
   const slug = href.replace(/^\/thoughts\//, '').replace(/\/$/, '');
@@ -532,13 +493,6 @@ export default function StackedThoughts({
       const target = e.target as HTMLElement;
       if (!isGrabbable(target, container, e.clientX, e.clientY)) return;
 
-      const paneEl = target.closest('.thought-pane') as HTMLElement | null;
-      let paneIndex = -1;
-      if (paneEl) {
-        const paneEls = Array.from(container.querySelectorAll('.thought-pane'));
-        paneIndex = paneEls.indexOf(paneEl);
-      }
-
       const startX = e.clientX;
       const startScrollLeft = container.scrollLeft;
       let state: 'PENDING' | 'DRAGGING' = 'PENDING';
@@ -580,11 +534,6 @@ export default function StackedThoughts({
         }
 
         container.style.scrollBehavior = '';
-
-        // PENDING → click: reveal partially-visible pane
-        if (paneEl && paneIndex >= 0 && !paneEl.classList.contains('collapsed')) {
-          revealPane(paneEl, container, paneIndex);
-        }
       };
 
       window.addEventListener('mousemove', onMouseMove);
@@ -825,22 +774,38 @@ export default function StackedThoughts({
               )}
             </div>
           )}
-          {ghostBacklinks.map((bl) => (
-            <div
-              key={`ghost-${bl.slug}`}
-              className="ghost-pane"
-              data-ghost-slug={bl.slug}
-              onClick={() => openThought(bl.slug, panes.length - 1)}
-            >
-              <span className="ghost-pane-title">{bl.title}</span>
-              {bl.context && (
-                <div
-                  className="ghost-pane-context"
-                  dangerouslySetInnerHTML={{ __html: bl.context }}
-                />
-              )}
-            </div>
-          ))}
+          {ghostBacklinks.map((bl) => {
+            const openIndex = panes.findIndex((p) => p.slug === bl.slug);
+            return (
+              <div
+                key={`ghost-${bl.slug}`}
+                className={`ghost-pane${openIndex >= 0 ? ' ghost-pane-linked' : ''}`}
+                data-ghost-slug={bl.slug}
+                onClick={() => openThought(bl.slug, panes.length - 1)}
+                onMouseEnter={() => {
+                  if (openIndex < 0) return;
+                  const target = containerRef.current?.querySelectorAll('.thought-pane')[openIndex] as HTMLElement | undefined;
+                  if (target && !target.classList.contains('flash-highlight')) {
+                    hoveredPaneRef.current?.classList.remove('hover-highlight');
+                    target.classList.add('hover-highlight');
+                    hoveredPaneRef.current = target;
+                  }
+                }}
+                onMouseLeave={() => {
+                  hoveredPaneRef.current?.classList.remove('hover-highlight');
+                  hoveredPaneRef.current = null;
+                }}
+              >
+                <span className="ghost-pane-title">{bl.title}</span>
+                {bl.context && (
+                  <div
+                    className="ghost-pane-context"
+                    dangerouslySetInnerHTML={{ __html: bl.context }}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
