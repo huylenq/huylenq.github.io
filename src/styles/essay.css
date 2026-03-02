@@ -286,9 +286,93 @@
 /* ── CorrectionStepper ──────────────────────────────── */
 
 .essay-stepper {
+  margin: var(--space-lg) 0;
+}
+
+.stepper-track {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+/* connecting line behind dots */
+.stepper-track::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: calc(12.5% + 12px);
+  right: calc(12.5% + 12px);
+  height: 1px;
+  background: var(--ink-faint);
+}
+
+.stepper-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex: 1;
+  position: relative;
+}
+
+.stepper-dot-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-faint);
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  color: var(--ink-medium);
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.stepper-dot:hover .stepper-dot-circle {
+  border-color: var(--ink-medium);
+  color: var(--ink-dark);
+}
+
+.stepper-dot-done .stepper-dot-circle {
+  border-color: var(--ink-medium);
+  background: var(--paper-aged);
+  color: var(--ink-dark);
+}
+
+.stepper-dot-active .stepper-dot-circle {
+  border-color: var(--ink-dark);
+  background: var(--ink-dark);
+  color: var(--paper);
+}
+
+.stepper-dot-label {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-medium);
+  transition: color 0.2s ease;
+}
+
+.stepper-dot-active .stepper-dot-label {
+  color: var(--ink-dark);
+  font-weight: 600;
+}
+
+.essay-stepper-panels {
   display: flex;
   gap: var(--space-sm);
-  margin: var(--space-lg) 0;
   align-items: flex-start;
 }
 
@@ -296,7 +380,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 }
 
 .essay-stepper-label {
@@ -306,14 +389,6 @@
   letter-spacing: 0.08em;
   color: var(--ink-dark);
   margin-bottom: var(--space-xs);
-}
-
-.essay-stepper-arrow {
-  position: absolute;
-  right: calc(-1 * var(--space-sm) / 2 - 4px);
-  top: 50%;
-  color: var(--ink-medium);
-  font-size: 1.2rem;
 }
 
 @media (max-width: 600px) {
@@ -330,14 +405,8 @@
     flex-direction: column;
   }
 
-  .essay-stepper {
+  .essay-stepper-panels {
     flex-direction: column;
     align-items: center;
-  }
-
-  .essay-stepper-arrow {
-    position: static;
-    transform: rotate(90deg);
-    margin: var(--space-xs) 0;
   }
 }

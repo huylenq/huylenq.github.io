@@ -1,4 +1,4 @@
-import { Essay, Slider, Reactive, RadioGroup } from "../components/essay";
+import { Essay, Slider, RadioGroup } from "../components/essay";
 import { ProjectionCanvas } from "../components/essay/tooth/ProjectionCanvas";
 import { CorrectionStepper } from "../components/essay/tooth/CorrectionStepper";
 
@@ -44,10 +44,6 @@ Try switching methods above — notice how A and B shift, changing the computed 
 ## Step-by-Step Correction
 
 The correction applies sequentially: first align on the Z-axis (using the X-Y projection), then X-axis (Y-Z), then Y-axis (X-Z). Each step uses the already-corrected points from prior steps.
-
-<Slider name="step" min={0} max={3} step={1} label="Correction step" />
-
-At step <Reactive derive={(get) => get("step")} />:
 
 <CorrectionStepper />
 
