@@ -33,21 +33,23 @@ Three methods for identifying the orientation axis from the hull:
 
 <RadioGroup name="method" options={["Farthest hull", "Restricted edge", "Bounding rect"]} />
 
-**Farthest hull point** divides the hull into quadrants from the centroid and picks the farthest point in each, then takes the pair with maximum separation. Simple but sensitive to outliers.
+**Farthest hull point** divides the hull into quadrants from the centroid and picks the farthest point in each, then takes the pair with maximum separation.
 
-**Restricted edge hull point** filters to points beyond 50% of the maximum distance in their quadrant before picking the farthest pair. More robust against noise.
+**Restricted edge hull point** applies separate D_X and D_Y thresholds per quadrant, keeping only points beyond 50% of both extents. From those, it picks the most axis-aligned point in each quadrant (smallest min(|dx|, |dy|)), then takes the pair with maximum separation.
 
-**Minimum bounding rectangle** fits the smallest enclosing rectangle (rotating calipers) and derives orientation from its long axis. Most stable, works well for elongated crowns.
+**Minimum bounding rectangle** fits the smallest enclosing rectangle (rotating calipers) and derives orientation from its long axis.
 
 Try switching methods above — notice how A and B shift, changing the computed angle.
 
 ## Step-by-Step Correction
 
-The correction applies sequentially: first align on the Z-axis (using the X-Y projection), then X-axis (Y-Z), then Y-axis (X-Z). Each step uses the already-corrected points from prior steps.
+The correction applies sequentially: Z-axis twice (Steps 1-1 and 1-2, using the X-Y projection), then X-axis (Y-Z), then Y-axis (X-Z). The double Z pass is deliberate — the first rotation changes the hull shape, and a second pass refines the residual. Each step uses the already-corrected points from prior steps.
 
 <CorrectionStepper />
 
-Step through from 0 to 3. Watch each projection's angle shrink as the tooth aligns with the scan axes. Panels ahead of the current step are dimmed — they show what the uncorrected projection looks like at that stage.
+Step through from 0 to 4. Watch each projection's angle shrink as the tooth aligns with the scan axes. Panels ahead of the current step are dimmed — they show what the uncorrected projection looks like at that stage.
+
+*Note: Chen et al. use only the crown portion of the tooth for projection. This visualization includes the full tooth for visual clarity — the parametric shapes here have clean tapered roots that don't cause the hull distortion seen in real CBCT data.*
 
 ## Try Different Teeth
 

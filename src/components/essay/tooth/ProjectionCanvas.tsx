@@ -115,18 +115,23 @@ export function ProjectionCanvas({
     pts = rotateAroundX(pts, tiltX);
     pts = rotateAroundY(pts, tiltY);
 
-    // Apply sequential corrections up to current step
+    // Apply sequential corrections up to current step (double Z per Chen et al.)
     if (step >= 1) {
       const hullXY = convexHull(projectToXY(pts));
       const { a, b } = refPointsForMethod(method, hullXY, centroid(hullXY));
       pts = rotateAroundZ(pts, correctionAngle(a, b, 'z'));
     }
     if (step >= 2) {
+      const hullXY2 = convexHull(projectToXY(pts));
+      const { a, b } = refPointsForMethod(method, hullXY2, centroid(hullXY2));
+      pts = rotateAroundZ(pts, correctionAngle(a, b, 'z'));
+    }
+    if (step >= 3) {
       const hullYZ = convexHull(projectToYZ(pts));
       const { a, b } = refPointsForMethod(method, hullYZ, centroid(hullYZ));
       pts = rotateAroundX(pts, correctionAngle(a, b, 'x'));
     }
-    if (step >= 3) {
+    if (step >= 4) {
       const hullXZ = convexHull(projectToXZ(pts));
       const { a, b } = refPointsForMethod(method, hullXZ, centroid(hullXZ));
       pts = rotateAroundY(pts, correctionAngle(a, b, 'y'));
@@ -169,7 +174,7 @@ export function ProjectionCanvas({
     : { cross: 'faint', dots: 'faint', hull: 'medium', hullW: 1, rect: 'faint', rectW: 0.8, ab: 'dark', label: 'dark', labelW: 400 };
 
   return (
-    <div className="tooth-canvas" style={{ opacity: dimmed ? 0.55 : 1, transition: 'opacity 0.3s' }}>
+    <div className="tooth-canvas">
       <svg viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`} width={SVG_SIZE} height={SVG_SIZE}>
         {/* Axis crosshairs */}
         <line x1={MARGIN} y1={SVG_SIZE / 2} x2={SVG_SIZE - MARGIN} y2={SVG_SIZE / 2}

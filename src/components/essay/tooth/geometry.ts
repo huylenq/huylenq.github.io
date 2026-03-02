@@ -123,39 +123,52 @@ export function farthestHullPoints(
   return best;
 }
 
-// Method 2: restricted edge hull points — filter to >50% of max quadrant distance
+// Method 2: restricted edge hull points — dual-axis thresholds, axis-aligned selection
 export function restrictedEdgeHullPoints(
   hull: Point2D[],
   center: Point2D
 ): { a: Point2D; b: Point2D } {
-  const maxDists = [0, 0, 0, 0];
+  // Per-quadrant max extent along each axis (D_X, D_Y)
+  const maxDx = [0, 0, 0, 0];
+  const maxDy = [0, 0, 0, 0];
   for (const p of hull) {
     const dx = p.x - center.x;
     const dy = p.y - center.y;
     const q = dx >= 0 ? (dy >= 0 ? 0 : 3) : dy >= 0 ? 1 : 2;
-    maxDists[q] = Math.max(maxDists[q], dist(p, center));
+    maxDx[q] = Math.max(maxDx[q], Math.abs(dx));
+    maxDy[q] = Math.max(maxDy[q], Math.abs(dy));
   }
 
-  const filtered: Point2D[] = [];
+  // Filter by BOTH |dx| > 0.5*D_X AND |dy| > 0.5*D_Y,
+  // then per-quadrant pick most axis-aligned (smallest min(|dx|,|dy|))
+  const picks: (Point2D | null)[] = [null, null, null, null];
+  const pickScores = [Infinity, Infinity, Infinity, Infinity];
+
   for (const p of hull) {
     const dx = p.x - center.x;
     const dy = p.y - center.y;
     const q = dx >= 0 ? (dy >= 0 ? 0 : 3) : dy >= 0 ? 1 : 2;
-    if (dist(p, center) > maxDists[q] * 0.5) {
-      filtered.push(p);
+
+    if (Math.abs(dx) <= 0.5 * maxDx[q] || Math.abs(dy) <= 0.5 * maxDy[q]) continue;
+
+    const score = Math.min(Math.abs(dx), Math.abs(dy));
+    if (score < pickScores[q]) {
+      pickScores[q] = score;
+      picks[q] = p;
     }
   }
 
-  if (filtered.length < 2) return farthestHullPoints(hull, center);
+  const candidates = picks.filter((p): p is Point2D => p !== null);
+  if (candidates.length < 2) return farthestHullPoints(hull, center);
 
   let maxD = 0;
-  let best = { a: filtered[0], b: filtered[1] };
-  for (let i = 0; i < filtered.length; i++) {
-    for (let j = i + 1; j < filtered.length; j++) {
-      const d = dist(filtered[i], filtered[j]);
+  let best = { a: candidates[0], b: candidates[1] };
+  for (let i = 0; i < candidates.length; i++) {
+    for (let j = i + 1; j < candidates.length; j++) {
+      const d = dist(candidates[i], candidates[j]);
       if (d > maxD) {
         maxD = d;
-        best = { a: filtered[i], b: filtered[j] };
+        best = { a: candidates[i], b: candidates[j] };
       }
     }
   }

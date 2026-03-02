@@ -2,10 +2,11 @@ import { useEssayVar } from '../EssayContext';
 import { ProjectionCanvas } from './ProjectionCanvas';
 
 const STEPS = [
-  { label: 'Original', projection: null },
-  { label: 'Z-axis', projection: 'xy' as const },
-  { label: 'X-axis', projection: 'yz' as const },
-  { label: 'Y-axis', projection: 'xz' as const },
+  { label: 'Original', projection: null, stepLabel: null },
+  { label: 'Z-axis (1)', projection: 'xy' as const, stepLabel: 'Step 1-1: Z-axis' },
+  { label: 'Z-axis (2)', projection: 'xy' as const, stepLabel: 'Step 1-2: Z-axis' },
+  { label: 'X-axis', projection: 'yz' as const, stepLabel: 'Step 2: X-axis' },
+  { label: 'Y-axis', projection: 'xz' as const, stepLabel: 'Step 3: Y-axis' },
 ] as const;
 
 const PROJECTIONS = STEPS.filter((s) => s.projection !== null);
@@ -29,8 +30,8 @@ export function CorrectionStepper() {
       </div>
       <div className="essay-stepper-panels">
         {PROJECTIONS.map((s, i) => (
-          <div key={s.projection} className="essay-stepper-panel">
-            <span className="essay-stepper-label">Step {i + 1}: {s.label}</span>
+          <div key={i} className={`essay-stepper-panel${i + 1 > step ? ' essay-stepper-panel-dimmed' : ''}`}>
+            <span className="essay-stepper-label">{s.stepLabel}</span>
             <ProjectionCanvas projection={s.projection!} dimmed={i + 1 > step} intense />
           </div>
         ))}

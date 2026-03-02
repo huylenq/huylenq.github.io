@@ -303,8 +303,8 @@
   content: '';
   position: absolute;
   top: 12px;
-  left: calc(12.5% + 12px);
-  right: calc(12.5% + 12px);
+  left: calc(10% + 12px);
+  right: calc(10% + 12px);
   height: 1px;
   background: var(--ink-faint);
 }
@@ -389,6 +389,21 @@
   letter-spacing: 0.08em;
   color: var(--ink-dark);
   margin-bottom: var(--space-xs);
+  transition: color 0.3s;
+}
+
+.essay-stepper-panel-dimmed .essay-stepper-label {
+  color: var(--ink-faint);
+}
+
+.essay-stepper-panel-dimmed .tooth-canvas svg {
+  opacity: 0.45;
+  transition: opacity 0.3s;
+}
+
+.essay-stepper-panel-dimmed .tooth-canvas-label {
+  color: var(--ink-faint);
+  transition: color 0.3s;
 }
 
 @media (max-width: 600px) {
