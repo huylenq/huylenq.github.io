@@ -1,0 +1,389 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+
+const books = [
+  { title: 'Atomic Habits', author: 'James Clear', cover: '51Eqf-URhoL' },
+  { title: 'Deep Work', author: 'Cal Newport', cover: '51vmivI5KvL' },
+  { title: 'Sapiens', author: 'Yuval Noah Harari', cover: '51Sn8PEXwcL' },
+  { title: 'Algorithms to Live By', author: 'Brian Christian & Tom Griffiths', cover: '51FhJXhhK6L' },
+  { title: 'A Game of Thrones', author: 'George R. R. Martin', cover: '518dkA0JEpL' },
+  { title: 'Staff Engineer', author: 'Will Larson & Tanya Reilly', cover: '71cPGL5jLTL' },
+  { title: 'Why We Sleep', author: 'Matthew Walker', cover: '51b36-UW0xL' },
+  { title: 'Range', author: 'David Epstein', cover: '41nLL-wUTXL' },
+  { title: 'Never Split the Difference', author: 'Chris Voss & Tahl Raz', cover: '51yKczFDuQL' },
+  { title: "The Subtle Art of Not Giving a F*ck", author: 'Mark Manson', cover: '51mN3bY0JjL' },
+];
+
+const topShelf = books.slice(0, 5);
+const bottomShelf = books.slice(5, 10);
+
+// Deterministic height variations per book (seeded by index)
+const heightOffsets = [4, -6, 2, -3, 7, -4, 5, -2, 6, -5];
+---
+
+<PageLayout title="Bookshelf">
+  <h1>Bookshelf</h1>
+  <p class="intro">A few books that left a mark.</p>
+
+  <div class="bookshelf">
+    {[topShelf, bottomShelf].map((shelf, shelfIdx) => (
+      <div class="shelf-row">
+        <div class="books">
+          {shelf.map((book, i) => {
+            const globalIdx = shelfIdx * 5 + i;
+            const hOffset = heightOffsets[globalIdx];
+            return (
+              <div
+                class="book"
+                style={`--h-offset: ${hOffset}px`}
+                data-title={book.title}
+                data-author={book.author}
+              >
+                <img
+                  src={`https://m.media-amazon.com/images/I/${book.cover}._SL500_.jpg`}
+                  alt={`${book.title} by ${book.author}`}
+                  loading="lazy"
+                />
+              </div>
+            );
+          })}
+        </div>
+        <div class="shelf-plank" />
+      </div>
+    ))}
+  </div>
+
+  <div class="tooltip" id="book-tooltip" aria-hidden="true"></div>
+</PageLayout>
+
+<style>
+  /* Override page-content to flex-fill the viewport */
+  :global(.page-content:has(.bookshelf)) {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    min-height: calc(100vh - var(--header-height, 2.5rem));
+    padding-bottom: 0;
+  }
+
+  h1 {
+    font-size: 1.6em;
+    margin-bottom: 0.4em;
+    max-width: var(--max-width);
+    padding: 0 var(--space-xl);
+  }
+
+  .intro {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-lg);
+    max-width: var(--max-width);
+    padding: 0 var(--space-xl);
+  }
+
+  /* --- Bookshelf structure --- */
+  .bookshelf {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: url('/assets/bookshelf/back.jpg') center / cover;
+    position: relative;
+    /* recessed back panel feel */
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Top/bottom fade into page background */
+  .bookshelf::before,
+  .bookshelf::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .bookshelf::before {
+    top: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--paper), transparent);
+  }
+
+  .bookshelf::after {
+    bottom: 0;
+    height: 80px;
+    background: linear-gradient(to top, var(--paper), transparent);
+  }
+
+  .shelf-row {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+  }
+
+  .books {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    align-items: flex-end;
+    padding: 20px 32px 0;
+  }
+
+  /* --- Individual book (3D skeuomorphic) --- */
+  .book {
+    width: 120px;
+    flex-shrink: 0;
+    cursor: default;
+    position: relative;
+    transform: translateY(var(--h-offset, 0px));
+    transition: transform 0.3s ease, filter 0.3s ease;
+    /* 3D context for the book */
+    transform-style: preserve-3d;
+    perspective: 600px;
+  }
+
+  .book img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    border-radius: 3px 1px 1px 3px;
+    position: relative;
+    z-index: 1;
+    /* layered shadow: contact shadow + ambient + depth */
+    box-shadow:
+      1px 1px 2px rgba(0, 0, 0, 0.3),
+      3px 3px 8px rgba(0, 0, 0, 0.25),
+      6px 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Spine: left edge with rounded highlight */
+  .book::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4px;
+    width: 6px;
+    height: 180px;
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15),
+      rgba(255, 255, 255, 0.08) 40%,
+      rgba(0, 0, 0, 0.2)
+    );
+    border-radius: 3px 0 0 3px;
+    z-index: 2;
+    transform: translateY(var(--h-offset, 0px));
+  }
+
+  /* Page edges: visible white pages on the right side */
+  .book::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: -5px;
+    width: 5px;
+    height: 174px;
+    background: linear-gradient(
+      to right,
+      #d4cfc7,
+      #ebe7df 30%,
+      #f5f2ec 60%,
+      #e8e4dc
+    );
+    border-radius: 0 1px 1px 0;
+    z-index: 0;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    transform: translateY(var(--h-offset, 0px));
+  }
+
+  /* Cover gloss/lighting: subtle top-down light reflection */
+  .book img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      170deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      transparent 40%,
+      transparent 80%,
+      rgba(0, 0, 0, 0.08) 100%
+    );
+    border-radius: 3px 1px 1px 3px;
+    pointer-events: none;
+  }
+
+  .book:hover {
+    transform: translateY(calc(var(--h-offset, 0px) - 10px));
+    filter: brightness(1.05);
+  }
+
+  .book:hover img {
+    box-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      5px 5px 15px rgba(0, 0, 0, 0.25),
+      10px 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  /* --- Shelf plank (3D skeuomorphic) --- */
+  .shelf-plank {
+    flex-shrink: 0;
+    position: relative;
+    height: 14px;
+    transform-style: preserve-3d;
+    perspective: 400px;
+    /* top surface — wood texture, slightly lit from above */
+    background:
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.1)),
+      url('/assets/bookshelf/shelf.jpg') center / cover;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    /* protrude past the back panel on both sides */
+    margin-left: -10px;
+    margin-right: -10px;
+    /* space for the angled front face below */
+    margin-bottom: 28px;
+  }
+
+  /* Front face — tilted back as seen from above */
+  .shelf-plank::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: -2px;
+    right: -2px;
+    height: 28px;
+    transform-origin: top center;
+    transform: rotateX(-20deg);
+    background:
+      /* lighting: highlight at top edge, darkens as face angles away */
+      linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.03) 8%,
+        transparent 25%,
+        rgba(0, 0, 0, 0.1) 60%,
+        rgba(0, 0, 0, 0.3) 100%
+      ),
+      /* real wood texture — offset from top surface for continuous grain */
+      url('/assets/bookshelf/shelf.jpg') -320px center / cover;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #1a1008;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -3px 6px rgba(0, 0, 0, 0.35),
+      inset 0 0 12px rgba(0, 0, 0, 0.2);
+    filter: brightness(0.7);
+  }
+
+  /* Shadow cast by the shelf onto the back panel below */
+  .shelf-plank::after {
+    content: '';
+    position: absolute;
+    top: calc(100% + 20px);
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.15) 35%,
+      rgba(0, 0, 0, 0.04) 70%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  /* --- Tooltip --- */
+  .tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(30, 25, 20, 0.94);
+    color: #e8e4de;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 100;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+  }
+
+  .tooltip.visible {
+    opacity: 1;
+  }
+
+  /* --- Dark mode --- */
+  :global([data-theme="dark"]) .bookshelf {
+    filter: brightness(0.85);
+  }
+
+  /* --- Mobile --- */
+  @media (max-width: 768px) {
+    .books {
+      gap: 8px;
+      padding: 14px 12px 0;
+    }
+
+    .book {
+      width: 90px;
+      min-width: 48px;
+    }
+
+    .book img {
+      height: 135px;
+    }
+
+    .book::before {
+      height: 135px;
+      left: -3px;
+      width: 4px;
+    }
+
+    .book::after {
+      height: 129px;
+      right: -4px;
+      width: 4px;
+    }
+
+    .shelf-plank {
+      height: 16px;
+      border-bottom-width: 6px;
+    }
+
+    .shelf-plank::after {
+      height: 6px;
+      bottom: -6px;
+    }
+  }
+</style>
+
+<script>
+  const tooltip = document.getElementById('book-tooltip')!;
+
+  document.querySelectorAll('.book').forEach((book) => {
+    const el = book as HTMLElement;
+    const title = el.dataset.title;
+    const author = el.dataset.author;
+
+    el.addEventListener('mouseenter', () => {
+      tooltip.innerHTML = `<strong>${title}</strong><br>${author}`;
+      tooltip.classList.add('visible');
+    });
+
+    el.addEventListener('mousemove', (e) => {
+      tooltip.style.left = `${e.clientX + 12}px`;
+      tooltip.style.top = `${e.clientY - 40}px`;
+    });
+
+    el.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
+</script>
