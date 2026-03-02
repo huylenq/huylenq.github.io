@@ -5,15 +5,114 @@
       "title": "A Reading System",
       "backlinks": []
     },
-    "just-testing": {
-      "slug": "just-testing",
-      "title": "A test thought",
+    "23cd8fda-6959-439f-800a-6d4eea5bd681": {
+      "slug": "23cd8fda-6959-439f-800a-6d4eea5bd681",
+      "title": "AI reduces the information privilege",
+      "backlinks": []
+    },
+    "anchoring-on-tool-capability-limits-the-mind": {
+      "slug": "anchoring-on-tool-capability-limits-the-mind",
+      "title": "Anchoring on tool capability limit the mind",
+      "backlinks": [
+        {
+          "slug": "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e",
+          "title": "Perfect-tools syndrome",
+          "context": "<p><a href=\"/thoughts/anchoring-on-tool-capability-limits-the-mind\">Anchoring on tool capability limit the mind</a></p>"
+        }
+      ]
+    },
+    "recognizable-patterns-of-valuable-thoughts": {
+      "slug": "recognizable-patterns-of-valuable-thoughts",
+      "title": "Are there recognizable patterns or signals of valuable thoughts",
+      "backlinks": [
+        {
+          "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
+          "title": "Articulation is the validation of thinking",
+          "context": "<p>...friction of verbalizing abstract ideas into LLM prompts</span> <a href=\"/thoughts/recognizable-patterns-of-valuable-thoughts\">Are there recognizable patterns or signals of valuable thoughts</a></p>"
+        }
+      ]
+    },
+    "96524a51-8a13-4db4-950c-e365c69a017d": {
+      "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "title": "Articulation is the validation of thinking",
+      "backlinks": []
+    },
+    "be-mindful-of-what-you-put-into-your-bucket": {
+      "slug": "be-mindful-of-what-you-put-into-your-bucket",
+      "title": "Be mindful of what you put into your bucket",
+      "backlinks": []
+    },
+    "d838d424-1c3f-4fb6-b094-0014eaa6bfcc": {
+      "slug": "d838d424-1c3f-4fb6-b094-0014eaa6bfcc",
+      "title": "Best practices coding with agents",
+      "backlinks": []
+    },
+    "feel-the-sensation": {
+      "slug": "feel-the-sensation",
+      "title": "Feel the Sensation",
       "backlinks": []
     },
     "how-i-write-notes": {
       "slug": "how-i-write-notes",
       "title": "How I Write Notes",
       "backlinks": []
+    },
+    "0bf3c4de-be91-4eeb-af9f-4683be9f8598": {
+      "slug": "0bf3c4de-be91-4eeb-af9f-4683be9f8598",
+      "title": "How I review Flashcards",
+      "backlinks": []
+    },
+    "life-running-digital-engine": {
+      "slug": "life-running-digital-engine",
+      "title": "Life Running Digital Engine",
+      "backlinks": [
+        {
+          "slug": "feel-the-sensation",
+          "title": "Feel the Sensation",
+          "context": "<p>...is fine, I'm doing fine. A big part of this comes from <a href=\"/thoughts/life-running-digital-engine\">Life Running Digital Engine</a>. \t- You can feel the imbalance happening. You by instinct, feel...</p>"
+        }
+      ]
+    },
+    "modal-thinking": {
+      "slug": "modal-thinking",
+      "title": "Modal thinking - Separate decision making and execution",
+      "backlinks": []
+    },
+    "0bfe2610-f643-4eb6-acf4-e13ce8179826": {
+      "slug": "0bfe2610-f643-4eb6-acf4-e13ce8179826",
+      "title": "Narrating while doing increase focus",
+      "backlinks": []
+    },
+    "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e": {
+      "slug": "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e",
+      "title": "Perfect-tools syndrome",
+      "backlinks": []
+    },
+    "play-the-game": {
+      "slug": "play-the-game",
+      "title": "Play the game",
+      "backlinks": []
+    },
+    "programmable-self": {
+      "slug": "programmable-self",
+      "title": "Programmable Self",
+      "backlinks": []
+    },
+    "purpose-of-highlights": {
+      "slug": "purpose-of-highlights",
+      "title": "Purpose of of highlights",
+      "backlinks": []
+    },
+    "sense": {
+      "slug": "sense",
+      "title": "Sense",
+      "backlinks": [
+        {
+          "slug": "be-mindful-of-what-you-put-into-your-bucket",
+          "title": "Be mindful of what you put into your bucket",
+          "context": "<p>Probably would be a great <a href=\"/thoughts/sense\">Sense</a>.</p>"
+        }
+      ]
     },
     "software-engineering-fatigue": {
       "slug": "software-engineering-fatigue",
@@ -25,16 +124,31 @@
       "title": "The cost of delayed action",
       "backlinks": [
         {
-          "slug": "just-testing",
-          "title": "A test thought",
-          "context": "<p>which is linked to <a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a></p>"
-        },
-        {
           "slug": "how-i-write-notes",
           "title": "How I Write Notes",
           "context": "<p>...in your vault. That means if an idea belongs to the Vault, do not dump it down to the interim ephemeral notes. Avoid <a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a>.</p>"
         }
       ]
+    },
+    "the-heuristics-for-what-to-do-now": {
+      "slug": "the-heuristics-for-what-to-do-now",
+      "title": "The heuristics for what to do now",
+      "backlinks": []
+    },
+    "e165fb3e-3ba1-4972-827f-b2a3220f39ac": {
+      "slug": "e165fb3e-3ba1-4972-827f-b2a3220f39ac",
+      "title": "The physics laws of life",
+      "backlinks": []
+    },
+    "the-trap-of-information-consumption": {
+      "slug": "the-trap-of-information-consumption",
+      "title": "The trap of information consumption without action",
+      "backlinks": []
+    },
+    "thinking-and-doing-rhythm": {
+      "slug": "thinking-and-doing-rhythm",
+      "title": "Thinking and Doing Rhythm",
+      "backlinks": []
     },
     "trust": {
       "slug": "trust",
@@ -46,20 +160,52 @@
       "title": "What if I found a startup",
       "backlinks": []
     },
+    "5d29c52e-e127-40b4-9348-7229370a3fed": {
+      "slug": "5d29c52e-e127-40b4-9348-7229370a3fed",
+      "title": "What is the line between Knowledge and Skill?",
+      "backlinks": []
+    },
+    "start-new-behaviors-in-boring-easy-mode": {
+      "slug": "start-new-behaviors-in-boring-easy-mode",
+      "title": "When forming a new behavior, start in boring easy mode",
+      "backlinks": []
+    },
     "thinking-excuses": {
       "slug": "thinking-excuses",
       "title": "When thinking becomes the excuse",
+      "backlinks": []
+    },
+    "516f2efb-2e65-4809-81e6-ed40c245d331": {
+      "slug": "516f2efb-2e65-4809-81e6-ed40c245d331",
+      "title": "Why taking notes?",
+      "backlinks": []
+    },
+    "vocabulary-as-api-for-second-brain": {
+      "slug": "vocabulary-as-api-for-second-brain",
+      "title": "Your rich and consistent vocabulary is the best API for your second brain",
       "backlinks": []
     }
   },
   "edges": [
     {
-      "source": "just-testing",
-      "target": "the-cost-of-delayed-action"
+      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "target": "recognizable-patterns-of-valuable-thoughts"
+    },
+    {
+      "source": "be-mindful-of-what-you-put-into-your-bucket",
+      "target": "sense"
+    },
+    {
+      "source": "feel-the-sensation",
+      "target": "life-running-digital-engine"
     },
     {
       "source": "how-i-write-notes",
       "target": "the-cost-of-delayed-action"
+    },
+    {
+      "source": "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e",
+      "target": "anchoring-on-tool-capability-limits-the-mind"
     }
   ]
 }
