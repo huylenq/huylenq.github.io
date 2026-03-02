@@ -127,6 +127,34 @@
   color: var(--ink-black);
 }
 
+/* Forward links — internal [[wikilinks]] to other thoughts */
+.thought-content a[href^="/thoughts/"] {
+  text-decoration-color: color-mix(in srgb, var(--accent-yellow) 50%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+/* Inline right-pointing arrow — flows with text, no absolute positioning.
+   Uses a filled SVG shape as a CSS mask so background-color (from CSS var) controls the color. */
+.thought-content a[href^="/thoughts/"]::before {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  width: 0.6em;
+  height: 0.6em;
+  margin-right: 0.15em;
+  background-color: var(--accent-yellow);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='0' y='5' width='7' height='2' fill='black'/%3E%3Cpolygon points='12,6 6,1 6,11' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='0' y='5' width='7' height='2' fill='black'/%3E%3Cpolygon points='12,6 6,1 6,11' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.thought-content a[href^="/thoughts/"]:hover {
+  text-decoration-color: color-mix(in srgb, var(--accent-yellow-dark) 60%, transparent);
+}
+
+.thought-content a[href^="/thoughts/"]:hover::before {
+  background-color: var(--accent-yellow-dark);
+}
+
 .thought-content table {
   width: 100%;
   border-collapse: collapse;

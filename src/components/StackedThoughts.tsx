@@ -239,8 +239,11 @@ export default function StackedThoughts({
     return () => container.removeEventListener('scroll', updateCollapsed);
   }, [panes.length]);
 
-  // Mobile: only show the last pane
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  // Mobile: only show the last pane (determined after mount to avoid hydration mismatch)
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
   const visiblePanes = isMobile ? [panes[panes.length - 1]] : panes;
   // Ghost backlinks from the last pane
   const lastPane = panes[panes.length - 1];
