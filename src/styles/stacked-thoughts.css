@@ -539,27 +539,32 @@
   animation: forward-ghost-in 0.2s ease both;
 }
 
+.forward-ghost-pane.closing {
+  animation: forward-ghost-out 0.2s ease forwards;
+}
+
 @keyframes forward-ghost-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes forward-ghost-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(4px); }
 }
 
 /* Reveal wrapper — animates width to slide right panes like a curtain */
 .inline-ghost-reveal {
   flex-shrink: 0;
   align-self: center;
-  /* Total space: 48px left margin + 200px ghost + 8px right margin */
   overflow: visible;
-  width: 256px;
+  width: 200px;
   margin-left: 48px;
-  margin-right: 8px;
+  margin-right: 12px;
   animation: inline-ghost-reveal 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  /* Sticky: prevents ghost from scrolling behind the triggering pane.
+     left is set via inline style = paneIndex * 40 + 625 (pane sticky offset + width). */
+  position: sticky;
 }
 
 @keyframes inline-ghost-reveal {
@@ -569,10 +574,38 @@
     margin-right: 0;
   }
   to {
-    width: 256px;
+    width: 200px;
     margin-left: 48px;
-    margin-right: 8px;
+    margin-right: 12px;
   }
+}
+
+/* Counter-translate: cancels the 48px rightward shift from wrapper's
+   margin-left animation so the ghost stays visually fixed in place
+   while the right pane slides away — true curtain-reveal. */
+@keyframes inline-ghost-hold {
+  from { transform: translateX(48px); }
+  to   { transform: translateX(0); }
+}
+
+/* Closing: reverse curtain — right pane slides back left to cover the ghost. */
+.inline-ghost-reveal.closing {
+  animation: inline-ghost-exit 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+.inline-ghost-reveal.closing .inline-forward-ghost {
+  animation: inline-ghost-release 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes inline-ghost-exit {
+  from { width: 200px; margin-left: 48px; margin-right: 12px; }
+  to   { width: 0;     margin-left: 0;    margin-right: 0;    }
+}
+
+/* Symmetric to inline-ghost-hold: ghost stays fixed while wrapper collapses. */
+@keyframes inline-ghost-release {
+  from { transform: translateX(0); }
+  to   { transform: translateX(48px); }
 }
 
 /* Inline forward ghost — full-size from the start, revealed by wrapper */
@@ -589,6 +622,7 @@
   position: relative;
   overflow: visible;
   transition: opacity 0.15s ease, background 0.15s ease;
+  animation: inline-ghost-hold 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .inline-forward-ghost:hover {

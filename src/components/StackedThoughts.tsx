@@ -437,6 +437,23 @@ export default function StackedThoughts({
     // Small delay so the user can cross the gap between pane edge and ghost
     hideTimeoutRef.current = setTimeout(() => {
       forwardGhostFetchRef.current?.abort();
+
+      // Inline ghost: reverse curtain (right pane slides back to cover)
+      const inlineWrapper = containerRef.current?.querySelector<HTMLElement>('.inline-ghost-reveal');
+      if (inlineWrapper) {
+        inlineWrapper.classList.add('closing');
+        setTimeout(() => setForwardGhost(null), 300);
+        return;
+      }
+
+      // Column ghost: fade out (symmetric to fade-in entry)
+      const columnGhost = containerRef.current?.querySelector<HTMLElement>('.forward-ghost-pane');
+      if (columnGhost) {
+        columnGhost.classList.add('closing');
+        setTimeout(() => setForwardGhost(null), 200);
+        return;
+      }
+
       setForwardGhost(null);
     }, 100);
   }, []);
@@ -720,6 +737,7 @@ export default function StackedThoughts({
             <div
               key={`forward-ghost-reveal-${forwardGhost.slug}`}
               className="inline-ghost-reveal"
+              style={{ left: `${realIndex * 40 + 625}px` }}
             >
               <div
                 className="inline-forward-ghost"
