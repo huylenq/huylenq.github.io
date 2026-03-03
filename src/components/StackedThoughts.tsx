@@ -612,7 +612,9 @@ export default function StackedThoughts({
     [hideForwardGhost],
   );
 
-  const hasGhostColumn = ghostBacklinks.length > 0;
+  // Forward ghost from the last pane falls back to the ghost column
+  const forwardGhostInColumn = forwardGhost && forwardGhost.fromPaneIndex === panes.length - 1;
+  const hasGhostColumn = ghostBacklinks.length > 0 || !!forwardGhostInColumn;
 
   const ghostColumnRef = useRef<HTMLDivElement>(null);
 
@@ -649,7 +651,7 @@ export default function StackedThoughts({
         const realIndex = isMobile ? panes.length - 1 : visualIndex;
         const isCollapsed = collapsedSet.has(realIndex);
         const isLastPane = realIndex === panes.length - 1;
-        const ghostInsertAfter = !isMobile && forwardGhost && forwardGhost.fromPaneIndex === realIndex;
+        const ghostInsertAfter = !isMobile && forwardGhost && forwardGhost.fromPaneIndex === realIndex && !isLastPane;
 
         const elements = [
           <div
@@ -723,7 +725,32 @@ export default function StackedThoughts({
       {!isMobile && hasGhostColumn && (
         <div className={`ghost-pane-column${ghostBacklinks.some((bl) => panes.some((p) => p.slug === bl.slug)) ? ' has-linked-ghosts' : ''}`}
           ref={ghostColumnRef}
+          onMouseEnter={cancelHideForwardGhost}
+          onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
         >
+          {forwardGhostInColumn && (
+            <div
+              className="ghost-pane forward-ghost-pane"
+              onClick={() => {
+                const slug = forwardGhost.slug;
+                const fromIndex = forwardGhost.fromPaneIndex;
+                hideForwardGhost();
+                openThought(slug, fromIndex);
+              }}
+            >
+              {forwardGhost.thought ? (
+                <>
+                  <span className="ghost-pane-title">{forwardGhost.thought.title}</span>
+                  <div
+                    className="ghost-pane-context forward-ghost-content"
+                    dangerouslySetInnerHTML={{ __html: forwardGhost.thought.html }}
+                  />
+                </>
+              ) : (
+                <span className="ghost-pane-title" style={{ fontStyle: 'italic', color: 'var(--ink-light)' }}>Loading…</span>
+              )}
+            </div>
+          )}
           {ghostBacklinks.some((bl) => !panes.some((p) => p.slug === bl.slug)) && (
             <>
               <span className="ghost-section-label">Backlinks</span>
