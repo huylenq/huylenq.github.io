@@ -361,6 +361,8 @@
     border: none;
     border-radius: 0;
     box-shadow: none;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
 
   /* Hide tilt bleed-through mask — no tilted panes on mobile */
@@ -375,6 +377,7 @@
   .thought-pane-header,
   .stacked-container.single-pane .thought-pane-header,
   .stacked-container.single-pane-with-ghosts .thought-pane-header {
+    padding-top: 26px;
     padding-left: 16px;
     padding-right: 16px;
   }
