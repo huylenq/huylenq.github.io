@@ -624,6 +624,14 @@
   opacity: 1;
 }
 
+.ghost-content-fade {
+  animation: ghost-content-in 0.15s ease;
+}
+@keyframes ghost-content-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .inline-forward-ghost:hover .ghost-pane-title {
   color: var(--ink-black);
 }

@@ -736,7 +736,7 @@ export default function StackedThoughts({
         if (ghostInsertAfter) {
           elements.push(
             <div
-              key={`forward-ghost-reveal-${forwardGhost.slug}`}
+              key={`inline-ghost-reveal-${forwardGhost.fromPaneIndex}`}
               className="inline-ghost-reveal"
               style={{ left: `${realIndex * 40 + 625}px` }}
             >
@@ -746,7 +746,9 @@ export default function StackedThoughts({
                 onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
                 onClick={handleForwardGhostClick}
               >
-                {forwardGhostContent}
+                <div key={forwardGhost.slug} className="ghost-content-fade">
+                  {forwardGhostContent}
+                </div>
               </div>
             </div>,
           );
