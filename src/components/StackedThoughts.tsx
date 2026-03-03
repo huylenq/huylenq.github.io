@@ -769,7 +769,7 @@ export default function StackedThoughts({
             }}
             style={{
               left: `${realIndex * 40}px`,
-              '--tilt': isCollapsed ? '0deg' : realIndex % 2 === 0 ? '0.6deg' : '-0.4deg',
+              '--tilt': (isCollapsed || panes.length === 1) ? '0deg' : realIndex % 2 === 0 ? '0.6deg' : '-0.4deg',
               marginTop: realIndex % 2 === 0 ? '8px' : '1px',
               marginBottom: realIndex % 2 === 0 ? '8px' : '1px',
             } as React.CSSProperties}
