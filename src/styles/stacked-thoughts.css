@@ -594,8 +594,8 @@
     border-width: 0;
     opacity: 0;
   }
-  60% {
-    opacity: 0;
+  10% {
+    opacity: 0.7;
   }
   to {
     width: 200px;
