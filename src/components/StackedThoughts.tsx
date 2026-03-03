@@ -763,7 +763,7 @@ export default function StackedThoughts({
             </div>
           )}
           {ghostBacklinks.some((bl) => !openPaneSlugs.has(bl.slug)) && (
-            <>
+            <div className="ghost-unlinked-group">
               <span className="ghost-section-label">Backlinks</span>
               {ghostBacklinks.filter((bl) => !openPaneSlugs.has(bl.slug)).map((bl) => (
                 <div
@@ -781,7 +781,7 @@ export default function StackedThoughts({
                   )}
                 </div>
               ))}
-            </>
+            </div>
           )}
           {ghostBacklinks.some((bl) => openPaneSlugs.has(bl.slug)) && (
             <div className="ghost-linked-group">

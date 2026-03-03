@@ -398,6 +398,15 @@
   border-style: solid;
 }
 
+/* Unlinked backlinks wrapper — centers vertically when linked ghosts stretch the column */
+.ghost-unlinked-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 /* Bottom-aligned group for already-open backlink ghosts */
 .ghost-linked-group {
   margin-top: auto;
