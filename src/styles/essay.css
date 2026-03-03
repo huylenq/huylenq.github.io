@@ -327,14 +327,14 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 1.5px solid var(--ink-medium);
+  border: 1.5px solid var(--ink-light);
   background: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-sans);
   font-size: 0.7rem;
-  color: var(--ink-dark);
+  color: var(--ink-light);
   transition: all 0.2s ease;
   position: relative;
   z-index: 1;
@@ -362,7 +362,7 @@
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ink-dark);
+  color: var(--ink-light);
   transition: color 0.2s ease;
 }
 
@@ -394,6 +394,10 @@
   width: 100%;
   max-width: 200px;
   height: auto;
+  outline: 1.5px solid transparent;
+  outline-offset: 3px;
+  border-radius: var(--border-radius);
+  transition: outline-color 0.2s;
 }
 
 .essay-stepper-panels .tooth-canvas-label {
@@ -412,9 +416,7 @@
 
 /* Active panel — outline around the visualization */
 .essay-stepper-panel-active .tooth-canvas svg {
-  outline: 1.5px solid var(--ink-medium);
-  outline-offset: 3px;
-  border-radius: var(--border-radius);
+  outline-color: var(--ink-medium);
 }
 
 /* Dimmed panels — visible but faded (used at step 0) */
