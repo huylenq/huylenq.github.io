@@ -1,0 +1,13 @@
+{
+  "slug": "aristocracy-vs-democracy",
+  "title": "Aristocracy vs. Democracy",
+  "html": "<p>Should an grand architect dictate the entire system design, or should it be commitee-driven.</p>",
+  "backlinks": [
+    {
+      "slug": "mythical-man-month",
+      "title": "The Mythical Man-Month (Book)",
+      "context": "<p>...3. <span class=\"private-link\">The Surgical Team</span> 4. <a href=\"/thoughts/aristocracy-vs-democracy\">Aristocracy, Democracy, and System Design</a> 5. <span class=\"private-link\">The Second-System...</p>"
+    }
+  ],
+  "maturity": "seed"
+}

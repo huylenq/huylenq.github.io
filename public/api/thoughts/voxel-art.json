@@ -1,0 +1,13 @@
+{
+  "slug": "voxel-art",
+  "title": "Voxel art",
+  "html": "<p>For some reasons, Voxel Art is so fascinating to me. The same way Pixel Art feels, but intensified.</p>\n<p>I don't think this is a peculiar of mine but some sort of inborn instincts that make those kind of crafts compelling to us.  Though they are digital products, but somehow escaping that abstraction confinement and can be felt as if physically tangible.</p>\n<p>Somehow the feeling is drastically different from drawing. It is much more fulfilled, the feeling of \"Ma, I created this\".</p>\n<p><a href=\"/thoughts/ben-thanh-market\">Ben Thanh market</a></p>",
+  "backlinks": [
+    {
+      "slug": "about",
+      "title": "About these notes",
+      "context": "<p>I like to <a href=\"/thoughts/sketches\">sketch</a> occasionally. Recent I'm fascinating with <a href=\"/thoughts/voxel-art\">Voxel art</a>.</p>"
+    }
+  ],
+  "maturity": "seed"
+}

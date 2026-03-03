@@ -1,0 +1,13 @@
+{
+  "slug": "code-run-on-people",
+  "title": "Code run on people",
+  "html": "<blockquote>\n<p>“Programs must be written for people to read, and only incidentally for machines to execute.”\n﹣Harold Abelson, Structure and Interpretation of Computer Programs</p>\n</blockquote>",
+  "backlinks": [
+    {
+      "slug": "programming-beacons",
+      "title": "Programming beacons",
+      "context": "<p>Remember, <a href=\"/thoughts/code-run-on-people\">Code run on people</a>.</p>"
+    }
+  ],
+  "maturity": "seed"
+}

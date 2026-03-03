@@ -1,0 +1,13 @@
+{
+  "slug": "sketches",
+  "title": "§ Sketches",
+  "html": "<p>My sketching timelapse videos.</p>\n<p><span class=\"private-link\">Just a cup</span></p>\n<p><span class=\"private-link\">Shiba the reporter</span></p>\n<p><span class=\"private-link\">Fed up man</span></p>\n<p><span class=\"private-link\">Face planes</span></p>",
+  "backlinks": [
+    {
+      "slug": "about",
+      "title": "About these notes",
+      "context": "<p>I like to <a href=\"/thoughts/sketches\">sketch</a> occasionally. Recent I'm fascinating with <a href=\"/thoughts/voxel-art\">Voxel art</a>.</p>"
+    }
+  ],
+  "maturity": "seed"
+}

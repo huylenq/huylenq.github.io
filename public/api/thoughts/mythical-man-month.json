@@ -1,0 +1,13 @@
+{
+  "slug": "mythical-man-month",
+  "title": "The Mythical Man-Month (Book)",
+  "html": "<p>Author:: <span class=\"private-link\">Federick Brooks</span>\n<img src=\"https://upload.wikimedia.org/wikipedia/en/f/fd/Mythical_man-month_%28book_cover%29.jpg\" alt=\"the-mythical-man-month-cover\"></p>\n<p>Some of the ideas here are obsoleted in the modern software development theme (especially <span class=\"private-link\">The Surgical Team</span>, or the idea of having a dedicated tool builder person in the \"Sharp Tools\" chapter). But the rest are timeless wisdoms.</p>\n<h2>Chapters</h2>\n<ol>\n<li><span class=\"private-link\">The Tar Pit</span></li>\n<li><span class=\"private-link\">The Mythical Man-Month</span></li>\n<li><span class=\"private-link\">The Surgical Team</span></li>\n<li><a href=\"/thoughts/aristocracy-vs-democracy\">Aristocracy, Democracy, and System Design</a></li>\n<li><span class=\"private-link\">The Second-System Effect</span></li>\n<li>Passing the Word</li>\n<li>Why Did the <span class=\"private-link\">Tower of Babel</span> Fail?</li>\n<li>Calling the Shot</li>\n<li>Ten Pounds in a Five-Pound Sack</li>\n<li>The Documentary Hypothesis</li>\n<li>Plan the Throw One Away</li>\n<li>Sharp Tools</li>\n<li>The Whole and the Parts</li>\n<li>Hatching a Catastrophe</li>\n<li>The Other Face</li>\n</ol>",
+  "backlinks": [
+    {
+      "slug": "on-top-of-mind",
+      "title": "§ On top of mind",
+      "context": "<p>...and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and <a href=\"/thoughts/mythical-man-month\">The Mythical Man-Month (Book)</a></p>"
+    }
+  ],
+  "maturity": "seed"
+}

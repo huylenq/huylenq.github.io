@@ -1,0 +1,18 @@
+{
+  "slug": "replication",
+  "title": "Replication",
+  "html": "<p>Q: What kind of failure that <a href=\"/thoughts/replication\">Replication</a> can recover?\nA: fail-stop</p>\n<p>Q: What kinds of failures that <a href=\"/thoughts/replication\">Replication</a> can't recover?\nA: bugs, correlated failures, disaster (if replication aren't physically separated enough).</p>\n<p>Q: What is it called when a backup replica take control from the primary?\nA: cut-over.</p>",
+  "backlinks": [
+    {
+      "slug": "mit-6824-distributed-systems",
+      "title": "MIT OCW 6.824 - Distributed Computer Systems Engineering",
+      "context": "<p>Mentions: <a href=\"/thoughts/replication\">Replication</a>, <a href=\"/thoughts/hypervisor\">Hypervisor</a></p>"
+    },
+    {
+      "slug": "replication",
+      "title": "Replication",
+      "context": "<p>Q: What kind of failure that <a href=\"/thoughts/replication\">Replication</a> can recover? A: fail-stop</p>"
+    }
+  ],
+  "maturity": "seed"
+}

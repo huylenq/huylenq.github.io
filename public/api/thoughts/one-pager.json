@@ -1,0 +1,18 @@
+{
+  "slug": "one-pager",
+  "title": "1pager",
+  "html": "<p><span class=\"private-link\">huyle-1pager.pdf</span></p>",
+  "backlinks": [
+    {
+      "slug": "about",
+      "title": "About these notes",
+      "context": "<p><a href=\"/thoughts/one-pager\">More about me</a>.</p>"
+    },
+    {
+      "slug": "cv",
+      "title": "CV",
+      "context": "<p>Haven't updated this for awhile. It's out of date for 6 years by now. You could see my <a href=\"/thoughts/one-pager\">1pager</a> for a more up-to-date and condensed version.</p>"
+    }
+  ],
+  "maturity": "seed"
+}

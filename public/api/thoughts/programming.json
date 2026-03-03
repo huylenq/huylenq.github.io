@@ -1,0 +1,7 @@
+{
+  "slug": "programming",
+  "title": "§ Programming",
+  "html": "<ul>\n<li><a href=\"/thoughts/programming-abstractions\">Programming abstractions</a></li>\n<li><a href=\"/thoughts/programming-beacons\">Programming beacons</a></li>\n</ul>",
+  "backlinks": [],
+  "maturity": "seed"
+}

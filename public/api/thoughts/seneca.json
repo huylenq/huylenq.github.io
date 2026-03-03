@@ -1,0 +1,13 @@
+{
+  "slug": "seneca",
+  "title": "Seneca",
+  "html": "<p>One of the father of <span class=\"private-link\">Stoicism</span>.</p>",
+  "backlinks": [
+    {
+      "slug": "time-heals-what-reason-cannot",
+      "title": "Time heals what reason cannot",
+      "context": "<p>A timeless (no pun intended) advice from <a href=\"/thoughts/seneca\">Seneca</a>.</p>"
+    }
+  ],
+  "maturity": "seed"
+}

@@ -1,0 +1,7 @@
+{
+  "slug": "hyrums-law",
+  "title": "Hyrum's Law",
+  "html": "<p><em>In short:</em></p>\n<blockquote>\n<p><strong>\"Public behaviors will eventually be public contracts.\"</strong></p>\n</blockquote>\n<p>Original and precise definition: https://www.hyrumslaw.com</p>\n<hr>\n<figure>\n\t<img src=\"https://imgs.xkcd.com/comics/workflow.png\" alt=\"xkcd's workflow\">\n\t<figcaption><a href=\"https://xkcd.com/1172/\">xkcd/1172</a></figcaption>\n</figure>",
+  "backlinks": [],
+  "maturity": "seed"
+}

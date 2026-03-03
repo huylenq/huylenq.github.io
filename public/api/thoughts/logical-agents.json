@@ -1,0 +1,13 @@
+{
+  "slug": "logical-agents",
+  "title": "Logical Agents",
+  "html": "<p>Q: In what way that <strong>knowledge-based agents</strong>'s approach to intelligence is similar to human?\nA: They perform <strong>reasoning</strong> on <strong>internal representation</strong> of knowledge.</p>\n<!--ID: 1657965336507-->\n<p>Q: Two limitations of <strong>problem-solving</strong> agents have, compare to <strong>knowledge-based</strong> agents?\nA: Their implementations are <strong>domain-specific</strong> and the <strong>atomic representation</strong> of states.</p>\n<!--ID: 1657965365228-->\n<p>Q: How <strong>atomic representation</strong> of states of <strong>problem-solving</strong> is a limitation?\nA: The only choice for representing what it knows about the state is to list all possible states, which will eventually be impractical in large environments.</p>\n<!--ID: 1658028106837-->\n<p>Q: What to call a <strong>sentence</strong> that is taken as given without being derived from other sentence?\nA: axiom</p>\n<!--ID: 1658028150006-->\n<p>Three functions that abstract the implementation details of <strong>knowledge representation language</strong>?\n?</p>\n<ul>\n<li>$\\text{MAKE-PERCEPT-SENTENCE}$</li>\n<li>$\\text{MAKE-ACTION-QUERY}$</li>\n<li>$\\text{MAKE-ACTION-SENTENCE}$</li>\n</ul>\n<!--SR:!2022-03-07,16,234-->\n<p>Two main function as the main means of interfacing between the agent and the <strong>knowledge base</strong> (<strong>KB</strong>)?\n?</p>\n<ul>\n<li>$\\text{TELL}$</li>\n<li>$\\text{ASK}$</li>\n</ul>\n<!--SR:!2022-03-08,17,234-->\n<p>The details of the <mark>inference mechanisms</mark> are hidden inside $\\text{TELL}$ and $\\text{ASK}$.</p>\n<!--SR:!2022-03-05,14,250-->\n<p>The <strong>knowledge base</strong> (<strong>KB</strong>) could initiallly contains <mark>background knowledge</mark>.</p>\n<!--SR:!2022-03-09,18,234-->\n<p>The <mark>procedural</mark> approach encodes desired behaviors directly as program code.</p>\n<!--SR:!2022-03-07,16,234-->\n<p>In the 1970s and 1980s, advocates of two approaches, <mark>declarative</mark> and <mark>procedural</mark> engaged in heated debates.</p>\n<!--SR:!2022-08-17,196,245!2022-04-17,70,205-->\n<p>When we need to specify only what the agent knows and in order to fix its behavior, it means we fix it at the <mark>knowledge</mark> level, not the <mark>implementation</mark> level</p>\n<!--SR:!2022-04-25,78,229!2022-04-23,75,228-->",
+  "backlinks": [
+    {
+      "slug": "aima",
+      "title": "AIMA",
+      "context": "<p>\"Sometimes you can trade space for time\", know what this allures to?:: Precomputed tables for opening and endgame. <!--SR:!2022-03-11,89,248--> # 7. <a href=\"/thoughts/logical-agents\">Logical Agents</a></p>"
+    }
+  ],
+  "maturity": "seed"
+}

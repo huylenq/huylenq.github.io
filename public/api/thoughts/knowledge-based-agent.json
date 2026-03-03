@@ -1,0 +1,7 @@
+{
+  "slug": "knowledge-based-agent",
+  "title": "Knowledge-based Agent",
+  "html": "<p>$$\n\\definecolor{Purple}{RGB}{147,61,173}\n\\definecolor{Blue}{RGB}{48,138,255}\n\\definecolor{Green}{RGB}{101,219,88}\n\\definecolor{Yellow}{RGB}{242,200,85}\n\\definecolor{Red}{RGB}{235,79,73}</p>\n<p>\\def\\definition#1{{\\color{Blue}\\text{#1}}}\n\\def\\param#1{{\\color{Yellow}{#1}}}\n\\def\\func#1{{\\color{Purple}\\text{#1}}}\n\\def\\persisted#1{{\\color{Green}{#1}}}\n$$</p>\n<div style=\"color: red; margin-bottom: -1rem\"/>\n<p>Pseudo implementation</p>\n<p><strong>function</strong> $\\definition{KB-AGENT}$($\\param{percept}$) <strong>returns</strong> an <em>action</em>\n$\\quad$<strong>persistent</strong>: $\\persisted{KB}$, a knowledge base\n$\\qquad\\qquad\\qquad\\quad\\persisted{t}$, the time step\n$\\quad$$\\func{TELL}$($\\persisted{KB}$, $\\func{MAKE-PERCEPT-SETENCE}(\\param{percept}, \\persisted{t})$)\n$\\quad$$action \\leftarrow \\func{ASK}(\\persisted{KB}, \\func{MAKE-ACTION-QUERY}(\\persisted{t}))$\n$\\quad \\func{TELL}(\\persisted{KB}, \\func{MAKE-ACTION-SENTENCE}(action))$\n$\\quad$<strong>return</strong> $action$</p>\n<!--SR:!2021-10-21,1,230-->",
+  "backlinks": [],
+  "maturity": "seed"
+}

@@ -1,0 +1,13 @@
+{
+  "slug": "programming-beacons",
+  "title": "Programming beacons",
+  "html": "<p>Beacons are clues that trigger some assumptions about the code, which most of the time is right, thus you save some mental expense.</p>\n<p>Beacons could be a common naming. For example if a variable is named \"node\", odds are they will be an element of a tree or some other connected collection type.</p>\n<p>You can enrich you code by glittering beacons in comments if they are difficult to implant them in the statements.</p>\n<p>Remember, <a href=\"/thoughts/code-run-on-people\">Code run on people</a>.</p>",
+  "backlinks": [
+    {
+      "slug": "programming",
+      "title": "§ Programming",
+      "context": "<ul>\n<li><a href=\"/thoughts/programming-abstractions\">Programming abstractions</a> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a></li>\n</ul>"
+    }
+  ],
+  "maturity": "seed"
+}

@@ -1,0 +1,13 @@
+{
+  "slug": "software-engineering-advices",
+  "title": "Software engineering advices",
+  "html": "<p>If I get to give a some guidance for someone that are just into software engineering, what will I tell.</p>\n<ol>\n<li><strong>Be ware of dogmatism</strong>. Don't take anyone opinion as it's your own, even if it comes from textbooks. It could be the opinion is plainly wrong, or that you misinterpret the point or the nuiance of it. This behaviors are usually encountered from the people that keep saying \"clean code\", \"OOP\", \"design patterns\", etc.</li>\n<li><strong>English</strong> is a mandatory reprequisite skill.</li>\n<li>Read</li>\n<li>Write</li>\n<li>Develop your people-skill. <span class=\"private-link\">Don't stereotype yourself</span>.</li>\n</ol>",
+  "backlinks": [
+    {
+      "slug": "on-top-of-mind",
+      "title": "§ On top of mind",
+      "context": "<p><strong><a href=\"/thoughts/software-engineering-advices\">Software engineering advices</a></strong></p>"
+    }
+  ],
+  "maturity": "seed"
+}

@@ -1,0 +1,7 @@
+{
+  "slug": "prime",
+  "title": "Prime",
+  "html": "<p>Common notes[^1] for PrimeData's folks.</p>\n<ul>\n<li><span class=\"private-link\">What is a rollover task?</span></li>\n<li><span class=\"private-link\">What is RSVP?</span></li>\n<li><span class=\"private-link\">Huy's calendar</span></li>\n</ul>\n<p>[^1]: Notes that are nothing new nor PrimeData-specific, or just too personal or opinionated to be put into Confluence.</p>",
+  "backlinks": [],
+  "maturity": "seed"
+}

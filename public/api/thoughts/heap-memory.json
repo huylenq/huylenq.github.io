@@ -1,0 +1,7 @@
+{
+  "slug": "heap-memory",
+  "title": "Heap memory",
+  "html": "<p>Q: Why heap (as in heap memory) is named \"heap\"?\nA: It may comes from the fact that early Lisp implement memory management using <span class=\"private-link\">Heap data structure</span> (according to this  <a href=\"https://stackoverflow.com/questions/1699057/why-are-two-different-concepts-both-called-heap\">this SO answer</a> ).</p>\n<!--ID: 1657974080276-->",
+  "backlinks": [],
+  "maturity": "seed"
+}

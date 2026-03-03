@@ -236,7 +236,31 @@ export default function StackedThoughts({
       }
 
       try {
-        const thought = await fetchThought(slug);
+        // Use ghost cache if available (ghost already fetched this thought)
+        const thought = forwardGhostCache.current.get(slug) ?? await fetchThought(slug);
+
+        // Inline ghost visible for this exact slug from this pane?
+        // Play closing animation, then insert pane in place — no scroll needed.
+        const currentGhost = forwardGhostRef.current;
+        const inlineGhostEl =
+          currentGhost?.slug === slug && currentGhost.fromPaneIndex === fromPaneIndex
+            ? containerRef.current?.querySelector<HTMLElement>('.inline-ghost-reveal')
+            : null;
+
+        if (inlineGhostEl) {
+          forwardGhostFetchRef.current?.abort();
+          inlineGhostEl.classList.add('closing');
+          setTimeout(() => {
+            setForwardGhost(null);
+            setPanes((prev) => [
+              ...prev.slice(0, fromPaneIndex + 1),
+              thought,
+              ...prev.slice(fromPaneIndex + 1),
+            ]);
+          }, 300);
+          return;
+        }
+
         // Batch ghost removal + pane insertion in one render to avoid
         // the ~260px flex layout zigzag (ghost yanked → panes jump left
         // → new pane inserted → panes jump right).
@@ -301,6 +325,10 @@ export default function StackedThoughts({
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current);
         hoverTimeoutRef.current = null;
+      }
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = null;
       }
       // Don't yank ghost here — let openThought batch the removal
       // with setPanes so the layout doesn't zigzag.
@@ -380,6 +408,8 @@ export default function StackedThoughts({
 
   // Forward ghost pane — shown on hover over a forward link
   const [forwardGhost, setForwardGhost] = useState<ForwardGhost | null>(null);
+  const forwardGhostRef = useRef(forwardGhost);
+  forwardGhostRef.current = forwardGhost;
 
   // Invariant: never show a forward ghost for a slug already in the stack.
   // Handles all race conditions between async pane addition and mouse events.
@@ -634,10 +664,17 @@ export default function StackedThoughts({
 
   const handleForwardGhostClick = useCallback(() => {
     if (!forwardGhost) return;
-    const { slug, fromPaneIndex } = forwardGhost;
-    hideForwardGhost();
-    openThought(slug, fromPaneIndex);
-  }, [forwardGhost, hideForwardGhost, openThought]);
+    // Clear pending hover/hide timeouts — openThought handles ghost animation
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    openThought(forwardGhost.slug, forwardGhost.fromPaneIndex);
+  }, [forwardGhost, openThought]);
 
   const forwardGhostContent = forwardGhost && (
     forwardGhost.thought ? (
