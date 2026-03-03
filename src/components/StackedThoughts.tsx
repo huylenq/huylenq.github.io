@@ -368,19 +368,9 @@ export default function StackedThoughts({
     setIsMobile(window.innerWidth < 768);
   }, []);
   const visiblePanes = isMobile ? [panes[panes.length - 1]] : panes;
-  // Ghost backlinks from the last pane, excluding thoughts already linked in its content
+  // Ghost backlinks from the last pane (bidirectional/cyclic links are fine)
   const lastPane = panes[panes.length - 1];
-  const ghostBacklinks = useMemo(() => {
-    const forwardSlugs = new Set<string>();
-    const re = /href="\/thoughts\/([^"]+)"/g;
-    let m;
-    while ((m = re.exec(lastPane.html)) !== null) {
-      forwardSlugs.add(m[1].replace(/\/$/, ''));
-    }
-    return forwardSlugs.size > 0
-      ? lastPane.backlinks.filter((bl) => !forwardSlugs.has(bl.slug))
-      : lastPane.backlinks;
-  }, [lastPane.html, lastPane.backlinks]);
+  const ghostBacklinks = lastPane.backlinks;
 
   // Forward ghost pane — shown on hover over a forward link
   const [forwardGhost, setForwardGhost] = useState<ForwardGhost | null>(null);

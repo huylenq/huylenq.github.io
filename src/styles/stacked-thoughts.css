@@ -487,7 +487,8 @@
   color: inherit;
   text-decoration: underline;
   text-decoration-style: dashed;
-  text-decoration-color: var(--ink-faint);
+  text-decoration-color: color-mix(in srgb, var(--accent-yellow-dark) 80%, transparent);
+  text-decoration-thickness: 1px;
   text-underline-offset: 2px;
   pointer-events: none;
 }
@@ -765,7 +766,8 @@
   color: inherit;
   text-decoration: underline;
   text-decoration-style: dashed;
-  text-decoration-color: var(--ink-faint);
+  text-decoration-color: color-mix(in srgb, var(--accent-yellow-dark) 80%, transparent);
+  text-decoration-thickness: 1px;
   text-underline-offset: 2px;
   pointer-events: none;
 }
