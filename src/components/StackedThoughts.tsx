@@ -200,6 +200,19 @@ export default function StackedThoughts({
     setScrollTarget(null);
   }, [scrollTarget]);
 
+  // Scroll compensation: when a full-width pane replaces a narrower inline ghost,
+  // bump scrollLeft before paint so right-side panes don't visually jump.
+  const scrollCompensationRef = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (scrollCompensationRef.current != null && container) {
+      if (container.scrollLeft > 0) {
+        container.scrollLeft += scrollCompensationRef.current;
+      }
+      scrollCompensationRef.current = null;
+    }
+  }, [panes]);
+
   // Flash highlight on an existing pane when navigated to via link click
   const flashPane = useCallback((index: number) => {
     const container = containerRef.current;
@@ -249,15 +262,28 @@ export default function StackedThoughts({
 
         if (inlineGhostEl) {
           forwardGhostFetchRef.current?.abort();
-          inlineGhostEl.classList.add('closing');
-          setTimeout(() => {
-            setForwardGhost(null);
-            setPanes((prev) => [
-              ...prev.slice(0, fromPaneIndex + 1),
-              thought,
-              ...prev.slice(fromPaneIndex + 1),
-            ]);
-          }, 300);
+          expandingPaneRef.current = slug;
+
+          // Measure ghost footprint for scroll compensation before removing it.
+          // We avoid scrollIntoView/scrollBy here because programmatic smooth scroll
+          // interacts poorly with sticky-positioned panes (the browser's scroll
+          // target calculation doesn't account for sticky offsets, causing overshoot
+          // or undershoot). Instead, we do a one-shot scrollLeft bump in
+          // useLayoutEffect — synchronous, before paint, no animation — so
+          // right-side panes stay visually pinned while the wider pane slots in.
+          const ghostRect = inlineGhostEl.getBoundingClientRect();
+          const gs = getComputedStyle(inlineGhostEl);
+          const ghostFootprint = ghostRect.width + parseFloat(gs.marginLeft) + parseFloat(gs.marginRight);
+          const refPane = containerRef.current!.querySelector('.thought-pane');
+          const paneWidth = refPane ? refPane.getBoundingClientRect().width : 625;
+          scrollCompensationRef.current = paneWidth - ghostFootprint;
+
+          setForwardGhost(null);
+          setPanes((prev) => [
+            ...prev.slice(0, fromPaneIndex + 1),
+            thought,
+            ...prev.slice(fromPaneIndex + 1),
+          ]);
           return;
         }
 
@@ -410,6 +436,7 @@ export default function StackedThoughts({
   const [forwardGhost, setForwardGhost] = useState<ForwardGhost | null>(null);
   const forwardGhostRef = useRef(forwardGhost);
   forwardGhostRef.current = forwardGhost;
+  const expandingPaneRef = useRef<string | null>(null);
 
   // Invariant: never show a forward ghost for a slug already in the stack.
   // Handles all race conditions between async pane addition and mouse events.
@@ -730,10 +757,14 @@ export default function StackedThoughts({
         const elements = [
           <div
             key={pane.slug}
-            className={`thought-pane${isCollapsed ? ' collapsed' : ''}${!initialPaneSlugs.current.has(pane.slug) ? ' animate-in' : ''}`}
+            className={`thought-pane${isCollapsed ? ' collapsed' : ''}${expandingPaneRef.current === pane.slug ? ' expand-in' : (!initialPaneSlugs.current.has(pane.slug) ? ' animate-in' : '')}`}
             onAnimationEnd={(e) => {
               if (e.animationName === 'pane-pop') {
                 e.currentTarget.classList.remove('animate-in');
+              }
+              if (e.animationName === 'pane-expand') {
+                e.currentTarget.classList.remove('expand-in');
+                expandingPaneRef.current = null;
               }
             }}
             style={{

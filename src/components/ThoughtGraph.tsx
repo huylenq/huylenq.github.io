@@ -28,13 +28,13 @@ interface ForceParams {
 const DEFAULT_FORCE_PARAMS: ForceParams = {
   "linkStrength": 0.45,
   "linkDistance": 30,
-  "chargeStrength": 0,
-  "centerXStrength": 0.005,
-  "centerYStrength": 0.02,
+  "chargeStrength": -60,
+  "centerXStrength": 0.01,
+  "centerYStrength": 0.04,
   "collisionPadX": 8,
   "collisionPadY": 27,
-  "alphaDecay": 0.02,
-  "velocityDecay": 0.2
+  "alphaDecay": 0.04,
+  "velocityDecay": 0.45
 };
 
 interface GraphNode extends SimulationNodeDatum {
@@ -460,7 +460,7 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
       .stop(); // don't auto-start — we pre-tick first
 
     // Pre-tick to settle layout before first paint
-    for (let i = 0; i < 150; i++) simulation.tick();
+    for (let i = 0; i < 500; i++) simulation.tick();
 
     simulation.on("tick", () => {
         // Offset edge endpoints to stop at text bounding box
