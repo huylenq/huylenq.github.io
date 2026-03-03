@@ -616,6 +616,30 @@ export default function StackedThoughts({
   const forwardGhostInColumn = forwardGhost && forwardGhost.fromPaneIndex === panes.length - 1;
   const hasGhostColumn = ghostBacklinks.length > 0 || !!forwardGhostInColumn;
 
+  // Pre-compute open pane slugs to avoid O(n²) scans in ghost column rendering
+  const openPaneSlugs = useMemo(() => new Set(panes.map((p) => p.slug)), [panes]);
+
+  const handleForwardGhostClick = useCallback(() => {
+    if (!forwardGhost) return;
+    const { slug, fromPaneIndex } = forwardGhost;
+    hideForwardGhost();
+    openThought(slug, fromPaneIndex);
+  }, [forwardGhost, hideForwardGhost, openThought]);
+
+  const forwardGhostContent = forwardGhost && (
+    forwardGhost.thought ? (
+      <>
+        <span className="ghost-pane-title">{forwardGhost.thought.title}</span>
+        <div
+          className="ghost-pane-context forward-ghost-content"
+          dangerouslySetInnerHTML={{ __html: forwardGhost.thought.html }}
+        />
+      </>
+    ) : (
+      <span className="ghost-pane-title" style={{ fontStyle: 'italic', color: 'var(--ink-light)' }}>Loading…</span>
+    )
+  );
+
   const ghostColumnRef = useRef<HTMLDivElement>(null);
 
   // Stabilize scroll position when ghost column appears/disappears
@@ -698,24 +722,9 @@ export default function StackedThoughts({
               className="inline-forward-ghost"
               onMouseEnter={cancelHideForwardGhost}
               onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
-              onClick={() => {
-                const slug = forwardGhost.slug;
-                const fromIndex = forwardGhost.fromPaneIndex;
-                hideForwardGhost();
-                openThought(slug, fromIndex);
-              }}
+              onClick={handleForwardGhostClick}
             >
-              {forwardGhost.thought ? (
-                <>
-                  <span className="ghost-pane-title">{forwardGhost.thought.title}</span>
-                  <div
-                    className="ghost-pane-context forward-ghost-content"
-                    dangerouslySetInnerHTML={{ __html: forwardGhost.thought.html }}
-                  />
-                </>
-              ) : (
-                <span className="ghost-pane-title" style={{ fontStyle: 'italic', color: 'var(--ink-light)' }}>Loading…</span>
-              )}
+              {forwardGhostContent}
             </div>,
           );
         }
@@ -723,7 +732,7 @@ export default function StackedThoughts({
         return elements;
       })}
       {!isMobile && hasGhostColumn && (
-        <div className={`ghost-pane-column${ghostBacklinks.some((bl) => panes.some((p) => p.slug === bl.slug)) ? ' has-linked-ghosts' : ''}`}
+        <div className={`ghost-pane-column${ghostBacklinks.some((bl) => openPaneSlugs.has(bl.slug)) ? ' has-linked-ghosts' : ''}`}
           ref={ghostColumnRef}
           onMouseEnter={cancelHideForwardGhost}
           onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
@@ -731,30 +740,15 @@ export default function StackedThoughts({
           {forwardGhostInColumn && (
             <div
               className="ghost-pane forward-ghost-pane"
-              onClick={() => {
-                const slug = forwardGhost.slug;
-                const fromIndex = forwardGhost.fromPaneIndex;
-                hideForwardGhost();
-                openThought(slug, fromIndex);
-              }}
+              onClick={handleForwardGhostClick}
             >
-              {forwardGhost.thought ? (
-                <>
-                  <span className="ghost-pane-title">{forwardGhost.thought.title}</span>
-                  <div
-                    className="ghost-pane-context forward-ghost-content"
-                    dangerouslySetInnerHTML={{ __html: forwardGhost.thought.html }}
-                  />
-                </>
-              ) : (
-                <span className="ghost-pane-title" style={{ fontStyle: 'italic', color: 'var(--ink-light)' }}>Loading…</span>
-              )}
+              {forwardGhostContent}
             </div>
           )}
-          {ghostBacklinks.some((bl) => !panes.some((p) => p.slug === bl.slug)) && (
+          {ghostBacklinks.some((bl) => !openPaneSlugs.has(bl.slug)) && (
             <>
               <span className="ghost-section-label">Backlinks</span>
-              {ghostBacklinks.filter((bl) => !panes.some((p) => p.slug === bl.slug)).map((bl) => (
+              {ghostBacklinks.filter((bl) => !openPaneSlugs.has(bl.slug)).map((bl) => (
                 <div
                   key={`ghost-${bl.slug}`}
                   className="ghost-pane"
@@ -772,9 +766,9 @@ export default function StackedThoughts({
               ))}
             </>
           )}
-          {ghostBacklinks.some((bl) => panes.some((p) => p.slug === bl.slug)) && (
+          {ghostBacklinks.some((bl) => openPaneSlugs.has(bl.slug)) && (
             <div className="ghost-linked-group">
-              {ghostBacklinks.filter((bl) => panes.some((p) => p.slug === bl.slug)).map((bl) => {
+              {ghostBacklinks.filter((bl) => openPaneSlugs.has(bl.slug)).map((bl) => {
                 const openIndex = panes.findIndex((p) => p.slug === bl.slug);
                 return (
                   <div
