@@ -1,17 +1,5 @@
 {
   "thoughts": {
-    "one-pager": {
-      "slug": "one-pager",
-      "title": "1pager",
-      "backlinks": [
-        {
-          "slug": "about",
-          "title": "About these notes",
-          "context": "<p><a href=\"/thoughts/one-pager\">More about me</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
     "a-reading-system": {
       "slug": "a-reading-system",
       "title": "A Reading System",
@@ -810,10 +798,6 @@
     {
       "source": "about",
       "target": "voxel-art"
-    },
-    {
-      "source": "about",
-      "target": "one-pager"
     },
     {
       "source": "about",

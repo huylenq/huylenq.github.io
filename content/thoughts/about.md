@@ -12,7 +12,7 @@ This site intentionally turned off all site-navigation and search features. I be
 
 I like to [sketch](/thoughts/sketches) occasionally. Recent I'm fascinating with [Voxel art](/thoughts/voxel-art).
 
-[More about me](/thoughts/one-pager).
+<span class="private-link">More about me</span>.
 
 ---
 
