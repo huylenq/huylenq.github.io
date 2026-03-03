@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useEssayState } from '../EssayContext';
 import { getToothPoints } from './toothShapes';
 import {
@@ -40,8 +40,63 @@ const CORRECTION_AXIS: Record<Projection, 'z' | 'x' | 'y'> = {
 const SVG_SIZE = 200;
 const MARGIN = 20;
 const VIEW = SVG_SIZE - 2 * MARGIN;
+const ANIM_DURATION = 400;
 
-// Returns scaled points plus a toSvg mapper reusing the same transform
+// ── Animation helpers ────────────────────────────────
+
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function lerpNum(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+function lerpPt(a: Point2D, b: Point2D, t: number): Point2D {
+  return { x: lerpNum(a.x, b.x, t), y: lerpNum(a.y, b.y, t) };
+}
+
+function lerpPts(a: Point2D[], b: Point2D[], t: number): Point2D[] {
+  if (a.length === b.length) return a.map((p, i) => lerpPt(p, b[i], t));
+  // Different vertex counts: resample both to max length, then lerp
+  const n = Math.max(a.length, b.length);
+  const ra = resamplePolygon(a, n);
+  const rb = resamplePolygon(b, n);
+  return ra.map((p, i) => lerpPt(p, rb[i], t));
+}
+
+/** Resample a closed polygon to exactly `n` evenly-spaced vertices. */
+function resamplePolygon(pts: Point2D[], n: number): Point2D[] {
+  if (pts.length === 0) return [];
+  if (pts.length === n) return pts;
+  if (pts.length === 1) return Array(n).fill(pts[0]);
+
+  // Cumulative perimeter distances
+  const dists = [0];
+  for (let i = 1; i <= pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i % pts.length];
+    dists.push(dists[i - 1] + Math.hypot(curr.x - prev.x, curr.y - prev.y));
+  }
+  const total = dists[dists.length - 1];
+  if (total === 0) return Array(n).fill(pts[0]);
+
+  const result: Point2D[] = [];
+  let seg = 0;
+  for (let i = 0; i < n; i++) {
+    const target = (i / n) * total;
+    while (seg < pts.length - 1 && dists[seg + 1] < target) seg++;
+    const segLen = dists[seg + 1] - dists[seg];
+    const frac = segLen > 0 ? (target - dists[seg]) / segLen : 0;
+    const a = pts[seg];
+    const b = pts[(seg + 1) % pts.length];
+    result.push({ x: a.x + frac * (b.x - a.x), y: a.y + frac * (b.y - a.y) });
+  }
+  return result;
+}
+
+// ── Geometry helpers ─────────────────────────────────
+
 function scalePoints(pts: Point2D[]): {
   scaled: Point2D[];
   toSvg: (p: Point2D) => Point2D;
@@ -62,7 +117,7 @@ function scalePoints(pts: Point2D[]): {
   const cy = (minY + maxY) / 2;
   const toSvg = (p: Point2D) => ({
     x: MARGIN + VIEW / 2 + (p.x - cx) * scale,
-    y: MARGIN + VIEW / 2 - (p.y - cy) * scale, // flip Y for SVG
+    y: MARGIN + VIEW / 2 - (p.y - cy) * scale,
   });
   return { scaled: pts.map(toSvg), toSvg };
 }
@@ -84,6 +139,32 @@ function refPointsForMethod(
   }
 }
 
+// ── Animated data type ───────────────────────────────
+
+type CanvasData = {
+  scaledPoints: Point2D[];
+  hull: Point2D[];
+  refA: Point2D | null;
+  refB: Point2D | null;
+  angle: number;
+  rect: Point2D[] | null;
+};
+
+function lerpData(from: CanvasData, to: CanvasData, t: number): CanvasData {
+  return {
+    scaledPoints: lerpPts(from.scaledPoints, to.scaledPoints, t),
+    hull: lerpPts(from.hull, to.hull, t),
+    refA: from.refA && to.refA ? lerpPt(from.refA, to.refA, t) : to.refA,
+    refB: from.refB && to.refB ? lerpPt(from.refB, to.refB, t) : to.refB,
+    angle: lerpNum(from.angle, to.angle, t),
+    rect: from.rect && to.rect && from.rect.length === to.rect.length
+      ? lerpPts(from.rect, to.rect, t)
+      : to.rect,
+  };
+}
+
+// ── Component ────────────────────────────────────────
+
 export function ProjectionCanvas({
   projection,
   dimmed = false,
@@ -98,7 +179,6 @@ export function ProjectionCanvas({
   const state = useEssayState();
   const isHydrated = Object.keys(state).length > 0;
 
-  // Cache the tooth point cloud — only regenerate when toothType changes
   const toothType = state.toothType ?? 0;
   const toothPtsRef = useRef<{ type: number; pts: ReturnType<typeof getToothPoints> } | null>(null);
   if (!toothPtsRef.current || toothPtsRef.current.type !== toothType) {
@@ -108,17 +188,15 @@ export function ProjectionCanvas({
   const { tiltZ = 0, tiltX = 0, tiltY = 0, method = 0 } = state;
   const step = stepOverride ?? state.step ?? 0;
 
-  const { scaledPoints, hull, refA, refB, angle, rect } = useMemo(() => {
+  const target = useMemo((): CanvasData => {
     if (!isHydrated) return { scaledPoints: [], hull: [], refA: null, refB: null, angle: 0, rect: null };
 
     let pts = toothPtsRef.current!.pts;
 
-    // Apply tilts
     pts = rotateAroundZ(pts, tiltZ);
     pts = rotateAroundX(pts, tiltX);
     pts = rotateAroundY(pts, tiltY);
 
-    // Apply sequential corrections up to current step (double Z per Chen et al.)
     if (step >= 1) {
       const hullXY = convexHull(projectToXY(pts));
       const { a, b } = refPointsForMethod(method, hullXY, centroid(hullXY));
@@ -145,7 +223,6 @@ export function ProjectionCanvas({
     const ref = refPointsForMethod(method, hullPts, centroid(hullPts));
     const ang = correctionAngle(ref.a, ref.b, CORRECTION_AXIS[projection]);
 
-    // Single scale computation — reuse toSvg for ref points and rect
     const { scaled: scaledProjected } = scalePoints(projected);
     const { scaled: scaledHull, toSvg } = scalePoints(hullPts);
 
@@ -159,9 +236,45 @@ export function ProjectionCanvas({
     };
   }, [isHydrated, tiltZ, tiltX, tiltY, step, method, toothType, projection]);
 
+  // ── Animate between states ──
+  const [display, setDisplay] = useState<CanvasData>(target);
+  const currentRef = useRef<CanvasData>(target);
+  const animRef = useRef<number>(0);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Skip animation on first render
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      currentRef.current = target;
+      setDisplay(target);
+      return;
+    }
+
+    const from = currentRef.current;
+    const to = target;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const t = easeOutCubic(Math.min((now - start) / ANIM_DURATION, 1));
+      const frame = lerpData(from, to, t);
+      currentRef.current = frame;
+      setDisplay(frame);
+      if (t < 1) {
+        animRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    cancelAnimationFrame(animRef.current);
+    animRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [target]);
+
   if (!isHydrated) {
     return <div className="tooth-canvas" style={{ width: SVG_SIZE, height: SVG_SIZE + 28 }} />;
   }
+
+  const { scaledPoints, hull, refA, refB, angle, rect } = display;
 
   const hullPath = hull.length > 0
     ? `M ${hull.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
@@ -171,7 +284,6 @@ export function ProjectionCanvas({
     ? `M ${rect.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
     : '';
 
-  // Ink levels: default (subtle) vs intense (stepper)
   const ink = intense
     ? { cross: 'light', dots: 'medium', hull: 'dark', hullW: 1.2, rect: 'medium', rectW: 1, ab: 'black', label: 'black', labelW: 600 }
     : { cross: 'faint', dots: 'faint', hull: 'medium', hullW: 1, rect: 'faint', rectW: 0.8, ab: 'dark', label: 'dark', labelW: 400 };
