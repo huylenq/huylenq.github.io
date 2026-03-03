@@ -23,9 +23,11 @@ Drag the tilt to see how rotation distorts the projected shape. Even moderate ti
 <Slider name="tiltX" min={-45} max={45} label="Tilt X" />
 <Slider name="tiltY" min={-45} max={45} label="Tilt Y" />
 
+<RadioGroup name="toothType" options={["Incisor", "Premolar", "Molar"]} />
+
 <ProjectionCanvas projection="xy" step={0} />
 
-The convex hull of the projection (outline) shows how the apparent shape deforms. Points **A** and **B** are the reference points used to compute the correction angle.
+The convex hull (outline) deforms with tilt. Points **A** and **B** are the reference points for computing the correction angle.
 
 ## Finding Reference Points
 
@@ -50,13 +52,5 @@ The correction applies sequentially: Z-axis twice (Steps 1-1 and 1-2, using the 
 Step through from 0 to 4. Watch each projection's angle shrink as the tooth aligns with the scan axes. Panels ahead of the current step are dimmed — they show what the uncorrected projection looks like at that stage.
 
 *Note: Chen et al. use only the crown portion of the tooth for projection. This visualization includes the full tooth for visual clarity — the parametric shapes here have clean tapered roots that don't cause the hull distortion seen in real CBCT data.*
-
-## Try Different Teeth
-
-Different tooth morphologies respond differently to each method. Incisors are elongated (bounding rect works well), molars are more square (quadrant methods may be better).
-
-<RadioGroup name="toothType" options={["Incisor", "Premolar", "Molar"]} />
-
-Go back and adjust the tilt, method, and steps to see how each combination behaves. The "best" method depends on the tooth shape and the degree of tilt.
 
 </Essay>
