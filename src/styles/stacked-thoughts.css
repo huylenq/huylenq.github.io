@@ -361,6 +361,8 @@
     border: none;
     border-radius: 0;
     box-shadow: none;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
 
   /* Hide tilt bleed-through mask — no tilted panes on mobile */
