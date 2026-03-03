@@ -374,6 +374,7 @@
   display: flex;
   gap: var(--space-sm);
   align-items: flex-start;
+  padding: 6px;
 }
 
 .essay-stepper-panel {
@@ -413,6 +414,21 @@
   outline: 1.5px solid var(--ink-medium);
   outline-offset: 3px;
   border-radius: var(--border-radius);
+}
+
+/* Dimmed panels — visible but faded (used at step 0) */
+.essay-stepper-panel-dimmed .essay-stepper-label {
+  color: var(--ink-faint);
+}
+
+.essay-stepper-panel-dimmed .tooth-canvas svg {
+  opacity: 0.45;
+  transition: opacity 0.3s;
+}
+
+.essay-stepper-panel-dimmed .tooth-canvas-label {
+  color: var(--ink-faint);
+  transition: color 0.3s;
 }
 
 /* Future panels — hidden but space preserved */
