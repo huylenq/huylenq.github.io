@@ -60,14 +60,15 @@ export function CorrectionStepper() {
       <div className="essay-stepper-panels">
         {PROJECTIONS.map((s, i) => {
           const isActive = i + 1 === step;
-          const isFuture = i + 1 > step;
+          const isFuture = step > 0 && i + 1 > step;
+          const isDimmed = step === 0;
           return (
             <div
               key={i}
-              className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}`}
+              className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}${isDimmed ? ' essay-stepper-panel-dimmed' : ''}`}
             >
               <span className="essay-stepper-label">{s.stepLabel}</span>
-              <ProjectionCanvas projection={s.projection!} dimmed={isFuture} intense />
+              <ProjectionCanvas projection={s.projection!} dimmed={isFuture || isDimmed} intense />
             </div>
           );
         })}
