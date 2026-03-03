@@ -568,7 +568,7 @@
   margin-left: 48px;
   margin-right: 8px;
   transition: opacity 0.15s ease, background 0.15s ease;
-  animation: inline-ghost-in 0.25s ease both;
+  animation: inline-ghost-in 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .inline-forward-ghost:hover {
@@ -585,9 +585,26 @@
 
 @keyframes inline-ghost-in {
   from {
+    width: 0;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-width: 0;
+    opacity: 0;
+  }
+  60% {
     opacity: 0;
   }
   to {
+    width: 200px;
+    min-width: 200px;
+    margin-left: 48px;
+    margin-right: 8px;
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    border-width: 2px;
     opacity: 0.7;
   }
 }
