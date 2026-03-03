@@ -550,10 +550,33 @@
   }
 }
 
-/* Inline forward ghost — inserted between panes in flex flow */
-.inline-forward-ghost {
+/* Reveal wrapper — animates width to slide right panes like a curtain */
+.inline-ghost-reveal {
   flex-shrink: 0;
   align-self: center;
+  /* Total space: 48px left margin + 200px ghost + 8px right margin */
+  overflow: visible;
+  width: 256px;
+  margin-left: 48px;
+  margin-right: 8px;
+  animation: inline-ghost-reveal 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes inline-ghost-reveal {
+  from {
+    width: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  to {
+    width: 256px;
+    margin-left: 48px;
+    margin-right: 8px;
+  }
+}
+
+/* Inline forward ghost — full-size from the start, revealed by wrapper */
+.inline-forward-ghost {
   width: 200px;
   min-width: 200px;
   background: transparent;
@@ -565,10 +588,7 @@
   opacity: 0.7;
   position: relative;
   overflow: visible;
-  margin-left: 48px;
-  margin-right: 8px;
   transition: opacity 0.15s ease, background 0.15s ease;
-  animation: inline-ghost-in 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .inline-forward-ghost:hover {
@@ -581,32 +601,6 @@
 
 .inline-forward-ghost:hover .ghost-pane-context {
   color: var(--ink-dark);
-}
-
-@keyframes inline-ghost-in {
-  from {
-    width: 0;
-    min-width: 0;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
-    border-width: 0;
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  to {
-    width: 200px;
-    min-width: 200px;
-    margin-left: 48px;
-    margin-right: 8px;
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
-    border-width: 2px;
-    opacity: 0.7;
-  }
 }
 
 /* Connector arrow — right-pointing from pane to ghost */

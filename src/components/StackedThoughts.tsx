@@ -718,13 +718,17 @@ export default function StackedThoughts({
         if (ghostInsertAfter) {
           elements.push(
             <div
-              key={`forward-ghost-${forwardGhost.slug}`}
-              className="inline-forward-ghost"
-              onMouseEnter={cancelHideForwardGhost}
-              onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
-              onClick={handleForwardGhostClick}
+              key={`forward-ghost-reveal-${forwardGhost.slug}`}
+              className="inline-ghost-reveal"
             >
-              {forwardGhostContent}
+              <div
+                className="inline-forward-ghost"
+                onMouseEnter={cancelHideForwardGhost}
+                onMouseLeave={() => { if (forwardGhost) hideForwardGhost(); }}
+                onClick={handleForwardGhostClick}
+              >
+                {forwardGhostContent}
+              </div>
             </div>,
           );
         }
