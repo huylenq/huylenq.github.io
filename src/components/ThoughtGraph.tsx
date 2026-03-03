@@ -32,7 +32,7 @@ const DEFAULT_FORCE_PARAMS: ForceParams = {
   "centerXStrength": 0.01,
   "centerYStrength": 0.04,
   "collisionPadX": 8,
-  "collisionPadY": 27,
+  "collisionPadY": 14,
   "alphaDecay": 0.04,
   "velocityDecay": 0.45
 };
