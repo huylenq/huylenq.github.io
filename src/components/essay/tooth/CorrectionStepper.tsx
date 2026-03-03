@@ -5,34 +5,39 @@ const STEPS = [
   {
     label: 'Original',
     projection: null,
-    stepLabel: null,
+    stepNum: null,
+    stepAxis: null,
     description: 'The tooth is tilted in 3D space. No corrections have been applied yet.',
   },
   {
     label: 'Z-axis (1)',
     projection: 'xy' as const,
-    stepLabel: 'Step 1-1: Z-axis',
+    stepNum: 'Step 1-1',
+    stepAxis: 'Z-axis',
     description:
       'Project onto the X-Y plane. Find reference points A and B on the convex hull, then rotate around the Z-axis to align A\u2013B with the horizontal axis.',
   },
   {
     label: 'Z-axis (2)',
     projection: 'xy' as const,
-    stepLabel: 'Step 1-2: Z-axis',
+    stepNum: 'Step 1-2',
+    stepAxis: 'Z-axis',
     description:
       'Re-project onto X-Y after the first correction. The hull shape has changed, so a second Z-axis pass refines the residual rotation.',
   },
   {
     label: 'X-axis',
     projection: 'yz' as const,
-    stepLabel: 'Step 2: X-axis',
+    stepNum: 'Step 2',
+    stepAxis: 'X-axis',
     description:
       'Project onto the Y-Z plane. Rotate around the X-axis to correct the tooth\u2019s lateral tilt.',
   },
   {
     label: 'Y-axis',
     projection: 'xz' as const,
-    stepLabel: 'Step 3: Y-axis',
+    stepNum: 'Step 3',
+    stepAxis: 'Y-axis',
     description:
       'Project onto the X-Z plane. Rotate around the Y-axis to correct the remaining front-to-back tilt.',
   },
@@ -67,7 +72,7 @@ export function CorrectionStepper() {
               key={i}
               className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}${isDimmed ? ' essay-stepper-panel-dimmed' : ''}`}
             >
-              <span className="essay-stepper-label">{s.stepLabel}</span>
+              <span className="essay-stepper-label">{s.stepNum}<br />{s.stepAxis}</span>
               <ProjectionCanvas projection={s.projection!} dimmed={isFuture || isDimmed} intense />
             </div>
           );
