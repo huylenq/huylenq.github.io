@@ -39,9 +39,11 @@ const edges = graphFile.edges;
 </PageLayout>
 
 <style is:global>
-  /* Prevent scroll on the thoughts graph page */
-  html:has(.listing-section .graph-desktop) {
-    overflow: hidden;
+  /* Prevent scroll on the thoughts graph page (desktop only — mobile shows a scrollable list) */
+  @media (min-width: 768px) {
+    html:has(.listing-section .graph-desktop) {
+      overflow: hidden;
+    }
   }
 </style>
 
