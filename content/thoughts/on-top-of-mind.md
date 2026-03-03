@@ -6,7 +6,7 @@ maturity: "seed"
 
 ## Actively reading at the moment
 
-**[7 Habits of Highly Effective People](/thoughts/7-habits)**
+**<span class="private-link">7 Habits of Highly Effective People</span>**
 Read this out of curisoty, I wonder what makes it become a so of a classic.
 
 ## Simmering ideas
@@ -17,7 +17,7 @@ _(Stuffs that I kept back in my head pop up time to time.)_
 **[Software engineering advices](/thoughts/software-engineering-advices)**
 
 **Project Management**
-The science and art of managing project and leading people. My recent read on the subject are [The Unofficial Project Manager](/thoughts/unofficial-project-manager), and [The Mythical Man-Month (Book)](/thoughts/mythical-man-month)
+The science and art of managing project and leading people. My recent read on the subject are [The Unofficial Project Manager](/thoughts/unofficial-project-manager), and <span class="private-link">The Mythical Man-Month (Book)</span>
 
 **[Tools for Thought](/thoughts/tools-for-thought)**
 

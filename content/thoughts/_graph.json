@@ -17,18 +17,6 @@
       ],
       "maturity": "seed"
     },
-    "7-habits": {
-      "slug": "7-habits",
-      "title": "7 Habits of Highly Effective People",
-      "backlinks": [
-        {
-          "slug": "on-top-of-mind",
-          "title": "§ On top of mind",
-          "context": "<p><strong><a href=\"/thoughts/7-habits\">7 Habits of Highly Effective People</a></strong> Read this out of curisoty, I wonder what makes it become a so of a classic.</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
     "a-reading-system": {
       "slug": "a-reading-system",
       "title": "A Reading System",
@@ -86,13 +74,7 @@
     "aristocracy-vs-democracy": {
       "slug": "aristocracy-vs-democracy",
       "title": "Aristocracy vs. Democracy",
-      "backlinks": [
-        {
-          "slug": "mythical-man-month",
-          "title": "The Mythical Man-Month (Book)",
-          "context": "<p>...3. <span class=\"private-link\">The Surgical Team</span> 4. <a href=\"/thoughts/aristocracy-vs-democracy\">Aristocracy, Democracy, and System Design</a> 5. <span class=\"private-link\">The Second-System...</p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "96524a51-8a13-4db4-950c-e365c69a017d": {
@@ -379,12 +361,6 @@
       "backlinks": [],
       "maturity": "budding"
     },
-    "prime": {
-      "slug": "prime",
-      "title": "Prime",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "programmable-self": {
       "slug": "programmable-self",
       "title": "Programmable Self",
@@ -513,18 +489,6 @@
       "backlinks": [],
       "maturity": "evergreen"
     },
-    "mythical-man-month": {
-      "slug": "mythical-man-month",
-      "title": "The Mythical Man-Month (Book)",
-      "backlinks": [
-        {
-          "slug": "on-top-of-mind",
-          "title": "§ On top of mind",
-          "context": "<p>...and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and <a href=\"/thoughts/mythical-man-month\">The Mythical Man-Month (Book)</a></p>"
-        }
-      ],
-      "maturity": "seed"
-    },
     "unofficial-project-manager": {
       "slug": "unofficial-project-manager",
       "title": "The Unofficial Project Manager",
@@ -532,7 +496,7 @@
         {
           "slug": "on-top-of-mind",
           "title": "§ On top of mind",
-          "context": "<p>...project and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and [The Mythical Man-Month...</p>"
+          "context": "<p>...project and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and <span class=\"private-link\">The Mythical Man-Month...</p>"
         }
       ],
       "maturity": "seed"
@@ -761,13 +725,7 @@
     "work-messages-aggressive-bias": {
       "slug": "work-messages-aggressive-bias",
       "title": "Work messages aggressive bias",
-      "backlinks": [
-        {
-          "slug": "biases-at-work",
-          "title": "§ Biases at work",
-          "context": "<p><a href=\"/thoughts/work-messages-aggressive-bias\">Work messages aggressive bias</a></p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "write-to-attend": {
@@ -804,12 +762,6 @@
           "context": "<p>...valuable thoughts](/thoughts/recognizable-patterns-of-valuable-thoughts) - <a href=\"/thoughts/vocabulary-as-api-for-second-brain\">Your rich and consistent vocabulary is the best API for your second brain</a></p>"
         }
       ],
-      "maturity": "seed"
-    },
-    "biases-at-work": {
-      "slug": "biases-at-work",
-      "title": "§ Biases at work",
-      "backlinks": [],
       "maturity": "seed"
     },
     "on-top-of-mind": {
@@ -995,10 +947,6 @@
       "target": "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e"
     },
     {
-      "source": "mythical-man-month",
-      "target": "aristocracy-vs-democracy"
-    },
-    {
       "source": "the-cost-of-delayed-action",
       "target": "start-new-behaviors-in-boring-easy-mode"
     },
@@ -1067,14 +1015,6 @@
       "target": "96524a51-8a13-4db4-950c-e365c69a017d"
     },
     {
-      "source": "biases-at-work",
-      "target": "work-messages-aggressive-bias"
-    },
-    {
-      "source": "on-top-of-mind",
-      "target": "7-habits"
-    },
-    {
       "source": "on-top-of-mind",
       "target": "letter-to-my-20s"
     },
@@ -1085,10 +1025,6 @@
     {
       "source": "on-top-of-mind",
       "target": "unofficial-project-manager"
-    },
-    {
-      "source": "on-top-of-mind",
-      "target": "mythical-man-month"
     },
     {
       "source": "on-top-of-mind",

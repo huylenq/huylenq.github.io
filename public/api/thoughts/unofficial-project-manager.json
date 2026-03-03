@@ -6,7 +6,7 @@
     {
       "slug": "on-top-of-mind",
       "title": "§ On top of mind",
-      "context": "<p>...project and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and [The Mythical Man-Month...</p>"
+      "context": "<p>...project and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and <span class=\"private-link\">The Mythical Man-Month...</p>"
     }
   ],
   "maturity": "seed"
