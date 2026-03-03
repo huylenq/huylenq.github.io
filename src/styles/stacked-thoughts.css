@@ -262,24 +262,9 @@
     margin-left: var(--space-lg);
   }
 
-  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(odd) {
-    margin-top: 8px;
-    margin-bottom: 8px;
-  }
-
-  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:nth-child(even) {
-    margin-top: 1px;
-    margin-bottom: 1px;
-  }
-
-  /* Slanted paper — tilt the container, counter-rotate content */
-  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(odd) {
-    --tilt: 0.6deg;
-  }
-
-  .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed):nth-child(even) {
-    --tilt: -0.4deg;
-  }
+  /* Slanted paper tilt + alternating margins are set via inline style
+     (--tilt, margin-top, margin-bottom) keyed on logical pane index,
+     so they stay stable when siblings are removed from the DOM. */
 
   .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-header,
   .stacked-container:not(.single-pane):not(.single-pane-with-ghosts) .thought-pane:not(.collapsed) > .thought-pane-body {

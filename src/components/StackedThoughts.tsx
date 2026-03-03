@@ -703,7 +703,12 @@ export default function StackedThoughts({
                 e.currentTarget.classList.remove('animate-in');
               }
             }}
-            style={{ left: `${realIndex * 40}px` }}
+            style={{
+              left: `${realIndex * 40}px`,
+              '--tilt': isCollapsed ? '0deg' : realIndex % 2 === 0 ? '0.6deg' : '-0.4deg',
+              marginTop: realIndex % 2 === 0 ? '8px' : '1px',
+              marginBottom: realIndex % 2 === 0 ? '8px' : '1px',
+            } as React.CSSProperties}
             onClick={
               isCollapsed
                 ? () => {
