@@ -219,6 +219,7 @@ export default function StackedThoughts({
       // Already open in the stack? Scroll to it and flash.
       const existingIndex = panes.findIndex((p) => p.slug === slug);
       if (existingIndex >= 0) {
+        setForwardGhost(null);
         setScrollTarget({ index: existingIndex, mode: 'reveal' });
         flashPane(existingIndex);
         return;
@@ -236,6 +237,10 @@ export default function StackedThoughts({
 
       try {
         const thought = await fetchThought(slug);
+        // Batch ghost removal + pane insertion in one render to avoid
+        // the ~260px flex layout zigzag (ghost yanked → panes jump left
+        // → new pane inserted → panes jump right).
+        setForwardGhost(null);
         setPanes((prev) => [
           ...prev.slice(0, fromPaneIndex + 1),
           thought,
@@ -297,7 +302,8 @@ export default function StackedThoughts({
         clearTimeout(hoverTimeoutRef.current);
         hoverTimeoutRef.current = null;
       }
-      setForwardGhost(null);
+      // Don't yank ghost here — let openThought batch the removal
+      // with setPanes so the layout doesn't zigzag.
 
       // Determine which pane the click came from
       const paneEl = anchor.closest<HTMLElement>('.thought-pane');
