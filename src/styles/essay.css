@@ -394,6 +394,10 @@
   width: 100%;
   max-width: 200px;
   height: auto;
+  outline: 1.5px solid transparent;
+  outline-offset: 3px;
+  border-radius: var(--border-radius);
+  transition: outline-color 0.2s;
 }
 
 .essay-stepper-panels .tooth-canvas-label {
@@ -412,9 +416,7 @@
 
 /* Active panel — outline around the visualization */
 .essay-stepper-panel-active .tooth-canvas svg {
-  outline: 1.5px solid var(--ink-medium);
-  outline-offset: 3px;
-  border-radius: var(--border-radius);
+  outline-color: var(--ink-medium);
 }
 
 /* Dimmed panels — visible but faded (used at step 0) */
