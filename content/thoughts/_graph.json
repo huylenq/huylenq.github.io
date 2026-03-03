@@ -8,11 +8,6 @@
           "slug": "about",
           "title": "About these notes",
           "context": "<p><a href=\"/thoughts/one-pager\">More about me</a>.</p>"
-        },
-        {
-          "slug": "cv",
-          "title": "CV",
-          "context": "<p>Haven't updated this for awhile. It's out of date for 6 years by now. You could see my <a href=\"/thoughts/one-pager\">1pager</a> for a more up-to-date and condensed version.</p>"
         }
       ],
       "maturity": "seed"
@@ -115,12 +110,6 @@
     "d838d424-1c3f-4fb6-b094-0014eaa6bfcc": {
       "slug": "d838d424-1c3f-4fb6-b094-0014eaa6bfcc",
       "title": "Best practices coding with agents",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "cv": {
-      "slug": "cv",
-      "title": "CV",
       "backlinks": [],
       "maturity": "seed"
     },
@@ -841,10 +830,6 @@
     {
       "source": "be-mindful-of-what-you-put-into-your-bucket",
       "target": "sense"
-    },
-    {
-      "source": "cv",
-      "target": "one-pager"
     },
     {
       "source": "constraint-satisfaction-problem",
