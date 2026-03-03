@@ -12,7 +12,9 @@ if (fs.existsSync(graphPath)) {
   graphFile = JSON.parse(fs.readFileSync(graphPath, 'utf-8'));
 }
 
-const thoughts = Object.values(graphFile.thoughts);
+const maturityOrder: Record<string, number> = { evergreen: 0, budding: 1, seed: 2 };
+const thoughts = Object.values(graphFile.thoughts)
+  .sort((a, b) => (maturityOrder[a.maturity] ?? 2) - (maturityOrder[b.maturity] ?? 2));
 const edges = graphFile.edges;
 
 const essayModules = import.meta.glob('../essays/*.mdx', { eager: true }) as Record<string, any>;
