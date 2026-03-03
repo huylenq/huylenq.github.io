@@ -759,12 +759,13 @@ export default function StackedThoughts({
             key={pane.slug}
             className={`thought-pane${isCollapsed ? ' collapsed' : ''}${expandingPaneRef.current === pane.slug ? ' expand-in' : (!initialPaneSlugs.current.has(pane.slug) ? ' animate-in' : '')}`}
             onAnimationEnd={(e) => {
-              if (e.animationName === 'pane-pop') {
-                e.currentTarget.classList.remove('animate-in');
-              }
-              if (e.animationName === 'pane-expand') {
-                e.currentTarget.classList.remove('expand-in');
-                expandingPaneRef.current = null;
+              if (e.animationName === 'pane-pop' || e.animationName === 'pane-expand') {
+                e.currentTarget.classList.remove('animate-in', 'expand-in');
+                // Register slug so re-renders don't re-apply animation classes.
+                // Without this, React's className reconciliation would re-add
+                // the class after scroll-triggered re-renders (collapsedSet change).
+                initialPaneSlugs.current.add(pane.slug);
+                if (e.animationName === 'pane-expand') expandingPaneRef.current = null;
               }
             }}
             style={{
