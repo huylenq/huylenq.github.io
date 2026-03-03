@@ -712,15 +712,28 @@
 }
 
 .pane-backlinks-heading {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-weight: 400;
-  color: var(--ink-medium);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-light);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  white-space: nowrap;
   margin: 0 0 var(--space-xs);
-  text-transform: none;
-  letter-spacing: normal;
   border: none;
   padding: 0;
+  opacity: 0.7;
+}
+
+.pane-backlinks-heading::before,
+.pane-backlinks-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ink-faint);
 }
 
 .pane-backlinks-list {
