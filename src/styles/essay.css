@@ -269,7 +269,8 @@
 
 .tooth-canvas-label {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
   font-family: var(--font-sans);
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -326,14 +327,14 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 1.5px solid var(--ink-faint);
+  border: 1.5px solid var(--ink-medium);
   background: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-sans);
   font-size: 0.7rem;
-  color: var(--ink-medium);
+  color: var(--ink-dark);
   transition: all 0.2s ease;
   position: relative;
   z-index: 1;
@@ -361,12 +362,12 @@
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ink-medium);
+  color: var(--ink-dark);
   transition: color 0.2s ease;
 }
 
 .stepper-dot-active .stepper-dot-label {
-  color: var(--ink-dark);
+  color: var(--ink-black);
   font-weight: 600;
 }
 
