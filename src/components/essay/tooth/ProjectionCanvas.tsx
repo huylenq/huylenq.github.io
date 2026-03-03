@@ -88,10 +88,12 @@ export function ProjectionCanvas({
   projection,
   dimmed = false,
   intense = false,
+  step: stepOverride,
 }: {
   projection: Projection;
   dimmed?: boolean;
   intense?: boolean;
+  step?: number;
 }) {
   const state = useEssayState();
   const isHydrated = Object.keys(state).length > 0;
@@ -103,7 +105,8 @@ export function ProjectionCanvas({
     toothPtsRef.current = { type: toothType, pts: getToothPoints(toothType) };
   }
 
-  const { tiltZ = 0, tiltX = 0, tiltY = 0, step = 0, method = 0 } = state;
+  const { tiltZ = 0, tiltX = 0, tiltY = 0, method = 0 } = state;
+  const step = stepOverride ?? state.step ?? 0;
 
   const { scaledPoints, hull, refA, refB, angle, rect } = useMemo(() => {
     if (!isHydrated) return { scaledPoints: [], hull: [], refA: null, refB: null, angle: 0, rect: null };

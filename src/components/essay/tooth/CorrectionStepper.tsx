@@ -60,8 +60,8 @@ export function CorrectionStepper() {
       <div className="essay-stepper-panels">
         {PROJECTIONS.map((s, i) => {
           const isActive = i + 1 === step;
-          const isFuture = step > 0 && i + 1 > step;
-          const isDimmed = step === 0;
+          const isFuture = i + 1 > Math.max(step, 1);
+          const isDimmed = step === 0 && i === 0;
           return (
             <div
               key={i}
