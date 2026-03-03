@@ -372,6 +372,20 @@
     display: none;
   }
 
+  .thought-pane-header,
+  .stacked-container.single-pane .thought-pane-header,
+  .stacked-container.single-pane-with-ghosts .thought-pane-header {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .thought-pane-body,
+  .stacked-container.single-pane .thought-pane-body,
+  .stacked-container.single-pane-with-ghosts .thought-pane-body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
 }
 
 /* Ghost panes (desktop) — backlinks rendered as placeholder panes */
