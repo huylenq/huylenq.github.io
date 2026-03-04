@@ -183,12 +183,6 @@
       "backlinks": [],
       "maturity": "seed"
     },
-    "heap-memory": {
-      "slug": "heap-memory",
-      "title": "Heap memory",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "how-i-write-notes": {
       "slug": "how-i-write-notes",
       "title": "How I Write Notes",
@@ -593,18 +587,6 @@
       ],
       "maturity": "seed"
     },
-    "tree-csp-solver": {
-      "slug": "tree-csp-solver",
-      "title": "Tree CSP solver",
-      "backlinks": [
-        {
-          "slug": "constraint-satisfaction-problem",
-          "title": "Constraint Statisfaction Problem",
-          "context": "<p><a href=\"/thoughts/tree-csp-solver\">Tree CSP solver</a></p>"
-        }
-      ],
-      "maturity": "seed"
-    },
     "trust": {
       "slug": "trust",
       "title": "Trust",
@@ -824,10 +806,6 @@
     {
       "source": "constraint-satisfaction-problem",
       "target": "min-conflicts-heuristic"
-    },
-    {
-      "source": "constraint-satisfaction-problem",
-      "target": "tree-csp-solver"
     },
     {
       "source": "different-purposes-of-writing",

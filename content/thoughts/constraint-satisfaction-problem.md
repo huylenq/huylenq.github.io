@@ -12,7 +12,7 @@ A popular local search being used in CSP is [Min-conflicts heuristic](/thoughts/
 
 There are some smart ways to re-structure a big CSP problem into **independant subproblems** $\mathit{CSP}_i$ , so that the overall complexity could be reduced significantly.
 
-[Tree CSP solver](/thoughts/tree-csp-solver)
+<span class="private-link">Tree CSP solver</span>
 
 # #∆
 
