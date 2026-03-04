@@ -39,7 +39,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   </span>
   <nav class="site-nav">
     {sections.map((s) => (
-      <a href={`/${s}`} aria-current={activeSection === s ? 'page' : undefined}>
+      <a href={`/${s}`} aria-current={activeSection === s ? 'page' : undefined} data-text={s.charAt(0).toUpperCase() + s.slice(1)}>
         {s.charAt(0).toUpperCase() + s.slice(1)}
       </a>
     ))}
@@ -158,6 +158,11 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   // Hover: slide to hovered link, return to active on leave
   navLinks.forEach(link => {
     link.addEventListener('mouseenter', () => moveIndicatorTo(link));
+    // Eagerly set aria-current on click so bold persists through view transition
+    link.addEventListener('click', () => {
+      navLinks.forEach(l => l.removeAttribute('aria-current'));
+      link.setAttribute('aria-current', 'page');
+    });
   });
   nav.addEventListener('mouseleave', () => moveIndicatorTo(getActiveLink()));
 
@@ -296,12 +301,29 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     text-transform: uppercase;
     color: var(--ink-medium);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, font-weight .08s ease;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-sm) var(--space-xs);
+    margin: calc(-1 * var(--space-sm)) calc(-1 * var(--space-xs));
+  }
+
+  /* Reserve bold width to prevent layout shift on hover */
+  .site-nav a::after {
+    content: attr(data-text);
+    font-weight: 700;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .site-nav a:hover,
+  .site-nav a:active,
   .site-nav a[aria-current] {
     color: var(--ink-black);
+    font-weight: 700;
   }
 
   .nav-indicator {
