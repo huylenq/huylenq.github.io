@@ -146,11 +146,11 @@ The diagram below shows the structure. Drag the numbers inside the boxes to chan
 
 A team of <Var name="devs" min={2} max={12} step={1} /> developers.
 
-**Velocity:** <Reactive derive={velocity} /> pts/sprint <Spark metric="velocity" /> — context-switching costs <Reactive derive={switchingPenalty} />%, debt drag costs <Reactive derive={debtDrag} />%
+**Velocity:** <Reactive derive={velocity} minWidth="3.5ch" /> pts/sprint <Spark metric="velocity" /> — context-switching costs <Reactive derive={switchingPenalty} minWidth="1.5ch" />%, debt drag costs <Reactive derive={debtDrag} minWidth="1.5ch" />%
 
-**Bugs:** <Reactive derive={bugRate} />/sprint generated <Spark metric="bugs" />
+**Bugs:** <Reactive derive={bugRate} minWidth="2.5ch" />/sprint generated <Spark metric="bugs" />
 
-**Net throughput:** <Reactive derive={netThroughput} /> pts/sprint <Spark metric="shipped" />
+**Net throughput:** <Reactive derive={netThroughput} minWidth="3.5ch" /> pts/sprint <Spark metric="shipped" />
 
 **Loop diagnosis:** <Reactive derive={dominantLoop} />
 

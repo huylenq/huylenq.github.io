@@ -152,6 +152,8 @@
 
 .essay-diagram {
   margin: var(--space-lg) 0;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .essay-diagram svg {
@@ -168,9 +170,6 @@
   -webkit-user-select: none;
 }
 
-.essay-diagram-scrub:hover {
-  opacity: 0.7;
-}
 
 /* Flow arrow dash animation */
 .essay-flow-arrow {
@@ -187,18 +186,20 @@
 
 .essay-scenario {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-xl);
   margin: var(--space-lg) 0;
 }
 
 .essay-scenario-panel {
-  flex: 1;
+  width: 280px;
+  flex-shrink: 1;
   min-width: 0;
 }
 
 .essay-scenario-panel svg {
   width: 100%;
   height: auto;
+  max-width: 280px;
 }
 
 .essay-scenario-label {
