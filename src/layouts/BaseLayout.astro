@@ -26,12 +26,14 @@ const { title = 'huylenq.com' } = Astro.props;
   <title>{title}</title>
   <ViewTransitions />
   <script is:inline>
-    // Apply theme before paint to prevent FOUC
+    // Apply theme + mode before paint to prevent FOUC
     (function() {
       var saved = localStorage.getItem('theme');
+      var mode = saved || 'auto';
       if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.setAttribute('data-theme', 'dark');
       }
+      document.documentElement.setAttribute('data-theme-mode', mode);
     })();
   </script>
 </head>
@@ -40,41 +42,52 @@ const { title = 'huylenq.com' } = Astro.props;
   <script>
     const mq = matchMedia('(prefers-color-scheme: dark)');
 
-    function getEffectiveTheme(): string {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved;
-      return mq.matches ? 'dark' : 'light';
+    function getMode(): string {
+      return localStorage.getItem('theme') || 'auto';
     }
 
-    function applyTheme(theme: string) {
-      if (theme === 'dark') {
+    function getEffectiveTheme(): string {
+      const mode = getMode();
+      if (mode === 'auto') return mq.matches ? 'dark' : 'light';
+      return mode;
+    }
+
+    function applyTheme() {
+      const mode = getMode();
+      const effective = getEffectiveTheme();
+      document.documentElement.setAttribute('data-theme-mode', mode);
+      if (effective === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
       } else {
         document.documentElement.removeAttribute('data-theme');
       }
     }
 
-    // Attach click listeners once (header is transition:persist, so buttons survive navigation)
+    // Cycle: auto → light → dark → auto
     document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
-        const next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
-        localStorage.setItem('theme', next);
-        applyTheme(next);
+        const mode = getMode();
+        const next = mode === 'auto' ? 'light' : mode === 'light' ? 'dark' : 'auto';
+        if (next === 'auto') {
+          localStorage.removeItem('theme');
+        } else {
+          localStorage.setItem('theme', next);
+        }
+        applyTheme();
       });
     });
 
-    // If system preference changes while no explicit choice, follow it
+    // System preference changes — only matters in auto mode
     mq.addEventListener('change', () => {
-      if (!localStorage.getItem('theme')) {
-        applyTheme(mq.matches ? 'dark' : 'light');
-      }
+      if (getMode() === 'auto') applyTheme();
     });
 
     // Stamp theme onto incoming document BEFORE Astro swaps it in,
     // so copying <html> attrs preserves data-theme (no flash)
     document.addEventListener('astro:before-swap', (e) => {
-      const theme = getEffectiveTheme();
-      if (theme === 'dark') {
+      const mode = getMode();
+      e.newDocument.documentElement.setAttribute('data-theme-mode', mode);
+      if (getEffectiveTheme() === 'dark') {
         e.newDocument.documentElement.setAttribute('data-theme', 'dark');
       }
     });
