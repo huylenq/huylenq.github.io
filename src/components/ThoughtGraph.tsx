@@ -1,4 +1,8 @@
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useCallback, useState } from "react";
+
+// useLayoutEffect fires before useEffect, ensuring height is settled before buildGraph runs.
+// The SSR warning is harmless — this component is client-only (client:media).
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import {
   forceSimulation,
   forceLink,
@@ -195,8 +199,9 @@ export default function ThoughtGraph({ thoughts, edges, fillViewport }: ThoughtG
 
   const [height, setHeight] = useState(fallbackHeight);
 
-  // Set real height on mount (needs window)
-  useEffect(() => {
+  // Set real height before first paint — useLayoutEffect fires before useEffect,
+  // so height is settled before buildGraph runs.
+  useIsomorphicLayoutEffect(() => {
     setHeight(getHeight());
   }, [getHeight]);
 

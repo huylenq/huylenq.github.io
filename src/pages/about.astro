@@ -1,13 +1,10 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+import Bio from '../components/Bio.astro';
 ---
 <PageLayout title="About" section="About">
   <h1>About</h1>
-  <p>
-    I'm a hipster programmer (LISP for life, CLI for the win, yada yada, you got it).
-    Aside from my daily ranting on software development, I like to sketch, playing guitar,
-    taking care of my daughter (top priority, in case my wife is reading this).
-  </p>
+  <Bio />
 </PageLayout>
 
 <style>
@@ -17,12 +14,5 @@ import PageLayout from '../layouts/PageLayout.astro';
     font-weight: 400;
     letter-spacing: 0.02em;
     margin-bottom: 0.6em;
-  }
-
-  p {
-    line-height: var(--line-height-body);
-    color: var(--ink-dark);
-    text-align: justify;
-    hyphens: auto;
   }
 </style>

@@ -1,5 +1,6 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+import Bio from '../components/Bio.astro';
 import ThoughtGraph from '../components/ThoughtGraph.tsx';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -23,9 +24,9 @@ const essays = Object.values(essayModules)
   .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 ---
 <PageLayout title="huylenq.com">
-  <p class="intro">
-    Welcome. I'm Huy — a programmer who sketches, reads, and occasionally writes.
-  </p>
+  <div class="intro">
+    <Bio />
+  </div>
 
   <section class="thoughts-section" data-accent="yellow">
     <h2><a href="/thoughts">Thoughts</a></h2>
@@ -72,10 +73,6 @@ const essays = Object.values(essayModules)
 
 <style>
   .intro {
-    font-family: var(--font-serif);
-    font-size: 1.05rem;
-    font-style: italic;
-    color: var(--ink-medium);
     margin-bottom: var(--space-2xl);
   }
 
