@@ -38,42 +38,46 @@ const { title = 'huylenq.com' } = Astro.props;
 <body>
   <slot />
   <script>
-    function initThemeToggle() {
-      const btns = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
-      if (!btns.length) return;
+    const mq = matchMedia('(prefers-color-scheme: dark)');
 
-      const mq = matchMedia('(prefers-color-scheme: dark)');
+    function getEffectiveTheme(): string {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      return mq.matches ? 'dark' : 'light';
+    }
 
-      function getEffectiveTheme(): string {
-        const saved = localStorage.getItem('theme');
-        if (saved) return saved;
-        return mq.matches ? 'dark' : 'light';
+    function applyTheme(theme: string) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
       }
+    }
 
-      function applyTheme(theme: string) {
-        if (theme === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.removeAttribute('data-theme');
-        }
-      }
-
-      btns.forEach(btn => btn.addEventListener('click', () => {
+    // Attach click listeners once (header is transition:persist, so buttons survive navigation)
+    document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
         const next = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
         localStorage.setItem('theme', next);
         applyTheme(next);
-      }));
-
-      // If system preference changes while no explicit choice, follow it
-      mq.addEventListener('change', () => {
-        if (!localStorage.getItem('theme')) {
-          applyTheme(mq.matches ? 'dark' : 'light');
-        }
       });
-    }
+    });
 
-    initThemeToggle();
-    document.addEventListener('astro:after-swap', initThemeToggle);
+    // If system preference changes while no explicit choice, follow it
+    mq.addEventListener('change', () => {
+      if (!localStorage.getItem('theme')) {
+        applyTheme(mq.matches ? 'dark' : 'light');
+      }
+    });
+
+    // Stamp theme onto incoming document BEFORE Astro swaps it in,
+    // so copying <html> attrs preserves data-theme (no flash)
+    document.addEventListener('astro:before-swap', (e: any) => {
+      const theme = getEffectiveTheme();
+      if (theme === 'dark') {
+        e.newDocument.documentElement.setAttribute('data-theme', 'dark');
+      }
+    });
   </script>
 </body>
 </html>
