@@ -105,6 +105,24 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 
   function moveIndicatorTo(link: HTMLAnchorElement | null, animate = true) {
     if (!link) {
+      if (!animate) {
+        indicator.style.transition = 'none';
+        indicator.removeAttribute('data-direction');
+        indicator.style.setProperty('--ind-opacity', '0');
+        indicator.offsetHeight;
+        indicator.style.transition = '';
+        return;
+      }
+      // Shrink to center of current position
+      const currentLeft = parseFloat(indicator.style.getPropertyValue('--ind-left')) || 0;
+      const currentRight = parseFloat(indicator.style.getPropertyValue('--ind-right')) || 0;
+      const navWidth = nav.getBoundingClientRect().width;
+      const barWidth = navWidth - currentLeft - currentRight;
+      const center = currentLeft + barWidth / 2;
+
+      indicator.setAttribute('data-direction', 'shrink');
+      indicator.style.setProperty('--ind-left', `${center}px`);
+      indicator.style.setProperty('--ind-right', `${navWidth - center}px`);
       indicator.style.setProperty('--ind-opacity', '0');
       return;
     }
@@ -306,7 +324,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 
   /* Moving right: right (leading) edge races ahead, left (trailing) edge catches up */
   .nav-indicator[data-direction="right"] {
-    transition: left 0.45s cubic-bezier(0.4, 0, 0.1, 1) 0.06s,
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.1, 1) 0.03s,
                 right 0.3s cubic-bezier(0.2, 1, 0.3, 1),
                 background-color 0.2s ease,
                 opacity 0.2s ease;
@@ -315,9 +333,16 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   /* Moving left: left (leading) edge races ahead, right (trailing) edge catches up */
   .nav-indicator[data-direction="left"] {
     transition: left 0.3s cubic-bezier(0.2, 1, 0.3, 1),
-                right 0.45s cubic-bezier(0.4, 0, 0.1, 1) 0.06s,
+                right 0.35s cubic-bezier(0.4, 0, 0.1, 1) 0.03s,
                 background-color 0.2s ease,
                 opacity 0.2s ease;
+  }
+
+  /* Shrink: both edges collapse to center, opacity snaps off after */
+  .nav-indicator[data-direction="shrink"] {
+    transition: left 0.15s cubic-bezier(0.4, 0, 1, 1),
+                right 0.15s cubic-bezier(0.4, 0, 1, 1),
+                opacity 0s 0.15s;
   }
 
   .theme-toggle {
