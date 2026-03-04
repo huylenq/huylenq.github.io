@@ -5,7 +5,33 @@ import Bio from '../components/Bio.astro';
 <PageLayout title="About" section="About">
   <h1>About</h1>
   <Bio />
+
+  <section class="contact-section">
+    <h2>Reach me</h2>
+    <ul class="contact-list">
+      <li>
+        <a class="email-link" data-u="huy.lenq" data-d="gmail.com" href="#">Email</a>
+      </li>
+      <li>
+        <a href="https://t.me/huylenq" target="_blank" rel="noopener">Telegram</a>
+      </li>
+      <li>
+        <a href="https://github.com/huylenq" target="_blank" rel="noopener">GitHub</a>
+      </li>
+      <li>
+        <a href="https://linkedin.com/in/huylenq" target="_blank" rel="noopener">LinkedIn</a>
+      </li>
+    </ul>
+  </section>
 </PageLayout>
+
+<script>
+  document.querySelector('.contact-section .email-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const el = e.currentTarget as HTMLAnchorElement;
+    window.location.href = `mailto:${el.dataset.u}@${el.dataset.d}`;
+  });
+</script>
 
 <style>
   h1 {
@@ -14,5 +40,35 @@ import Bio from '../components/Bio.astro';
     font-weight: 400;
     letter-spacing: 0.02em;
     margin-bottom: 0.6em;
+  }
+
+  .contact-section {
+    margin-top: var(--space-2xl);
+  }
+
+  .contact-section h2 {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--ink-black);
+  }
+
+  .contact-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .contact-list li {
+    padding: var(--space-xs) 0;
+  }
+
+  .contact-list a {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--ink-dark);
   }
 </style>
