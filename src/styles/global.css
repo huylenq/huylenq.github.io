@@ -11,6 +11,8 @@
   /* Color Palette - Accent */
   --accent-yellow: #e0c44d;
   --accent-yellow-dark: #d4a824;
+  --accent-blue: #5b8c9a;
+  --accent-blue-dark: #3d7a8a;
 
   /* Color Palette - Paper */
   --paper: #fdfcf9;
@@ -66,6 +68,8 @@
 
   --accent-yellow: #f0d86a;
   --accent-yellow-dark: #e0b830;
+  --accent-blue: #7ab0be;
+  --accent-blue-dark: #5a9aaa;
 
   --paper: #1c1b1a;
   --paper-aged: #242321;

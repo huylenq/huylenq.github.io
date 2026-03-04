@@ -26,8 +26,8 @@ const edges = graphFile.edges;
         </div>
         <ul class="listing graph-mobile">
           {thoughts.map((thought) => (
-            <li>
-              <a href={`/thoughts/${thought.slug}`} data-maturity={thought.maturity ?? "seed"}>{thought.title}</a>
+            <li data-maturity={thought.maturity ?? "seed"}>
+              <a href={`/thoughts/${thought.slug}`}>{thought.title}</a>
             </li>
           ))}
         </ul>
@@ -81,8 +81,17 @@ const edges = graphFile.edges;
   }
 
   .listing li {
-    padding: var(--space-sm) 0;
+    padding: var(--space-sm) 0 var(--space-sm) var(--space-md);
     border-bottom: 1px solid var(--ink-faint);
+    border-left: 3px solid var(--ink-faint);
+  }
+
+  .listing li[data-maturity="budding"] {
+    border-left-color: var(--ink-medium);
+  }
+
+  .listing li[data-maturity="evergreen"] {
+    border-left-color: var(--ink-dark);
   }
 
   .listing li:last-child {

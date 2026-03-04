@@ -159,6 +159,32 @@
   background-color: var(--accent-yellow-dark);
 }
 
+/* Forward links — internal links to essays */
+.thought-content a[href^="/essays/"] {
+  text-decoration-color: var(--accent-blue);
+  text-decoration-thickness: 2px;
+}
+
+.thought-content a[href^="/essays/"]::before {
+  content: '';
+  display: inline-block;
+  vertical-align: .02em;
+  width: 0.6em;
+  height: 0.6em;
+  margin-right: 0.2em;
+  background-color: var(--accent-blue);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='0' y='5' width='7' height='2' fill='black'/%3E%3Cpolygon points='12,6 6,1 6,11' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Crect x='0' y='5' width='7' height='2' fill='black'/%3E%3Cpolygon points='12,6 6,1 6,11' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.thought-content a[href^="/essays/"]:hover {
+  text-decoration-color: var(--accent-blue-dark);
+}
+
+.thought-content a[href^="/essays/"]:hover::before {
+  background-color: var(--accent-blue-dark);
+}
+
 .thought-content table {
   width: 100%;
   border-collapse: collapse;

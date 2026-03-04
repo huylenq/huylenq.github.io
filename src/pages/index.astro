@@ -27,7 +27,7 @@ const essays = Object.values(essayModules)
     Welcome. I'm Huy — a programmer who sketches, reads, and occasionally writes.
   </p>
 
-  <section class="thoughts-section">
+  <section class="thoughts-section" data-accent="yellow">
     <h2><a href="/thoughts">Thoughts</a></h2>
     <p class="section-description">My shower thoughts, put together. Some of these are just incoherent thought dump placeholders.</p>
     {thoughts.length > 0 ? (
@@ -37,8 +37,8 @@ const essays = Object.values(essayModules)
         </div>
         <ul class="thoughts-list graph-mobile">
           {thoughts.map((thought) => (
-            <li>
-              <a href={`/thoughts/${thought.slug}`} data-maturity={thought.maturity ?? "seed"}>{thought.title}</a>
+            <li data-maturity={thought.maturity ?? "seed"}>
+              <a href={`/thoughts/${thought.slug}`}>{thought.title}</a>
             </li>
           ))}
         </ul>
@@ -48,7 +48,7 @@ const essays = Object.values(essayModules)
     )}
   </section>
 
-  <section class="thoughts-section">
+  <section class="thoughts-section" data-accent="blue">
     <h2><a href="/essays">Essays</a></h2>
     <p class="section-description">Interactive, play-able essays that I'm having fun making.</p>
     {essays.length > 0 ? (
@@ -103,6 +103,22 @@ const essays = Object.values(essayModules)
     border-bottom: 1px solid var(--ink-black);
   }
 
+  .thoughts-section[data-accent] h2 {
+    border-bottom-width: 2px;
+  }
+
+  :global([data-theme="dark"]) .thoughts-section[data-accent] h2 {
+    border-bottom-width: 1px;
+  }
+
+  .thoughts-section[data-accent="yellow"] h2 {
+    border-bottom-color: var(--accent-yellow);
+  }
+
+  .thoughts-section[data-accent="blue"] h2 {
+    border-bottom-color: var(--accent-blue);
+  }
+
   .thoughts-section h2 a {
     color: inherit;
     text-decoration: none;
@@ -114,8 +130,17 @@ const essays = Object.values(essayModules)
   }
 
   .thoughts-list li {
-    padding: var(--space-sm) 0;
+    padding: var(--space-sm) 0 var(--space-sm) var(--space-md);
     border-bottom: 1px solid var(--ink-faint);
+    border-left: 3px solid var(--ink-faint);
+  }
+
+  .thoughts-list li[data-maturity="budding"] {
+    border-left-color: var(--ink-medium);
+  }
+
+  .thoughts-list li[data-maturity="evergreen"] {
+    border-left-color: var(--ink-dark);
   }
 
   .thoughts-list li:last-child {
@@ -127,14 +152,6 @@ const essays = Object.values(essayModules)
     font-size: 0.95rem;
     color: var(--ink-dark);
     text-decoration: none;
-  }
-
-  .thoughts-list a[data-maturity="seed"] {
-    color: var(--ink-faint);
-  }
-
-  .thoughts-list a[data-maturity="budding"] {
-    color: var(--ink-medium);
   }
 
   .thoughts-list a:hover {
