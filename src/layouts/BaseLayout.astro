@@ -63,6 +63,54 @@ const { title = 'huylenq.com' } = Astro.props;
       }
     }
 
+    // --- Theme hint (anchored below toggle button for auto mode) ---
+    let hintTimer: number | undefined;
+
+    function dismissThemeHint() {
+      clearTimeout(hintTimer);
+      const hint = document.querySelector<HTMLElement>('.theme-hint');
+      if (!hint || !hint.hasAttribute('data-visible')) return;
+      hint.removeAttribute('data-visible');
+      hint.removeAttribute('data-fading');
+    }
+
+    function showThemeHint(text: string, btn: HTMLElement) {
+      const hint = document.querySelector<HTMLElement>('.theme-hint');
+      if (!hint) return;
+
+      // Cancel any in-flight hint
+      clearTimeout(hintTimer);
+      hint.removeAttribute('data-fading');
+
+      hint.textContent = text;
+      hint.setAttribute('data-visible', '');
+
+      // Position below the toggle button, centered horizontally
+      const btnRect = btn.getBoundingClientRect();
+      const gap = 10;
+      const hintRect = hint.getBoundingClientRect();
+      let left = btnRect.left + (btnRect.width - hintRect.width) / 2;
+      const top = btnRect.bottom + gap;
+
+      // Clamp to viewport edges
+      const pad = 8;
+      left = Math.max(pad, Math.min(left, window.innerWidth - hintRect.width - pad));
+
+      hint.style.left = `${left}px`;
+      hint.style.top = `${top}px`;
+
+      // After 1.5s, fade out
+      hintTimer = window.setTimeout(() => {
+        hint.setAttribute('data-fading', '');
+        const cleanup = () => {
+          hint.removeAttribute('data-visible');
+          hint.removeAttribute('data-fading');
+        };
+        hint.addEventListener('transitionend', cleanup, { once: true });
+        window.setTimeout(cleanup, 400);
+      }, 1500);
+    }
+
     // Cycle: auto → light → dark → auto
     document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -74,6 +122,11 @@ const { title = 'huylenq.com' } = Astro.props;
           localStorage.setItem('theme', next);
         }
         applyTheme();
+        if (next === 'auto') {
+          showThemeHint('Follows system theme', btn);
+        } else {
+          dismissThemeHint();
+        }
       });
     });
 

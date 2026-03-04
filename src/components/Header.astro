@@ -59,6 +59,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
       </svg>
     </button>
   </nav>
+  <span class="theme-hint" aria-hidden="true"></span>
 </header>
 
 <script>
@@ -383,6 +384,27 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
                 right 0.15s cubic-bezier(0.4, 0, 1, 1),
                 opacity 0s 0.15s;
   }
+
+  .theme-hint {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--ink-medium);
+    background: var(--paper);
+    border: 1px solid var(--ink-faint);
+    border-radius: var(--border-radius);
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: none;
+  }
+  .theme-hint[data-visible] { display: block; opacity: 1; }
+  .theme-hint[data-fading] { opacity: 0; }
 
   .theme-toggle {
     background: none;
