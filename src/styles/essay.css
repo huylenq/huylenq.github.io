@@ -298,6 +298,12 @@
   gap: 0;
   margin-bottom: var(--space-md);
   position: relative;
+  /* Break out to match panels */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+  box-sizing: border-box;
 }
 
 /* connecting line behind dots */
@@ -346,6 +352,12 @@
   color: var(--ink-dark);
 }
 
+.stepper-dot-active:hover .stepper-dot-circle {
+  border-color: var(--ink-black);
+  background: var(--ink-black);
+  color: var(--paper);
+}
+
 .stepper-dot-done .stepper-dot-circle {
   border-color: var(--ink-medium);
   background: var(--paper-aged);
@@ -376,25 +388,47 @@
   display: flex;
   gap: var(--space-sm);
   align-items: flex-start;
+  justify-content: center;
   padding: 6px;
+  /* Break out of essay-page max-width */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+  box-sizing: border-box;
+}
+
+.essay-stepper-separator {
+  width: 1px;
+  align-self: stretch;
+  background: var(--ink-faint);
+  flex: 0 0 1px;
+  margin: var(--space-lg) var(--space-sm);
 }
 
 .essay-stepper-panel {
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
   flex: 1;
   min-width: 0;
 }
 
 .essay-stepper-panels .tooth-canvas {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .essay-stepper-panels .tooth-canvas svg {
   width: 100%;
   max-width: 200px;
   height: auto;
+}
+
+.essay-stepper-panels .tooth-canvas {
   outline: 1.5px solid transparent;
   outline-offset: 3px;
   border-radius: var(--border-radius);
@@ -416,41 +450,48 @@
 }
 
 /* Active panel — outline around the visualization */
-.essay-stepper-panel-active .tooth-canvas svg {
+.essay-stepper-panel-active .tooth-canvas {
   outline-color: var(--ink-medium);
 }
 
-/* Dimmed panels — visible but faded (used at step 0) */
-.essay-stepper-panel-dimmed .essay-stepper-label {
+
+/* Future panels — visible but dimmed */
+.essay-stepper-panel-future .essay-stepper-label {
   color: var(--ink-faint);
 }
 
-.essay-stepper-panel-dimmed .tooth-canvas svg {
-  opacity: 0.45;
+.essay-stepper-panel-future .tooth-canvas svg {
+  opacity: 0.3;
   transition: opacity 0.3s;
 }
 
-.essay-stepper-panel-dimmed .tooth-canvas-label {
+.essay-stepper-panel-future .tooth-canvas-label {
   color: var(--ink-faint);
   transition: color 0.3s;
 }
 
-/* Future panels — hidden but space preserved */
-.essay-stepper-panel-future {
-  visibility: hidden;
-}
-
 /* Step description */
-.essay-stepper-description {
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  color: var(--ink-medium);
+.essay-stepper-description-wrapper {
+  display: grid;
   margin-top: var(--space-md);
-  text-align: center;
-  line-height: 1.5;
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.essay-stepper-description {
+  grid-area: 1 / 1;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--ink-medium);
+  text-align: center;
+  line-height: 1.5;
+  transition: opacity 0.2s ease;
+}
+
+.essay-stepper-description-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 600px) {

@@ -15,7 +15,7 @@ const STEPS = [
     stepNum: 'Step 1-1',
     stepAxis: 'Z-axis',
     description:
-      'Project onto the X-Y plane. Find reference points A and B on the convex hull, then rotate around the Z-axis to align A\u2013B with the horizontal axis.',
+      'Project onto the X-Y plane. Find reference points A and B on the convex hull. The displayed angle is the Z-axis rotation that will be applied to align A\u2013B horizontally.',
   },
   {
     label: 'Z-axis (2)',
@@ -23,7 +23,7 @@ const STEPS = [
     stepNum: 'Step 1-2',
     stepAxis: 'Z-axis',
     description:
-      'Re-project onto X-Y after the first correction. The hull shape has changed, so a second Z-axis pass refines the residual rotation.',
+      'Re-project onto X-Y after the first Z correction. The 3D rotation changed which points contribute to the hull boundary, revealing a residual angle. A second Z-axis pass corrects it.',
   },
   {
     label: 'X-axis',
@@ -31,7 +31,7 @@ const STEPS = [
     stepNum: 'Step 2',
     stepAxis: 'X-axis',
     description:
-      'Project onto the Y-Z plane. Rotate around the X-axis to correct the tooth\u2019s lateral tilt.',
+      'Project onto the Y-Z plane after both Z corrections. Find A and B, then rotate around the X-axis to correct lateral tilt.',
   },
   {
     label: 'Y-axis',
@@ -39,7 +39,7 @@ const STEPS = [
     stepNum: 'Step 3',
     stepAxis: 'Y-axis',
     description:
-      'Project onto the X-Z plane. Rotate around the Y-axis to correct the remaining front-to-back tilt.',
+      'Project onto the X-Z plane after Z and X corrections. Find A and B, then rotate around the Y-axis to correct the remaining front-to-back tilt.',
   },
 ] as const;
 
@@ -63,22 +63,43 @@ export function CorrectionStepper() {
         ))}
       </div>
       <div className="essay-stepper-panels">
+        <div
+          className={`essay-stepper-panel${step === 0 ? ' essay-stepper-panel-active' : ''}`}
+          onClick={() => setStep(0)}
+        >
+          <span className="essay-stepper-label">Original<br />X-Y view</span>
+          <ProjectionCanvas projection="xy" step={0} intense showRef={false} />
+        </div>
+        <div className="essay-stepper-separator" />
         {PROJECTIONS.map((s, i) => {
-          const isActive = i + 1 === step;
-          const isFuture = i + 1 > Math.max(step, 1);
-          const isDimmed = step === 0 && i === 0;
+          const stepIdx = i + 1;
+          const isNext = stepIdx === step + 1;
+          const isActive = stepIdx === step;
+          const isPast = stepIdx < step;
+          const isFuture = stepIdx > step + 1;
           return (
             <div
               key={i}
-              className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}${isDimmed ? ' essay-stepper-panel-dimmed' : ''}`}
+              className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}`}
+              onClick={() => setStep(stepIdx)}
             >
               <span className="essay-stepper-label">{s.stepNum}<br />{s.stepAxis}</span>
-              <ProjectionCanvas projection={s.projection!} intense />
+              {isPast || isActive ? (
+                <ProjectionCanvas projection={s.projection!} step={stepIdx} ghostStep={i} intense />
+              ) : isNext ? (
+                <ProjectionCanvas projection={s.projection!} step={i} ghostStep={i} ghostOnly intense />
+              ) : null}
             </div>
           );
         })}
       </div>
-      <p className="essay-stepper-description">{STEPS[step]?.description}</p>
+      <div className="essay-stepper-description-wrapper">
+        {STEPS.map((s, i) => (
+          <p key={i} className={`essay-stepper-description${i === step ? '' : ' essay-stepper-description-hidden'}`}>
+            {s.description}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }

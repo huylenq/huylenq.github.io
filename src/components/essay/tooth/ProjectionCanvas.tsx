@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useEssayState } from '../EssayContext';
 import { getToothPoints } from './toothShapes';
 import {
@@ -15,6 +15,7 @@ import {
   minBoundingRectPoints,
   correctionAngle,
   type Point2D,
+  type Point3D,
 } from './geometry';
 
 type Projection = 'xy' | 'yz' | 'xz';
@@ -42,71 +43,17 @@ const MARGIN = 20;
 const VIEW = SVG_SIZE - 2 * MARGIN;
 const ANIM_DURATION = 400;
 
-// ── Animation helpers ────────────────────────────────
+// ── Geometry helpers ─────────────────────────────────
 
 function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3);
 }
 
-function lerpNum(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
-}
-
-function lerpPt(a: Point2D, b: Point2D, t: number): Point2D {
-  return { x: lerpNum(a.x, b.x, t), y: lerpNum(a.y, b.y, t) };
-}
-
-function lerpPts(a: Point2D[], b: Point2D[], t: number): Point2D[] {
-  if (a.length === b.length) return a.map((p, i) => lerpPt(p, b[i], t));
-  // Different vertex counts: resample both to max length, then lerp
-  const n = Math.max(a.length, b.length);
-  const ra = resamplePolygon(a, n);
-  const rb = resamplePolygon(b, n);
-  return ra.map((p, i) => lerpPt(p, rb[i], t));
-}
-
-/** Resample a closed polygon to exactly `n` evenly-spaced vertices. */
-function resamplePolygon(pts: Point2D[], n: number): Point2D[] {
-  if (pts.length === 0) return [];
-  if (pts.length === n) return pts;
-  if (pts.length === 1) return Array(n).fill(pts[0]);
-
-  // Cumulative perimeter distances
-  const dists = [0];
-  for (let i = 1; i <= pts.length; i++) {
-    const prev = pts[i - 1];
-    const curr = pts[i % pts.length];
-    dists.push(dists[i - 1] + Math.hypot(curr.x - prev.x, curr.y - prev.y));
-  }
-  const total = dists[dists.length - 1];
-  if (total === 0) return Array(n).fill(pts[0]);
-
-  const result: Point2D[] = [];
-  let seg = 0;
-  for (let i = 0; i < n; i++) {
-    const target = (i / n) * total;
-    while (seg < pts.length - 1 && dists[seg + 1] < target) seg++;
-    const segLen = dists[seg + 1] - dists[seg];
-    const frac = segLen > 0 ? (target - dists[seg]) / segLen : 0;
-    const a = pts[seg];
-    const b = pts[(seg + 1) % pts.length];
-    result.push({ x: a.x + frac * (b.x - a.x), y: a.y + frac * (b.y - a.y) });
-  }
-  return result;
-}
-
-// ── Geometry helpers ─────────────────────────────────
-
-function scalePoints(pts: Point2D[]): {
-  scaled: Point2D[];
-  toSvg: (p: Point2D) => Point2D;
-} {
-  if (pts.length === 0) {
-    const toSvg = (p: Point2D) => p;
-    return { scaled: [], toSvg };
-  }
+/** Compute a toSvg mapping from a set of 2D points (unified bounding box). */
+function makeToSvg(allPoints: Point2D[]): (p: Point2D) => Point2D {
+  if (allPoints.length === 0) return (p) => p;
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-  for (const p of pts) {
+  for (const p of allPoints) {
     if (p.x < minX) minX = p.x;
     if (p.x > maxX) maxX = p.x;
     if (p.y < minY) minY = p.y;
@@ -115,11 +62,10 @@ function scalePoints(pts: Point2D[]): {
   const scale = VIEW / (Math.max(maxX - minX, maxY - minY) || 1);
   const cx = (minX + maxX) / 2;
   const cy = (minY + maxY) / 2;
-  const toSvg = (p: Point2D) => ({
+  return (p: Point2D) => ({
     x: MARGIN + VIEW / 2 + (p.x - cx) * scale,
     y: MARGIN + VIEW / 2 - (p.y - cy) * scale,
   });
-  return { scaled: pts.map(toSvg), toSvg };
 }
 
 function refPointsForMethod(
@@ -139,9 +85,47 @@ function refPointsForMethod(
   }
 }
 
-// ── Animated data type ───────────────────────────────
+// Correction step definitions for sequential application
+const CORRECTION_STEPS: {
+  project: (pts: Point3D[]) => Point2D[];
+  rotate: (pts: Point3D[], deg: number) => Point3D[];
+  axis: 'z' | 'x' | 'y';
+}[] = [
+  { project: projectToXY, rotate: rotateAroundZ, axis: 'z' },
+  { project: projectToXY, rotate: rotateAroundZ, axis: 'z' },
+  { project: projectToYZ, rotate: rotateAroundX, axis: 'x' },
+  { project: projectToXZ, rotate: rotateAroundY, axis: 'y' },
+];
 
-type CanvasData = {
+/**
+ * Apply corrections to 3D points. Supports fractional step count for animation.
+ * e.g. n=2.5 means steps 1,2 fully applied, step 3 at 50% of its correction angle.
+ */
+function applyCorrections(pts: Point3D[], n: number, method: number): Point3D[] {
+  let result = pts;
+  for (let i = 0; i < CORRECTION_STEPS.length && i < n; i++) {
+    const { project, rotate, axis } = CORRECTION_STEPS[i];
+    const hull = convexHull(project(result));
+    const { a, b } = refPointsForMethod(method, hull, centroid(hull));
+    const fullAngle = correctionAngle(a, b, axis);
+    const frac = Math.min(n - i, 1);
+    result = rotate(result, fullAngle * frac);
+  }
+  return result;
+}
+
+/** Compute raw (unscaled) layer data for a set of 3D points on a projection. */
+function computeRawLayer(pts3D: Point3D[], projection: Projection, method: number) {
+  const projected = PROJECT_FN[projection](pts3D);
+  const hullPts = convexHull(projected);
+  const ref = refPointsForMethod(method, hullPts, centroid(hullPts));
+  const angle = correctionAngle(ref.a, ref.b, CORRECTION_AXIS[projection]);
+  return { projected, hullPts, refA: ref.a, refB: ref.b, angle, rect: ref.rect };
+}
+
+// ── Data types ───────────────────────────────────────
+
+type LayerData = {
   scaledPoints: Point2D[];
   hull: Point2D[];
   refA: Point2D | null;
@@ -150,18 +134,11 @@ type CanvasData = {
   rect: Point2D[] | null;
 };
 
-function lerpData(from: CanvasData, to: CanvasData, t: number): CanvasData {
-  return {
-    scaledPoints: lerpPts(from.scaledPoints, to.scaledPoints, t),
-    hull: lerpPts(from.hull, to.hull, t),
-    refA: from.refA && to.refA ? lerpPt(from.refA, to.refA, t) : to.refA,
-    refB: from.refB && to.refB ? lerpPt(from.refB, to.refB, t) : to.refB,
-    angle: lerpNum(from.angle, to.angle, t),
-    rect: from.rect && to.rect && from.rect.length === to.rect.length
-      ? lerpPts(from.rect, to.rect, t)
-      : to.rect,
-  };
-}
+type CanvasData = LayerData & {
+  ghost: LayerData | null;
+};
+
+const EMPTY_LAYER: LayerData = { scaledPoints: [], hull: [], refA: null, refB: null, angle: 0, rect: null };
 
 // ── Component ────────────────────────────────────────
 
@@ -169,10 +146,16 @@ export function ProjectionCanvas({
   projection,
   intense = false,
   step: stepOverride,
+  ghostStep,
+  showRef = true,
+  ghostOnly = false,
 }: {
   projection: Projection;
   intense?: boolean;
   step?: number;
+  ghostStep?: number;
+  showRef?: boolean;
+  ghostOnly?: boolean;
 }) {
   const state = useEssayState();
   const isHydrated = Object.keys(state).length > 0;
@@ -186,78 +169,132 @@ export function ProjectionCanvas({
   const { tiltZ = 0, tiltX = 0, tiltY = 0, method = 0 } = state;
   const step = stepOverride ?? state.step ?? 0;
 
-  const target = useMemo((): CanvasData => {
-    if (!isHydrated) return { scaledPoints: [], hull: [], refA: null, refB: null, angle: 0, rect: null };
-
+  // Compute tilted base points (shared by all layers)
+  const basePts = useRef<Point3D[]>([]);
+  const basePtsKey = `${toothType}-${tiltZ}-${tiltX}-${tiltY}`;
+  const prevBasePtsKey = useRef('');
+  if (prevBasePtsKey.current !== basePtsKey) {
+    prevBasePtsKey.current = basePtsKey;
     let pts = toothPtsRef.current!.pts;
-
     pts = rotateAroundZ(pts, tiltZ);
     pts = rotateAroundX(pts, tiltX);
     pts = rotateAroundY(pts, tiltY);
+    basePts.current = pts;
+  }
 
-    if (step >= 1) {
-      const hullXY = convexHull(projectToXY(pts));
-      const { a, b } = refPointsForMethod(method, hullXY, centroid(hullXY));
-      pts = rotateAroundZ(pts, correctionAngle(a, b, 'z'));
-    }
-    if (step >= 2) {
-      const hullXY2 = convexHull(projectToXY(pts));
-      const { a, b } = refPointsForMethod(method, hullXY2, centroid(hullXY2));
-      pts = rotateAroundZ(pts, correctionAngle(a, b, 'z'));
-    }
-    if (step >= 3) {
-      const hullYZ = convexHull(projectToYZ(pts));
-      const { a, b } = refPointsForMethod(method, hullYZ, centroid(hullYZ));
-      pts = rotateAroundX(pts, correctionAngle(a, b, 'x'));
-    }
-    if (step >= 4) {
-      const hullXZ = convexHull(projectToXZ(pts));
-      const { a, b } = refPointsForMethod(method, hullXZ, centroid(hullXZ));
-      pts = rotateAroundY(pts, correctionAngle(a, b, 'y'));
+  /** Compute full CanvasData from a (possibly fractional) main step. */
+  const computeCanvas = useCallback((mainStep: number): CanvasData => {
+    if (!isHydrated) return { ...EMPTY_LAYER, ghost: null };
+
+    const pts = basePts.current;
+
+    // Main layer
+    const mainPts3D = applyCorrections(pts, mainStep, method);
+    const mainRaw = computeRawLayer(mainPts3D, projection, method);
+
+    // Ghost layer (always integer, no animation)
+    let ghostRaw = null;
+    if (ghostStep !== undefined) {
+      const ghostPts3D = applyCorrections(pts, ghostStep, method);
+      ghostRaw = computeRawLayer(ghostPts3D, projection, method);
     }
 
-    const projected = PROJECT_FN[projection](pts);
-    const hullPts = convexHull(projected);
-    const ref = refPointsForMethod(method, hullPts, centroid(hullPts));
-    const ang = correctionAngle(ref.a, ref.b, CORRECTION_AXIS[projection]);
+    // Unified scale: always include ghost + full correction to prevent
+    // scale jumps when toggling between active/ghostOnly modes
+    let allProjected = [...mainRaw.projected];
+    if (ghostRaw) allProjected.push(...ghostRaw.projected);
+    if (ghostStep !== undefined) {
+      const fullCorrPts3D = applyCorrections(pts, ghostStep + 1, method);
+      const fullCorrProjected = PROJECT_FN[projection](fullCorrPts3D);
+      allProjected.push(...fullCorrProjected);
+    }
+    const toSvg = makeToSvg(allProjected);
 
-    const { scaled: scaledHull, toSvg } = scalePoints(hullPts);
-    const scaledProjected = projected.map(toSvg);
-
-    return {
-      scaledPoints: scaledProjected,
-      hull: scaledHull,
-      refA: toSvg(ref.a),
-      refB: toSvg(ref.b),
-      angle: ang,
-      rect: ref.rect ? ref.rect.map(toSvg) : null,
+    // Main A-B: rotate ghost's A-B by the partial correction applied so far,
+    // so A-B moves rigidly with the point cloud during animation.
+    const mainHull = convexHull(mainRaw.projected);
+    let mainRefA: Point2D | null = null;
+    let mainRefB: Point2D | null = null;
+    let mainAngle = mainRaw.angle;
+    let mainRect = mainRaw.rect ? mainRaw.rect.map(toSvg) : null;
+    if (ghostRaw) {
+      const frac = Math.min(mainStep - (ghostStep ?? 0), 1);
+      const appliedDeg = ghostRaw.angle * frac;
+      // Sign of 2D rotation matches the 3D rotation matrix projected:
+      //   Z-axis (XY): rotateAroundZ rotates (x,y) → standard 2D rotation
+      //   X-axis (YZ): rotateAroundX rotates (y,z) → projected (y,z) standard
+      //   Y-axis (XZ): rotateAroundY has x'=xc+zs, z'=-xs+zc → projected (x,z) flipped sign
+      // Rotate around the origin (0,0) in projection space — same pivot as the 3D rotation.
+      const sign = projection === 'xz' ? -1 : 1;
+      const appliedRad = sign * (appliedDeg * Math.PI) / 180;
+      const rotPt = (p: Point2D): Point2D => {
+        const c = Math.cos(appliedRad);
+        const s = Math.sin(appliedRad);
+        return { x: p.x * c - p.y * s, y: p.x * s + p.y * c };
+      };
+      mainRefA = toSvg(rotPt(ghostRaw.refA));
+      mainRefB = toSvg(rotPt(ghostRaw.refB));
+      mainAngle = ghostRaw.angle * frac;
+      mainRect = ghostRaw.rect ? ghostRaw.rect.map(p => toSvg(rotPt(p))) : null;
+    } else {
+      mainRefA = toSvg(mainRaw.refA);
+      mainRefB = toSvg(mainRaw.refB);
+    }
+    const main: LayerData = {
+      scaledPoints: mainRaw.projected.map(toSvg),
+      hull: mainHull.map(toSvg),
+      refA: mainRefA,
+      refB: mainRefB,
+      angle: mainAngle,
+      rect: mainRect,
     };
-  }, [isHydrated, tiltZ, tiltX, tiltY, step, method, toothType, projection]);
 
-  // ── Animate between states ──
-  const [display, setDisplay] = useState<CanvasData>(target);
-  const currentRef = useRef<CanvasData>(target);
+    // Scale ghost
+    let ghost: LayerData | null = null;
+    if (ghostRaw) {
+      const ghostHull = convexHull(ghostRaw.projected);
+      ghost = {
+        scaledPoints: ghostRaw.projected.map(toSvg),
+        hull: ghostHull.map(toSvg),
+        refA: toSvg(ghostRaw.refA),
+        refB: toSvg(ghostRaw.refB),
+        angle: ghostRaw.angle,
+        rect: ghostRaw.rect ? ghostRaw.rect.map(toSvg) : null,
+      };
+    }
+
+    return { ...main, ghost };
+  }, [isHydrated, method, ghostStep, projection, basePtsKey]);
+
+  // ── Animate via fractional step ──
+  const [display, setDisplay] = useState<CanvasData>(() => computeCanvas(step));
+  const prevStepRef = useRef(step);
   const animRef = useRef<number>(0);
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    // Skip animation on first render
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      currentRef.current = target;
-      setDisplay(target);
+      prevStepRef.current = step;
+      setDisplay(computeCanvas(step));
       return;
     }
 
-    const from = currentRef.current;
-    const to = target;
-    const start = performance.now();
+    const fromStep = prevStepRef.current;
+    const toStep = step;
+    prevStepRef.current = toStep;
 
+    // Non-animated: snap when step doesn't change (other params changed)
+    if (fromStep === toStep) {
+      setDisplay(computeCanvas(toStep));
+      return;
+    }
+
+    const start = performance.now();
     const tick = (now: number) => {
       const t = easeOutCubic(Math.min((now - start) / ANIM_DURATION, 1));
-      const frame = lerpData(from, to, t);
-      currentRef.current = frame;
-      setDisplay(frame);
+      const fractionalStep = fromStep + (toStep - fromStep) * t;
+      setDisplay(computeCanvas(fractionalStep));
       if (t < 1) {
         animRef.current = requestAnimationFrame(tick);
       }
@@ -266,13 +303,18 @@ export function ProjectionCanvas({
     cancelAnimationFrame(animRef.current);
     animRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animRef.current);
-  }, [target]);
+  }, [step, computeCanvas]);
+
+  // Snap on non-step param changes
+  useEffect(() => {
+    setDisplay(computeCanvas(step));
+  }, [basePtsKey, method, ghostStep, projection]);
 
   if (!isHydrated) {
     return <div className="tooth-canvas" style={{ width: SVG_SIZE, height: SVG_SIZE + 28 }} />;
   }
 
-  const { scaledPoints, hull, refA, refB, angle, rect } = display;
+  const { scaledPoints, hull, refA, refB, angle, rect, ghost } = display;
 
   const hullPath = hull.length > 0
     ? `M ${hull.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
@@ -280,6 +322,10 @@ export function ProjectionCanvas({
 
   const rectPath = rect
     ? `M ${rect.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
+    : '';
+
+  const ghostHullPath = ghost && ghost.hull.length > 0
+    ? `M ${ghost.hull.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
     : '';
 
   const ink = intense
@@ -295,51 +341,73 @@ export function ProjectionCanvas({
         <line x1={SVG_SIZE / 2} y1={MARGIN} x2={SVG_SIZE / 2} y2={SVG_SIZE - MARGIN}
           stroke={`var(--ink-${ink.cross})`} strokeWidth={0.5} strokeDasharray="4 4" />
 
-        {/* Point cloud */}
+        {/* ── Ghost layer (before correction) ── */}
+        {ghost && (
+          <g opacity={0.7}>
+            {ghost.scaledPoints.map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r={1} fill="var(--ink-faint)" />
+            ))}
+            {ghostHullPath && (
+              <path d={ghostHullPath} fill="none" stroke="var(--ink-faint)" strokeWidth={0.8} />
+            )}
+            {ghost.refA && ghost.refB && (
+              <line x1={ghost.refA.x} y1={ghost.refA.y} x2={ghost.refB.x} y2={ghost.refB.y}
+                stroke="var(--ink-light)" strokeWidth={1} strokeDasharray="3 2" />
+            )}
+          </g>
+        )}
+
+        {/* ── Ghost ref overlay (when ghostOnly, promote A-B/arc/labels from ghost) ── */}
+        {ghostOnly && ghost && ghost.refA && ghost.refB && (
+          <>
+            <line x1={ghost.refA.x} y1={ghost.refA.y} x2={ghost.refB.x} y2={ghost.refB.y}
+              stroke={`var(--ink-${ink.ab})`} strokeWidth={1.5} />
+            <circle cx={ghost.refA.x} cy={ghost.refA.y} r={3.5} fill="var(--ink-black)" />
+            <text x={ghost.refA.x + 6} y={ghost.refA.y - 6} fontSize={10}
+              fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}>A</text>
+            <circle cx={ghost.refB.x} cy={ghost.refB.y} r={3.5} fill="var(--ink-black)" />
+            <text x={ghost.refB.x + 6} y={ghost.refB.y - 6} fontSize={10}
+              fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}>B</text>
+          </>
+        )}
+
+        {/* ── Main layer (after correction) ── */}
+        {!ghostOnly && <>
         {scaledPoints.map((p, i) => (
           <circle key={i} cx={p.x} cy={p.y} r={1.2} fill={`var(--ink-${ink.dots})`} />
         ))}
-
-        {/* Convex hull */}
         {hullPath && (
           <path d={hullPath} fill="none" stroke={`var(--ink-${ink.hull})`} strokeWidth={ink.hullW} />
         )}
-
-        {/* Bounding rectangle overlay */}
         {rectPath && (
           <path d={rectPath} fill="none" stroke={`var(--ink-${ink.rect})`} strokeWidth={ink.rectW} strokeDasharray="3 3" />
         )}
-
-        {/* Line AB */}
-        {refA && refB && (
+        {showRef && refA && refB && (
           <line x1={refA.x} y1={refA.y} x2={refB.x} y2={refB.y}
             stroke={`var(--ink-${ink.ab})`} strokeWidth={1.5} />
         )}
-
-        {/* Angle arc */}
-        {refA && refB && Math.abs(angle) > 0.5 && (
+        {showRef && refA && refB && Math.abs(angle) > 0.5 && (
           <AngleArc a={refA} b={refB} angle={angle} projection={projection} intense={intense} />
         )}
-
-        {/* Reference points A, B */}
-        {refA && (
+        {showRef && refA && (
           <>
             <circle cx={refA.x} cy={refA.y} r={3.5} fill="var(--ink-black)" />
             <text x={refA.x + 6} y={refA.y - 6} fontSize={10}
               fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}>A</text>
           </>
         )}
-        {refB && (
+        {showRef && refB && (
           <>
             <circle cx={refB.x} cy={refB.y} r={3.5} fill="var(--ink-black)" />
             <text x={refB.x + 6} y={refB.y - 6} fontSize={10}
               fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}>B</text>
           </>
         )}
+        </>}
       </svg>
-      <div className="tooth-canvas-label">
+      <div className="tooth-canvas-label" style={showRef ? undefined : { visibility: 'hidden' }}>
         <span className="tooth-canvas-axis">{AXIS_LABEL[projection]}</span>
-        <span className="tooth-canvas-angle">{angle.toFixed(1)}°</span>
+        <span className="tooth-canvas-angle">{(ghostOnly ? 0 : angle).toFixed(1)}°</span>
       </div>
     </div>
   );
