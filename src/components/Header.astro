@@ -41,12 +41,14 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     <slot name="section-extra" />
   </span>
   <nav class="site-nav">
+    <svg class="nav-stroke" width="100%" height="100%" aria-hidden="true">
+      <path/>
+    </svg>
     {sections.map((s) => (
       <a href={`/${s}`} aria-current={activeSection === s ? 'page' : undefined} data-text={s.charAt(0).toUpperCase() + s.slice(1)}>
         {s.charAt(0).toUpperCase() + s.slice(1)}
       </a>
     ))}
-    <span class="nav-indicator" aria-hidden="true"></span>
     <button class="theme-toggle theme-toggle--desktop" id="theme-toggle" aria-label="Toggle theme">
       <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
@@ -94,86 +96,383 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     });
   }
 
-  // --- Sliding nav indicator ---
+  // --- Unified nav stroke: single SVG path morphing between bar and circle ---
+  import { createTimeline, cubicBezier } from 'animejs';
+
+  const easeLeading  = cubicBezier(0.2, 1, 0.3, 1);   // springy ease-out: leading edge overshoots
+  const easeTrailing = cubicBezier(0.4, 0, 0.1, 1);   // slow start, snap finish: trailing edge catches up
+  const easeCircle   = cubicBezier(0.25, 1, 0.5, 1);   // smooth ease-out for circle inflate
+  const easeIn       = cubicBezier(0.4, 0, 1, 1);      // ease-in for shrink & deflate
+
   const nav = document.querySelector<HTMLElement>('.site-nav')!;
-  const indicator = nav.querySelector<HTMLElement>('.nav-indicator')!;
+  const pathEl = nav.querySelector<SVGPathElement>('.nav-stroke path')!;
   const navLinks = nav.querySelectorAll<HTMLAnchorElement>('a[href]');
+  const desktopToggle = nav.querySelector<HTMLElement>('.theme-toggle--desktop')!;
+
+  function clearDash() {
+    pathEl.style.strokeDasharray = '';
+    pathEl.style.strokeDashoffset = '0';
+  }
+
+  const K = 0.5522847498; // bezier approximation constant for quarter-circle
+  const R = 16;
+  const CIRC = 2 * Math.PI * R;
+  const GAP_DEG = 220;
+  const GAP_LEN = CIRC * GAP_DEG / 360;
+  const CIRC_VIS = CIRC - GAP_LEN; // 270° visible arc
+
+  // Set circle resting state: 270° arc with gap centered at 6 o'clock (opening downward)
+  function setCircleRest() {
+    pathEl.style.strokeDasharray = `${CIRC_VIS} ${GAP_LEN}`;
+    pathEl.style.strokeDashoffset = `${-(GAP_LEN / 2)}`;
+  }
 
   const colorMap: Record<string, string> = {
     '/thoughts': 'var(--accent-yellow)',
     '/essays': 'var(--accent-blue)',
   };
 
+  // --- Geometry: line and circle share identical M C C C C Z structure (26 values) ---
+  // Both shapes use 4 cubic bezier segments so anime.js can interpolate d directly.
+
+  // Line CCW: center→left→center→right→center (matches CCW circle for rightward motion)
+  function lineCCW(lx: number, rx: number, y: number): string {
+    const cx = (lx + rx) / 2;
+    return `M ${cx} ${y} C ${(2*cx+lx)/3} ${y} ${(cx+2*lx)/3} ${y} ${lx} ${y} C ${(2*lx+cx)/3} ${y} ${(lx+2*cx)/3} ${y} ${cx} ${y} C ${(2*cx+rx)/3} ${y} ${(cx+2*rx)/3} ${y} ${rx} ${y} C ${(2*rx+cx)/3} ${y} ${(rx+2*cx)/3} ${y} ${cx} ${y} Z`;
+  }
+
+  // Line CW: center→right→center→left→center (matches CW circle for leftward motion)
+  function lineCW(lx: number, rx: number, y: number): string {
+    const cx = (lx + rx) / 2;
+    return `M ${cx} ${y} C ${(2*cx+rx)/3} ${y} ${(cx+2*rx)/3} ${y} ${rx} ${y} C ${(2*rx+cx)/3} ${y} ${(rx+2*cx)/3} ${y} ${cx} ${y} C ${(2*cx+lx)/3} ${y} ${(cx+2*lx)/3} ${y} ${lx} ${y} C ${(2*lx+cx)/3} ${y} ${(lx+2*cx)/3} ${y} ${cx} ${y} Z`;
+  }
+
+  // Circle CCW from 6 o'clock: bottom→left→top→right→bottom
+  function circleCCW(cx: number, cy: number, r: number): string {
+    const k = r * K;
+    return `M ${cx} ${cy+r} C ${cx-k} ${cy+r} ${cx-r} ${cy+k} ${cx-r} ${cy} C ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r} C ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy} C ${cx+r} ${cy+k} ${cx+k} ${cy+r} ${cx} ${cy+r} Z`;
+  }
+
+  // Circle CW from 6 o'clock: bottom→right→top→left→bottom
+  function circleCW(cx: number, cy: number, r: number): string {
+    const k = r * K;
+    return `M ${cx} ${cy+r} C ${cx+k} ${cy+r} ${cx+r} ${cy+k} ${cx+r} ${cy} C ${cx+r} ${cy-k} ${cx+k} ${cy-r} ${cx} ${cy-r} C ${cx-k} ${cy-r} ${cx-r} ${cy-k} ${cx-r} ${cy} C ${cx-r} ${cy+k} ${cx-k} ${cy+r} ${cx} ${cy+r} Z`;
+  }
+
+  // --- Composite paths for seamless line↔circle worm animation ---
+  // Single open path: line segment → connecting curve → full circle arc
+  function compositeLineToCircle(lx: number, rx: number, y: number, cx: number, cy: number, r: number, movingRight: boolean) {
+    const k = r * K;
+    const bot = cy + r;
+    let d: string;
+    if (movingRight) {
+      // Arrive at 6 o'clock, continue CW (right→top→left→back)
+      d = `M ${lx} ${y} L ${rx} ${y}` +
+        ` C ${(rx+cx)/2} ${y} ${cx} ${(y+bot)/2} ${cx} ${bot}` +
+        ` C ${cx+k} ${bot} ${cx+r} ${cy+k} ${cx+r} ${cy}` +
+        ` C ${cx+r} ${cy-k} ${cx+k} ${cy-r} ${cx} ${cy-r}` +
+        ` C ${cx-k} ${cy-r} ${cx-r} ${cy-k} ${cx-r} ${cy}` +
+        ` C ${cx-r} ${cy+k} ${cx-k} ${bot} ${cx} ${bot}`;
+    } else {
+      // Arrive at 6 o'clock, continue CCW (left→top→right→back)
+      d = `M ${rx} ${y} L ${lx} ${y}` +
+        ` C ${(lx+cx)/2} ${y} ${cx} ${(y+bot)/2} ${cx} ${bot}` +
+        ` C ${cx-k} ${bot} ${cx-r} ${cy+k} ${cx-r} ${cy}` +
+        ` C ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r}` +
+        ` C ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy}` +
+        ` C ${cx+r} ${cy+k} ${cx+k} ${bot} ${cx} ${bot}`;
+    }
+    return { d, lineLen: Math.abs(rx - lx) };
+  }
+
+  // Reverse: circle arcs → connecting curve → line segment
+  function compositeCircleToLine(cx: number, cy: number, r: number, lx: number, rx: number, y: number, movingRight: boolean) {
+    const k = r * K;
+    const bot = cy + r;
+    let d: string;
+    if (movingRight) {
+      // Circle CW (right→top→left→back to 6 o'clock), then curve out rightward to line
+      d = `M ${cx} ${bot}` +
+        ` C ${cx+k} ${bot} ${cx+r} ${cy+k} ${cx+r} ${cy}` +
+        ` C ${cx+r} ${cy-k} ${cx+k} ${cy-r} ${cx} ${cy-r}` +
+        ` C ${cx-k} ${cy-r} ${cx-r} ${cy-k} ${cx-r} ${cy}` +
+        ` C ${cx-r} ${cy+k} ${cx-k} ${bot} ${cx} ${bot}` +
+        ` C ${cx} ${(bot+y)/2} ${(cx+lx)/2} ${y} ${lx} ${y}` +
+        ` L ${rx} ${y}`;
+    } else {
+      // Circle CCW (left→top→right→back to 6 o'clock), then curve out leftward to line
+      d = `M ${cx} ${bot}` +
+        ` C ${cx-k} ${bot} ${cx-r} ${cy+k} ${cx-r} ${cy}` +
+        ` C ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r}` +
+        ` C ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy}` +
+        ` C ${cx+r} ${cy+k} ${cx+k} ${bot} ${cx} ${bot}` +
+        ` C ${cx} ${(bot+y)/2} ${(cx+rx)/2} ${y} ${rx} ${y}` +
+        ` L ${lx} ${y}`;
+    }
+    return { d, lineLen: Math.abs(rx - lx) };
+  }
+
+  // --- State ---
+  let barY = 0;
+  let toggleCX = 0, toggleCY = 0;
+  let currentLeftX = 0, currentRightX = 0;
+  let currentShape: 'line' | 'circle' | 'none' = 'none';
+  let currentAnim: ReturnType<typeof createTimeline> | null = null;
+  let geometryDirty = true;
+
+  function updateGeometry() {
+    if (!geometryDirty) return;
+    const navRect = nav.getBoundingClientRect();
+    barY = navRect.height + 2;
+    const toggleRect = desktopToggle.getBoundingClientRect();
+    toggleCX = toggleRect.left - navRect.left + toggleRect.width / 2;
+    toggleCY = barY - R;
+    geometryDirty = false;
+  }
+
+  function invalidateGeometry() { geometryDirty = true; }
+
   function getActiveLink(): HTMLAnchorElement | null {
     return nav.querySelector<HTMLAnchorElement>('a[aria-current]');
   }
 
-  let lastLeft = 0;
+  function getStrokeColor(target: HTMLElement | null): string {
+    if (!target) return 'var(--ink-faint)';
+    if (target === desktopToggle) return 'var(--ink-medium)';
+    const href = target.getAttribute('href') || '';
+    return colorMap[href] || 'var(--ink-faint)';
+  }
 
-  function moveIndicatorTo(link: HTMLAnchorElement | null, animate = true) {
-    if (!link) {
-      if (!animate) {
-        indicator.style.transition = 'none';
-        indicator.removeAttribute('data-direction');
-        indicator.style.setProperty('--ind-opacity', '0');
-        indicator.offsetHeight;
-        indicator.style.transition = '';
-        return;
+  function moveIndicatorTo(target: HTMLElement | null, shouldAnimate = true) {
+    if (currentAnim) {
+      currentAnim.pause();
+      currentAnim = null;
+    }
+
+    updateGeometry();
+    const isCircle = target === desktopToggle;
+    const navRect = nav.getBoundingClientRect();
+
+    // --- Mode 1: Instant set (resize, navigation, initial paint) ---
+    if (!shouldAnimate) {
+      if (target) {
+        const targetRect = target.getBoundingClientRect();
+        if (isCircle) {
+          pathEl.setAttribute('d', circleCCW(toggleCX, toggleCY, R));
+          pathEl.style.stroke = 'var(--ink-medium)';
+          pathEl.style.strokeWidth = '2';
+          pathEl.style.opacity = '1';
+          setCircleRest();
+          currentLeftX = toggleCX - 4;
+          currentRightX = toggleCX + 4;
+          currentShape = 'circle';
+        } else {
+          clearDash();
+          const lx = targetRect.left - navRect.left;
+          const rx = targetRect.right - navRect.left;
+          pathEl.setAttribute('d', lineCCW(lx, rx, barY));
+          pathEl.style.stroke = getStrokeColor(target);
+          pathEl.style.strokeWidth = '2';
+          pathEl.style.opacity = '1';
+          currentLeftX = lx;
+          currentRightX = rx;
+          currentShape = 'line';
+        }
+
+      } else {
+        clearDash();
+        pathEl.style.opacity = '0';
+        currentShape = 'none';
       }
-      // Shrink to center of current position
-      const currentLeft = parseFloat(indicator.style.getPropertyValue('--ind-left')) || 0;
-      const currentRight = parseFloat(indicator.style.getPropertyValue('--ind-right')) || 0;
-      const navWidth = nav.getBoundingClientRect().width;
-      const barWidth = navWidth - currentLeft - currentRight;
-      const center = currentLeft + barWidth / 2;
-
-      indicator.setAttribute('data-direction', 'shrink');
-      indicator.style.setProperty('--ind-left', `${center}px`);
-      indicator.style.setProperty('--ind-right', `${navWidth - center}px`);
-      indicator.style.setProperty('--ind-opacity', '0');
       return;
     }
 
-    const navRect = nav.getBoundingClientRect();
-    const linkRect = link.getBoundingClientRect();
-    const newLeft = linkRect.left - navRect.left;
-    const newRight = navRect.right - linkRect.right;
-    const href = link.getAttribute('href') || '';
-    const color = colorMap[href] || 'var(--ink-faint)';
+    // --- Mode 5: Shrink/hide (target = null) ---
+    if (!target) {
+      if (currentShape === 'circle') {
+        // Erase circle stroke then fade — start from current 140° arc rest state
+        pathEl.style.strokeDasharray = `${CIRC_VIS} ${GAP_LEN}`;
+        const tl = createTimeline({ onComplete: clearDash });
+        tl.add(pathEl, { strokeDashoffset: [-(GAP_LEN / 2), CIRC_VIS], opacity: 0, duration: 300, ease: easeIn }, 0);
+        currentShape = 'none';
+        currentAnim = tl;
+        return;
+      }
+      clearDash();
+      const centerX = (currentLeftX + currentRightX) / 2;
+      const pointD = lineCCW(centerX, centerX, barY);
 
-    if (!animate) {
-      indicator.style.transition = 'none';
-      indicator.removeAttribute('data-direction');
+      const tl = createTimeline();
+      tl.add(pathEl, { d: pointD, opacity: 0, duration: 200, ease: easeIn }, 0);
+      currentShape = 'none';
+      currentAnim = tl;
+      return;
+    }
+
+    const targetRect = target.getBoundingClientRect();
+
+    // --- Mode 3: → toggle (morph to circle) ---
+    if (isCircle) {
+      if (currentShape === 'circle') return;
+
+      const movingRight = toggleCX >= (currentLeftX + currentRightX) / 2;
+      const lineFn = movingRight ? lineCCW : lineCW;
+      const circleFn = movingRight ? circleCCW : circleCW;
+
+      // From 'none': draw circle via dashoffset
+      if (currentShape === 'none') {
+        pathEl.setAttribute('d', circleFn(toggleCX, toggleCY, R));
+        pathEl.style.stroke = 'var(--ink-medium)';
+        pathEl.style.strokeWidth = '2';
+        pathEl.style.opacity = '1';
+        pathEl.style.strokeDasharray = `${CIRC_VIS} ${GAP_LEN}`;
+        const tl = createTimeline();
+        tl.add(pathEl, { strokeDashoffset: [CIRC_VIS, -(GAP_LEN / 2)], duration: 400, ease: easeCircle }, 0);
+        currentLeftX = toggleCX - 4;
+        currentRightX = toggleCX + 4;
+
+        currentShape = 'circle';
+        currentAnim = tl;
+        return;
+      }
+
+      // From 'line': single composite path with worm dash animation
+      const comp = compositeLineToCircle(currentLeftX, currentRightX, barY, toggleCX, toggleCY, R, movingRight);
+      pathEl.setAttribute('d', comp.d);
+      const totalLen = pathEl.getTotalLength();
+      pathEl.style.stroke = 'var(--ink-medium)';
+      pathEl.style.opacity = '1';
+
+      const proxy = { leading: comp.lineLen, trailing: 0 };
+      // Set initial dash state immediately to prevent flash of full composite path
+      pathEl.style.strokeDasharray = `${comp.lineLen} ${totalLen}`;
+      pathEl.style.strokeDashoffset = '0';
+      const tl = createTimeline({
+        onRender: () => {
+          const dashLen = proxy.leading - proxy.trailing;
+          pathEl.style.strokeDasharray = `${dashLen} ${totalLen}`;
+          pathEl.style.strokeDashoffset = `${-proxy.trailing}`;
+        },
+        onComplete: () => {
+          pathEl.setAttribute('d', circleFn(toggleCX, toggleCY, R));
+          setCircleRest();
+        }
+      });
+      tl.add(proxy, { leading: totalLen - GAP_LEN / 2, duration: 400, ease: easeLeading }, 0);
+      tl.add(proxy, { trailing: totalLen - CIRC + GAP_LEN / 2, duration: 400, ease: easeTrailing }, 30);
+      tl.add(pathEl, { strokeWidth: 2, duration: 400 }, 0);
+
+      currentLeftX = toggleCX - 4;
+      currentRightX = toggleCX + 4;
+
+      currentShape = 'circle';
+      currentAnim = tl;
+      return;
+    }
+
+    // Target is a nav link
+    const targetLX = targetRect.left - navRect.left;
+    const targetRX = targetRect.right - navRect.left;
+    const color = getStrokeColor(target);
+
+    // --- Mode 4: Toggle → nav link (single composite worm animation) ---
+    if (currentShape === 'circle') {
+      const movingRight = targetLX >= toggleCX;
+      const lineFn = movingRight ? lineCCW : lineCW;
+
+      const comp = compositeCircleToLine(toggleCX, toggleCY, R, targetLX, targetRX, barY, movingRight);
+      pathEl.setAttribute('d', comp.d);
+      const totalLen = pathEl.getTotalLength();
+      pathEl.style.stroke = color;
+      pathEl.style.opacity = '1';
+
+      const proxy = { leading: GAP_LEN / 2 + CIRC_VIS, trailing: GAP_LEN / 2 };
+      // Set initial dash state immediately to prevent flash of full composite path
+      const initDash = proxy.leading - proxy.trailing;
+      pathEl.style.strokeDasharray = `${initDash} ${totalLen}`;
+      pathEl.style.strokeDashoffset = `${-proxy.trailing}`;
+      const tl = createTimeline({
+        onRender: () => {
+          const dashLen = proxy.leading - proxy.trailing;
+          pathEl.style.strokeDasharray = `${dashLen} ${totalLen}`;
+          pathEl.style.strokeDashoffset = `${-proxy.trailing}`;
+        },
+        onComplete: () => {
+          pathEl.setAttribute('d', lineFn(targetLX, targetRX, barY));
+          clearDash();
+        }
+      });
+      tl.add(proxy, { leading: totalLen, duration: 400, ease: easeLeading }, 0);
+      tl.add(proxy, { trailing: totalLen - comp.lineLen, duration: 400, ease: easeTrailing }, 30);
+      tl.add(pathEl, { strokeWidth: 2, duration: 400 }, 0);
+
+      currentLeftX = targetLX;
+      currentRightX = targetRX;
+
+      currentShape = 'line';
+      currentAnim = tl;
+      return;
+    }
+
+    // --- Fade-in (currentShape = 'none') ---
+    if (currentShape === 'none') {
+      clearDash();
+      pathEl.setAttribute('d', lineCCW(targetLX, targetRX, barY));
+      pathEl.style.stroke = color;
+      pathEl.style.strokeWidth = '2';
+      const tl = createTimeline();
+      tl.add(pathEl, { opacity: [0, 1], duration: 200 }, 0);
+      currentLeftX = targetLX;
+      currentRightX = targetRX;
+
+      currentShape = 'line';
+      currentAnim = tl;
+      return;
+    }
+
+    // --- Mode 2: Nav link → nav link (elastic stretch) ---
+    clearDash();
+    const movingRight = targetLX >= currentLeftX;
+    const lineFn = movingRight ? lineCCW : lineCW;
+
+    // Animate proxy object; rebuild d string each render frame
+    const proxy = { leftX: currentLeftX, rightX: currentRightX };
+    const tl = createTimeline({
+      onRender: () => {
+        pathEl.setAttribute('d', lineFn(proxy.leftX, proxy.rightX, barY));
+        currentLeftX = proxy.leftX;
+        currentRightX = proxy.rightX;
+      }
+    });
+
+    if (movingRight) {
+      // Right edge leads
+      tl.add(proxy, { rightX: targetRX, duration: 300, ease: easeLeading }, 0);
+      tl.add(proxy, { leftX: targetLX, duration: 350, ease: easeTrailing }, 30);
     } else {
-      // Set direction so CSS picks the right staggered transition
-      indicator.setAttribute('data-direction', newLeft >= lastLeft ? 'right' : 'left');
+      // Left edge leads
+      tl.add(proxy, { leftX: targetLX, duration: 300, ease: easeLeading }, 0);
+      tl.add(proxy, { rightX: targetRX, duration: 350, ease: easeTrailing }, 30);
     }
 
-    indicator.style.setProperty('--ind-left', `${newLeft}px`);
-    indicator.style.setProperty('--ind-right', `${newRight}px`);
-    indicator.style.setProperty('--ind-opacity', '1');
-    indicator.style.backgroundColor = color;
-    lastLeft = newLeft;
-
-    if (!animate) {
-      // Force reflow then restore transition
-      indicator.offsetHeight;
-      indicator.style.transition = '';
-    }
+    pathEl.style.stroke = color;
+    pathEl.style.opacity = '1';
+    currentShape = 'line';
+    currentAnim = tl;
   }
 
-  // Hover: slide to hovered link, return to active on leave
+  // --- Event listeners ---
   navLinks.forEach(link => {
     link.addEventListener('mouseenter', () => moveIndicatorTo(link));
-    // Eagerly set aria-current on click so bold persists through view transition
     link.addEventListener('click', () => {
       navLinks.forEach(l => l.removeAttribute('aria-current'));
       link.setAttribute('aria-current', 'page');
     });
   });
+  desktopToggle.addEventListener('mouseenter', () => moveIndicatorTo(desktopToggle));
   nav.addEventListener('mouseleave', () => moveIndicatorTo(getActiveLink()));
 
-  // Sync slotted content (e.g. "Download Resumé") from incoming page into persisted header
+  // Sync slotted content from incoming page into persisted header
   document.addEventListener('astro:before-swap', (e: any) => {
     const persistedGroup = document.querySelector('.header-section-group');
     const incomingGroup = e.newDocument.querySelector('.header-section-group');
@@ -182,21 +481,16 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     }
   });
 
-  // Navigation: update active state, then slide indicator
   function onNavigate() {
+    invalidateGeometry();
     updateActiveNav();
     moveIndicatorTo(getActiveLink(), false);
   }
   document.addEventListener('astro:after-swap', onNavigate);
 
-  // Initial paint — no animation
   moveIndicatorTo(getActiveLink(), false);
-
-  // Reposition on resize (no animation)
-  window.addEventListener('resize', () => moveIndicatorTo(getActiveLink(), false));
-
-  // Handle late font metric changes
-  document.fonts.ready.then(() => moveIndicatorTo(getActiveLink(), false));
+  window.addEventListener('resize', () => { invalidateGeometry(); moveIndicatorTo(getActiveLink(), false); });
+  document.fonts.ready.then(() => { invalidateGeometry(); moveIndicatorTo(getActiveLink(), false); });
 </script>
 
 <style>
@@ -344,45 +638,19 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     font-weight: 700;
   }
 
-  .nav-indicator {
+  .nav-stroke {
     position: absolute;
-    bottom: -3px;
-    height: 2px;
-    left: var(--ind-left, 0px);
-    right: var(--ind-right, 0px);
-    opacity: var(--ind-opacity, 0);
-    background-color: var(--ink-faint);
-    border-radius: 1px;
+    inset: 0;
+    overflow: visible;
     pointer-events: none;
-    will-change: left, right;
-    /* Default (no direction yet): uniform transition */
-    transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                right 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                background-color 0.2s ease,
-                opacity 0.2s ease;
   }
 
-  /* Moving right: right (leading) edge races ahead, left (trailing) edge catches up */
-  .nav-indicator[data-direction="right"] {
-    transition: left 0.35s cubic-bezier(0.4, 0, 0.1, 1) 0.03s,
-                right 0.3s cubic-bezier(0.2, 1, 0.3, 1),
-                background-color 0.2s ease,
-                opacity 0.2s ease;
-  }
-
-  /* Moving left: left (leading) edge races ahead, right (trailing) edge catches up */
-  .nav-indicator[data-direction="left"] {
-    transition: left 0.3s cubic-bezier(0.2, 1, 0.3, 1),
-                right 0.35s cubic-bezier(0.4, 0, 0.1, 1) 0.03s,
-                background-color 0.2s ease,
-                opacity 0.2s ease;
-  }
-
-  /* Shrink: both edges collapse to center, opacity snaps off after */
-  .nav-indicator[data-direction="shrink"] {
-    transition: left 0.15s cubic-bezier(0.4, 0, 1, 1),
-                right 0.15s cubic-bezier(0.4, 0, 1, 1),
-                opacity 0s 0.15s;
+  .nav-stroke path {
+    fill: none;
+    stroke: var(--ink-faint);
+    stroke-width: 2;
+    stroke-linecap: round;
+    transition: stroke 0.3s ease;
   }
 
   .theme-hint {
