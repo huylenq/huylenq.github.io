@@ -43,6 +43,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
         {s.charAt(0).toUpperCase() + s.slice(1)}
       </a>
     ))}
+    <span class="nav-indicator" aria-hidden="true"></span>
     <button class="theme-toggle theme-toggle--desktop" id="theme-toggle" aria-label="Toggle dark mode">
       <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
@@ -86,7 +87,70 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     });
   }
 
-  document.addEventListener('astro:after-swap', updateActiveNav);
+  // --- Sliding nav indicator ---
+  const nav = document.querySelector<HTMLElement>('.site-nav')!;
+  const indicator = nav.querySelector<HTMLElement>('.nav-indicator')!;
+  const navLinks = nav.querySelectorAll<HTMLAnchorElement>('a[href]');
+
+  const colorMap: Record<string, string> = {
+    '/thoughts': 'var(--accent-yellow)',
+    '/essays': 'var(--accent-blue)',
+  };
+
+  function getActiveLink(): HTMLAnchorElement | null {
+    return nav.querySelector<HTMLAnchorElement>('a[aria-current]');
+  }
+
+  function moveIndicatorTo(link: HTMLAnchorElement | null, animate = true) {
+    if (!link) {
+      indicator.style.setProperty('--ind-opacity', '0');
+      return;
+    }
+
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    const x = linkRect.left - navRect.left;
+    const w = linkRect.width;
+    const href = link.getAttribute('href') || '';
+    const color = colorMap[href] || 'var(--ink-faint)';
+
+    if (!animate) {
+      indicator.style.transition = 'none';
+    }
+
+    indicator.style.setProperty('--ind-x', `${x}px`);
+    indicator.style.setProperty('--ind-w', `${w}px`);
+    indicator.style.setProperty('--ind-opacity', '1');
+    indicator.style.backgroundColor = color;
+
+    if (!animate) {
+      // Force reflow then restore transition
+      indicator.offsetHeight;
+      indicator.style.transition = '';
+    }
+  }
+
+  // Hover: slide to hovered link, return to active on leave
+  navLinks.forEach(link => {
+    link.addEventListener('mouseenter', () => moveIndicatorTo(link));
+  });
+  nav.addEventListener('mouseleave', () => moveIndicatorTo(getActiveLink()));
+
+  // Navigation: update active state, then slide indicator
+  function onNavigate() {
+    updateActiveNav();
+    moveIndicatorTo(getActiveLink(), false);
+  }
+  document.addEventListener('astro:after-swap', onNavigate);
+
+  // Initial paint — no animation
+  moveIndicatorTo(getActiveLink(), false);
+
+  // Reposition on resize (no animation)
+  window.addEventListener('resize', () => moveIndicatorTo(getActiveLink(), false));
+
+  // Handle late font metric changes
+  document.fonts.ready.then(() => moveIndicatorTo(getActiveLink(), false));
 </script>
 
 <style>
@@ -196,6 +260,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   .site-nav {
     display: flex;
     gap: var(--space-lg);
+    position: relative;
   }
 
   .site-nav a {
@@ -205,27 +270,30 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink-medium);
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
-    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+    text-decoration: none;
+    transition: color 0.2s ease;
   }
 
   .site-nav a:hover,
   .site-nav a[aria-current] {
     color: var(--ink-black);
-    text-decoration-color: var(--ink-faint);
   }
 
-  .site-nav a[href="/thoughts"]:hover,
-  .site-nav a[href="/thoughts"][aria-current] {
-    text-decoration-color: var(--accent-yellow);
-  }
-
-  .site-nav a[href="/essays"]:hover,
-  .site-nav a[href="/essays"][aria-current] {
-    text-decoration-color: var(--accent-blue);
+  .nav-indicator {
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    height: 2px;
+    transform: translateX(var(--ind-x, 0));
+    width: var(--ind-w, 0);
+    opacity: var(--ind-opacity, 0);
+    background-color: var(--ink-faint);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.2s ease,
+                opacity 0.2s ease;
+    pointer-events: none;
+    will-change: transform, width;
   }
 
   .theme-toggle {
