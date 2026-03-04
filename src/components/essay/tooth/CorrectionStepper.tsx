@@ -73,7 +73,7 @@ export function CorrectionStepper() {
               className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}${isDimmed ? ' essay-stepper-panel-dimmed' : ''}`}
             >
               <span className="essay-stepper-label">{s.stepNum}<br />{s.stepAxis}</span>
-              <ProjectionCanvas projection={s.projection!} dimmed={isFuture || isDimmed} intense />
+              <ProjectionCanvas projection={s.projection!} intense />
             </div>
           );
         })}

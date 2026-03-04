@@ -13,7 +13,7 @@ function mulberry32(seed: number) {
 
 type ShapeParams = {
   crownRadiusX: number;
-  crownRadiusZ: number;
+  crownRadiusY: number; // Y-extent of crown cross-section (tooth long axis is Z)
   crownHeight: number;
   rootLength: number;
   rootTaper: number;
@@ -25,25 +25,25 @@ type ShapeParams = {
 function generateTooth(params: ShapeParams, seed: number): Point3D[] {
   const rand = mulberry32(seed);
   const points: Point3D[] = [];
-  const { crownRadiusX, crownRadiusZ, crownHeight, rootLength, rootTaper, slices, pointsPerSlice, jitter } = params;
+  const { crownRadiusX, crownRadiusY, crownHeight, rootLength, rootTaper, slices, pointsPerSlice, jitter } = params;
   const totalHeight = crownHeight + rootLength;
 
   for (let i = 0; i < slices; i++) {
     const t = i / (slices - 1); // 0 = root tip, 1 = crown top
     const y = -rootLength + t * totalHeight;
 
-    let rx: number, rz: number;
+    let rx: number, ry: number;
     if (t < rootLength / totalHeight) {
       // Root section: taper from narrow tip to full width at crown base
       const rootT = t / (rootLength / totalHeight);
       rx = crownRadiusX * rootTaper + (crownRadiusX - crownRadiusX * rootTaper) * rootT;
-      rz = crownRadiusZ * rootTaper + (crownRadiusZ - crownRadiusZ * rootTaper) * rootT;
+      ry = crownRadiusY * rootTaper + (crownRadiusY - crownRadiusY * rootTaper) * rootT;
     } else {
       // Crown section: slight barrel shape
       const crownT = (t - rootLength / totalHeight) / (crownHeight / totalHeight);
       const barrel = 1 + 0.1 * Math.sin(crownT * Math.PI);
       rx = crownRadiusX * barrel;
-      rz = crownRadiusZ * barrel;
+      ry = crownRadiusY * barrel;
     }
 
     for (let j = 0; j < pointsPerSlice; j++) {
@@ -54,7 +54,7 @@ function generateTooth(params: ShapeParams, seed: number): Point3D[] {
       // Long axis along Z (root-to-crown), cross-section in X-Y plane
       points.push({
         x: Math.cos(angle) * rx + jx,
-        y: Math.sin(angle) * rz + jy,
+        y: Math.sin(angle) * ry + jy,
         z: y + jz,
       });
     }
@@ -67,7 +67,7 @@ export function incisor(seed = 42): Point3D[] {
   return generateTooth(
     {
       crownRadiusX: 4.0, // wide buccolingually
-      crownRadiusZ: 1.8, // narrow mesiodistally
+      crownRadiusY: 1.8, // narrow mesiodistally
       crownHeight: 8,
       rootLength: 12,
       rootTaper: 0.15,
@@ -83,7 +83,7 @@ export function premolar(seed = 137): Point3D[] {
   return generateTooth(
     {
       crownRadiusX: 3.5,
-      crownRadiusZ: 3.0,
+      crownRadiusY: 3.0,
       crownHeight: 7,
       rootLength: 13,
       rootTaper: 0.12,
@@ -99,7 +99,7 @@ export function molar(seed = 271): Point3D[] {
   return generateTooth(
     {
       crownRadiusX: 5.0,
-      crownRadiusZ: 4.5,
+      crownRadiusY: 4.5,
       crownHeight: 6,
       rootLength: 10,
       rootTaper: 0.2,

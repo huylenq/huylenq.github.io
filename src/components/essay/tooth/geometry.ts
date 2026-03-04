@@ -72,11 +72,31 @@ export function rotateAroundY(pts: Point3D[], angleDeg: number): Point3D[] {
   }));
 }
 
+// Area-weighted polygon centroid (shoelace formula). More accurate than vertex
+// mean for asymmetric hulls with unevenly-spaced vertices.
 export function centroid(pts: Point2D[]): Point2D {
   const n = pts.length;
   if (n === 0) return { x: 0, y: 0 };
-  const sum = pts.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
-  return { x: sum.x / n, y: sum.y / n };
+  if (n === 1) return { ...pts[0] };
+  if (n === 2) return { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+
+  let area = 0;
+  let cx = 0;
+  let cy = 0;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const cross = pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+    area += cross;
+    cx += (pts[i].x + pts[j].x) * cross;
+    cy += (pts[i].y + pts[j].y) * cross;
+  }
+  area /= 2;
+  if (Math.abs(area) < 1e-10) {
+    // Degenerate polygon — fall back to vertex mean
+    const sum = pts.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+    return { x: sum.x / n, y: sum.y / n };
+  }
+  return { x: cx / (6 * area), y: cy / (6 * area) };
 }
 
 function dist(a: Point2D, b: Point2D): number {

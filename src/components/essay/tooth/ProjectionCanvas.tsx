@@ -167,12 +167,10 @@ function lerpData(from: CanvasData, to: CanvasData, t: number): CanvasData {
 
 export function ProjectionCanvas({
   projection,
-  dimmed = false,
   intense = false,
   step: stepOverride,
 }: {
   projection: Projection;
-  dimmed?: boolean;
   intense?: boolean;
   step?: number;
 }) {
@@ -223,8 +221,8 @@ export function ProjectionCanvas({
     const ref = refPointsForMethod(method, hullPts, centroid(hullPts));
     const ang = correctionAngle(ref.a, ref.b, CORRECTION_AXIS[projection]);
 
-    const { scaled: scaledProjected } = scalePoints(projected);
     const { scaled: scaledHull, toSvg } = scalePoints(hullPts);
+    const scaledProjected = projected.map(toSvg);
 
     return {
       scaledPoints: scaledProjected,
