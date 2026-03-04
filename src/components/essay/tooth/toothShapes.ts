@@ -111,7 +111,7 @@ export function molar(seed = 271): Point3D[] {
   );
 }
 
-export const TOOTH_TYPES = ['Incisor', 'Premolar', 'Molar'] as const;
+export const TOOTH_TYPES = ['Shape 1', 'Shape 2', 'Shape 3'] as const;
 
 export function getToothPoints(typeIndex: number, seed?: number): Point3D[] {
   switch (typeIndex) {

@@ -9,48 +9,38 @@ export const meta = {
 
 <Essay initialState={{ tiltZ: 25, tiltX: 15, tiltY: 10, step: 0, method: 0, toothType: 0 }}>
 
-# Correcting Tooth Orientation in CBCT Imaging
+# Hiệu chỉnh hướng răng trong ảnh CBCT
 
-In cone-beam CT imaging, teeth don't sit neatly aligned with the scan axes. The jaw curves, the tooth tilts, and the resulting cross-sections are skewed — making measurements unreliable.
+Hiệu chỉnh xoay tuần tự theo 3 trục: chiếu lên mặt phẳng, tìm cặp điểm tham chiếu A–B trên convex hull, xoay để căn chỉnh. Lặp lại cho mỗi trục.
 
-The fix is a sequential 3-axis rotation correction: project the tooth onto a plane, find reference points on its convex hull, and rotate to align. Repeat for each axis.
+<div className="tooth-initial-layout">
+  <div>
+    <ProjectionCanvas projection="xy" step={0} />
+    <RadioGroup name="toothType" options={["Hình 1", "Hình 2", "Hình 3"]} />
+  </div>
+  <div className="tooth-initial-controls">
+    <Slider name="tiltZ" min={-45} max={45} label="Nghiêng Z" />
+    <Slider name="tiltX" min={-45} max={45} label="Nghiêng X" />
+    <Slider name="tiltY" min={-45} max={45} label="Nghiêng Y" />
+  </div>
+</div>
 
-## The Problem: Tilted Projections
-
-Drag the tilt to see how rotation distorts the projected shape. Even moderate tilt makes the cross-section look nothing like the actual crown outline.
-
-<Slider name="tiltZ" min={-45} max={45} label="Tilt Z" />
-<Slider name="tiltX" min={-45} max={45} label="Tilt X" />
-<Slider name="tiltY" min={-45} max={45} label="Tilt Y" />
-
-<RadioGroup name="toothType" options={["Incisor", "Premolar", "Molar"]} />
-
-<ProjectionCanvas projection="xy" step={0} />
-
-The convex hull (outline) deforms with tilt. Points **A** and **B** are the reference points for computing the correction angle.
-
-## Finding Reference Points
-
-Three methods for identifying the orientation axis from the hull:
+## Phương pháp chọn reference point
 
 <RadioGroup name="method" options={["Farthest hull", "Restricted edge", "Bounding rect"]} />
 
-**Farthest hull point** divides the hull into quadrants from the centroid and picks the farthest point in each, then takes the pair with maximum separation.
+**Farthest hull point** — chia convex hull theo 4 góc phần tư từ centroid, chọn điểm xa nhất mỗi góc, lấy cặp có khoảng cách lớn nhất.
 
-**Restricted edge hull point** applies separate D_X and D_Y thresholds per quadrant, keeping only points beyond 50% of both extents. From those, it picks the most axis-aligned point in each quadrant (smallest min(|dx|, |dy|)), then takes the pair with maximum separation.
+**Restricted edge hull point** — lọc các điểm vượt 50% cả D_X và D_Y trong mỗi góc phần tư, chọn điểm gần trục nhất trong mỗi góc, lấy cặp có khoảng cách lớn nhất.
 
-**Minimum bounding rectangle** fits the smallest enclosing rectangle (rotating calipers) and derives orientation from its long axis.
+**Minimum bounding rectangle** — rotating calipers tìm hình chữ nhật bao nhỏ nhất, hướng răng xác định từ trục dài.
 
-Try switching methods above — notice how A and B shift, changing the computed angle.
+## Các bước hiệu chỉnh
 
-## Step-by-Step Correction
-
-The correction applies sequentially: Z-axis twice (Steps 1-1 and 1-2, using the X-Y projection), then X-axis (Y-Z), then Y-axis (X-Z). The double Z pass is deliberate — the first rotation changes the hull shape, and a second pass refines the residual. Each step uses the already-corrected points from prior steps.
+Trục Z hai lần (Step 1-1, 1-2 trên projection X-Y), rồi trục X (Y-Z), rồi trục Y (X-Z). Lần xoay Z thứ hai tinh chỉnh phần dư sau khi lần xoay đầu thay đổi hình dạng convex hull.
 
 <CorrectionStepper />
 
-Step through from 0 to 4. Watch each projection's angle shrink as the tooth aligns with the scan axes. Panels ahead of the current step are dimmed — they show what the uncorrected projection looks like at that stage.
-
-*Note: Chen et al. use only the crown portion of the tooth for projection. This visualization includes the full tooth for visual clarity — the parametric shapes here have clean tapered roots that don't cause the hull distortion seen in real CBCT data.*
+*Chen et al. chỉ dùng phần thân răng để chiếu. Minh hoạ này dùng toàn bộ hình răng tham số.*
 
 </Essay>

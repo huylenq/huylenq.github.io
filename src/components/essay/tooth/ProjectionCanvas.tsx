@@ -350,6 +350,10 @@ export function ProjectionCanvas({
             {ghostHullPath && (
               <path d={ghostHullPath} fill="none" stroke="var(--ink-faint)" strokeWidth={0.8} />
             )}
+            {ghost.rect && (
+              <path d={`M ${ghost.rect.map((p) => `${p.x},${p.y}`).join(' L ')} Z`}
+                fill="none" stroke="var(--ink-faint)" strokeWidth={0.6} strokeDasharray="3 3" />
+            )}
             {ghost.refA && ghost.refB && (
               <line x1={ghost.refA.x} y1={ghost.refA.y} x2={ghost.refB.x} y2={ghost.refB.y}
                 stroke="var(--ink-light)" strokeWidth={1} strokeDasharray="3 2" />

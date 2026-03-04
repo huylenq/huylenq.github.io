@@ -256,6 +256,30 @@
   color: var(--paper);
 }
 
+/* ── Tooth initial layout (canvas + sliders side by side) ── */
+
+.tooth-initial-layout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin: var(--space-md) 0;
+}
+
+.tooth-initial-layout > :first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tooth-initial-controls {
+  flex: 1;
+  min-width: 0;
+}
+
+.tooth-initial-controls .essay-slider {
+  margin: var(--space-xs) 0;
+}
+
 /* ── Tooth ProjectionCanvas ─────────────────────────── */
 
 .tooth-canvas {
