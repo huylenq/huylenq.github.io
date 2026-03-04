@@ -67,7 +67,7 @@ export function CorrectionStepper() {
           className={`essay-stepper-panel${step === 0 ? ' essay-stepper-panel-active' : ''}`}
           onClick={() => setStep(0)}
         >
-          <span className="essay-stepper-label">Original<br />X-Y view</span>
+          <span className="essay-stepper-label">Original</span>
           <ProjectionCanvas projection="xy" step={0} intense showRef={false} />
         </div>
         <div className="essay-stepper-separator" />
@@ -83,7 +83,7 @@ export function CorrectionStepper() {
               className={`essay-stepper-panel${isActive ? ' essay-stepper-panel-active' : ''}${isFuture ? ' essay-stepper-panel-future' : ''}`}
               onClick={() => setStep(stepIdx)}
             >
-              <span className="essay-stepper-label">{s.stepNum}<br />{s.stepAxis}</span>
+              <span className="essay-stepper-label">{s.stepNum}</span>
               {isPast || isActive ? (
                 <ProjectionCanvas projection={s.projection!} step={stepIdx} ghostStep={i} intense />
               ) : isNext ? (

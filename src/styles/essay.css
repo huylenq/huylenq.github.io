@@ -532,6 +532,31 @@
     flex-direction: column;
   }
 
+  /* ── Initial tooth layout: shrink canvas to fit side-by-side ── */
+  .tooth-initial-layout {
+    gap: var(--space-sm);
+  }
+
+  .tooth-initial-layout .tooth-canvas svg {
+    max-width: 120px;
+  }
+
+  .tooth-initial-layout .tooth-canvas-label {
+    max-width: 120px;
+    font-size: 0.6rem;
+  }
+
+  .tooth-initial-controls .essay-slider-label {
+    min-width: 3.5em;
+    font-size: 0.65rem;
+  }
+
+  .tooth-initial-controls .essay-slider-value {
+    min-width: 2.5em;
+    font-size: 0.75rem;
+  }
+
+  /* ── Stepper panels ── */
   .essay-stepper-panels {
     gap: 2px;
   }

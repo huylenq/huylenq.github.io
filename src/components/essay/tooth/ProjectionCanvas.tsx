@@ -410,7 +410,6 @@ export function ProjectionCanvas({
         </>}
       </svg>
       <div className="tooth-canvas-label" style={showRef ? undefined : { visibility: 'hidden' }}>
-        <span className="tooth-canvas-axis">{AXIS_LABEL[projection]}</span>
         <span className="tooth-canvas-angle">{(ghostOnly ? 0 : angle).toFixed(1)}°</span>
       </div>
     </div>
