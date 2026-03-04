@@ -500,6 +500,12 @@
       ],
       "maturity": "evergreen"
     },
+    "human-vs-ai-brain-elasticity": {
+      "slug": "human-vs-ai-brain-elasticity",
+      "title": "The fundamental advantages of human vs AI",
+      "backlinks": [],
+      "maturity": "seed"
+    },
     "the-heuristics-for-what-to-do-now": {
       "slug": "the-heuristics-for-what-to-do-now",
       "title": "The heuristics for what to do now",

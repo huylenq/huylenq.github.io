@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import matter from "gray-matter";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
@@ -49,10 +50,12 @@ function scanVault(): {
   publicThoughts: Map<string, VaultThought>;
   filenameToId: Map<string, string>;
   redirects: RedirectMap;
+  generatedIds: Array<{ title: string; publishId: string }>;
 } {
   const publicThoughts = new Map<string, VaultThought>();
   const filenameToId = new Map<string, string>();
   const redirects: RedirectMap = new Map();
+  const generatedIds: Array<{ title: string; publishId: string }> = [];
   const mdFiles = collectMarkdownFiles(VAULT_PATH);
 
   for (const filePath of mdFiles) {
@@ -78,15 +81,15 @@ function scanVault(): {
     const isPublic = tags.includes("public");
     if (!isPublic) continue;
 
-    const publishId = fm["publish-id"] as string | undefined;
+    const title = path.basename(filePath, ".md");
+
+    let publishId = fm["publish-id"] as string | undefined;
     if (!publishId) {
-      console.error(
-        `FATAL: Note "${filePath}" is tagged #public but has no publish-id.`
-      );
-      console.error(
-        `  → Open the note in Obsidian and run the "Assign Publish ID" command.`
-      );
-      process.exit(1);
+      console.log(`  ⏳ Generating publish-id for "${title}" via claude...`);
+      publishId = generatePublishId(content, title);
+      writePublishIdToVault(filePath, raw, publishId);
+      fm["publish-id"] = publishId;
+      generatedIds.push({ title, publishId });
     }
 
     // Collision detection
@@ -105,8 +108,6 @@ function scanVault(): {
       rawMaturity && VALID_MATURITIES.has(rawMaturity as Maturity)
         ? (rawMaturity as Maturity)
         : "seed";
-
-    const title = path.basename(filePath, ".md");
     publicThoughts.set(publishId, {
       title,
       vaultPath: filePath,
@@ -148,7 +149,7 @@ function scanVault(): {
     }
   }
 
-  return { publicThoughts, filenameToId, redirects };
+  return { publicThoughts, filenameToId, redirects, generatedIds };
 }
 
 function collectMarkdownFiles(dir: string): string[] {
@@ -170,6 +171,54 @@ function normalizeTags(tags: unknown): string[] {
   if (Array.isArray(tags)) return tags.map(String);
   if (typeof tags === "string") return tags.split(/[,\s]+/).filter(Boolean);
   return [];
+}
+
+// ── Publish-ID generation ─────────────────────────────────────
+
+function generatePublishId(noteContent: string, title: string): string {
+  const truncated = noteContent.slice(0, 2000);
+  const input = `# ${title}\n\n${truncated}`;
+  const prompt =
+    "Generate a short URL slug for this note. " +
+    "2-5 words, lowercase, hyphen-separated, keyword-driven. " +
+    "Output ONLY the raw slug, nothing else.";
+
+  const result = spawnSync("claude", ["--model", "sonnet", "-p", prompt], {
+    input,
+    encoding: "utf-8",
+    timeout: 30_000,
+  });
+
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error(
+      `claude CLI failed for "${title}": ${result.stderr.trim()}`
+    );
+  }
+
+  const slug = result.stdout
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (!slug) {
+    throw new Error(
+      `Failed to generate publish-id for "${title}": empty output`
+    );
+  }
+
+  return slug;
+}
+
+function writePublishIdToVault(
+  filePath: string,
+  raw: string,
+  publishId: string
+): void {
+  const updated = raw.replace(/^---\n/, `---\npublish-id: ${publishId}\n`);
+  fs.writeFileSync(filePath, updated);
 }
 
 // ── Step 2: Transform markdown ─────────────────────────────────
@@ -489,8 +538,16 @@ async function writeOutputs(
 async function main() {
   console.log(`Scanning vault: ${VAULT_PATH}`);
 
-  const { publicThoughts, filenameToId, redirects } = scanVault();
+  const { publicThoughts, filenameToId, redirects, generatedIds } = scanVault();
   console.log(`Found ${publicThoughts.size} public thoughts.`);
+
+  if (generatedIds.length > 0) {
+    console.log(`\n✦ Auto-generated ${generatedIds.length} publish-id(s):`);
+    for (const { title, publishId } of generatedIds) {
+      console.log(`  "${publishId}" ← ${title}`);
+    }
+    console.log();
+  }
 
   cleanOutputDirs();
 
