@@ -166,6 +166,15 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   });
   nav.addEventListener('mouseleave', () => moveIndicatorTo(getActiveLink()));
 
+  // Sync slotted content (e.g. "Download Resumé") from incoming page into persisted header
+  document.addEventListener('astro:before-swap', (e: any) => {
+    const persistedGroup = document.querySelector('.header-section-group');
+    const incomingGroup = e.newDocument.querySelector('.header-section-group');
+    if (persistedGroup) {
+      persistedGroup.innerHTML = incomingGroup?.innerHTML ?? '';
+    }
+  });
+
   // Navigation: update active state, then slide indicator
   function onNavigate() {
     updateActiveNav();
@@ -307,6 +316,8 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     align-items: center;
     padding: var(--space-sm) var(--space-xs);
     margin: calc(-1 * var(--space-sm)) calc(-1 * var(--space-xs));
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   /* Reserve bold width to prevent layout shift on hover */

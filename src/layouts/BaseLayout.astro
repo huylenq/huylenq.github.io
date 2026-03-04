@@ -72,7 +72,7 @@ const { title = 'huylenq.com' } = Astro.props;
 
     // Stamp theme onto incoming document BEFORE Astro swaps it in,
     // so copying <html> attrs preserves data-theme (no flash)
-    document.addEventListener('astro:before-swap', (e: any) => {
+    document.addEventListener('astro:before-swap', (e) => {
       const theme = getEffectiveTheme();
       if (theme === 'dark') {
         e.newDocument.documentElement.setAttribute('data-theme', 'dark');
