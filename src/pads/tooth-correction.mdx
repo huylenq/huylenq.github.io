@@ -14,8 +14,8 @@ export const meta = {
 
 <div className="tooth-initial-layout">
   <div>
-    <ProjectionCanvas projection="xy" step={0} />
-    <RadioGroup name="toothType" options={["Hình 1", "Hình 2", "Hình 3"]} />
+    <ProjectionCanvas projection="xy" step={0} showRef={false} />
+    <RadioGroup name="toothType" options={["Mẫu 1", "Mẫu 2", "Mẫu 3"]} />
   </div>
   <div className="tooth-initial-controls">
     <Slider name="tiltZ" min={-45} max={45} label="Nghiêng Z" />
