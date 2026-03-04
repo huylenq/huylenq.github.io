@@ -30,8 +30,6 @@ Hiệu chỉnh xoay tuần tự theo 3 trục: chiếu lên mặt phẳng, tìm 
 
 ### Cách chọn reference point
 
-<RadioGroup name="method" options={["Farthest hull", "Restricted edge", "Bounding rect"]} />
-
 **Farthest hull point** — chia convex hull theo 4 góc phần tư từ centroid, chọn điểm xa nhất mỗi góc, lấy cặp có khoảng cách lớn nhất.
 
 **Restricted edge hull point** — lọc các điểm vượt 50% cả D_X và D_Y trong mỗi góc phần tư, chọn điểm gần trục nhất trong mỗi góc, lấy cặp có khoảng cách lớn nhất.
@@ -41,6 +39,8 @@ Hiệu chỉnh xoay tuần tự theo 3 trục: chiếu lên mặt phẳng, tìm 
 ## Các bước hiệu chỉnh
 
 Trục Z hai lần (Step 1-1, 1-2 trên projection X-Y), rồi trục X (Y-Z), rồi trục Y (X-Z). Lần xoay Z thứ hai tinh chỉnh phần dư sau khi lần xoay đầu thay đổi hình dạng convex hull.
+
+<RadioGroup name="method" options={["Farthest hull", "Restricted edge", "Bounding rect"]} />
 
 <CorrectionStepper />
 
