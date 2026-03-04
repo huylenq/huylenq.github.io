@@ -101,6 +101,8 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     return nav.querySelector<HTMLAnchorElement>('a[aria-current]');
   }
 
+  let lastLeft = 0;
+
   function moveIndicatorTo(link: HTMLAnchorElement | null, animate = true) {
     if (!link) {
       indicator.style.setProperty('--ind-opacity', '0');
@@ -109,19 +111,24 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 
     const navRect = nav.getBoundingClientRect();
     const linkRect = link.getBoundingClientRect();
-    const x = linkRect.left - navRect.left;
-    const w = linkRect.width;
+    const newLeft = linkRect.left - navRect.left;
+    const newRight = navRect.right - linkRect.right;
     const href = link.getAttribute('href') || '';
     const color = colorMap[href] || 'var(--ink-faint)';
 
     if (!animate) {
       indicator.style.transition = 'none';
+      indicator.removeAttribute('data-direction');
+    } else {
+      // Set direction so CSS picks the right staggered transition
+      indicator.setAttribute('data-direction', newLeft >= lastLeft ? 'right' : 'left');
     }
 
-    indicator.style.setProperty('--ind-x', `${x}px`);
-    indicator.style.setProperty('--ind-w', `${w}px`);
+    indicator.style.setProperty('--ind-left', `${newLeft}px`);
+    indicator.style.setProperty('--ind-right', `${newRight}px`);
     indicator.style.setProperty('--ind-opacity', '1');
     indicator.style.backgroundColor = color;
+    lastLeft = newLeft;
 
     if (!animate) {
       // Force reflow then restore transition
@@ -282,18 +289,35 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   .nav-indicator {
     position: absolute;
     bottom: -3px;
-    left: 0;
     height: 2px;
-    transform: translateX(var(--ind-x, 0));
-    width: var(--ind-w, 0);
+    left: var(--ind-left, 0px);
+    right: var(--ind-right, 0px);
     opacity: var(--ind-opacity, 0);
     background-color: var(--ink-faint);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius: 1px;
+    pointer-events: none;
+    will-change: left, right;
+    /* Default (no direction yet): uniform transition */
+    transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                right 0.35s cubic-bezier(0.25, 1, 0.5, 1),
                 background-color 0.2s ease,
                 opacity 0.2s ease;
-    pointer-events: none;
-    will-change: transform, width;
+  }
+
+  /* Moving right: right (leading) edge races ahead, left (trailing) edge catches up */
+  .nav-indicator[data-direction="right"] {
+    transition: left 0.45s cubic-bezier(0.4, 0, 0.1, 1) 0.06s,
+                right 0.3s cubic-bezier(0.2, 1, 0.3, 1),
+                background-color 0.2s ease,
+                opacity 0.2s ease;
+  }
+
+  /* Moving left: left (leading) edge races ahead, right (trailing) edge catches up */
+  .nav-indicator[data-direction="left"] {
+    transition: left 0.3s cubic-bezier(0.2, 1, 0.3, 1),
+                right 0.45s cubic-bezier(0.4, 0, 0.1, 1) 0.06s,
+                background-color 0.2s ease,
+                opacity 0.2s ease;
   }
 
   .theme-toggle {
