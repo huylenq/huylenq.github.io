@@ -7,7 +7,7 @@ const STEPS = [
     projection: null,
     stepNum: null,
     stepAxis: null,
-    description: 'The tooth is tilted in 3D space. No corrections have been applied yet.',
+    description: 'Răng nghiêng trong không gian 3D. Chưa có hiệu chỉnh nào được áp dụng.',
   },
   {
     label: 'Z-axis (1)',
@@ -15,7 +15,7 @@ const STEPS = [
     stepNum: 'Step 1-1',
     stepAxis: 'Z-axis',
     description:
-      'Project onto the X-Y plane. Find reference points A and B on the convex hull. The displayed angle is the Z-axis rotation that will be applied to align A\u2013B horizontally.',
+      'Chiếu lên mặt phẳng X-Y. Tìm reference point A và B trên convex hull. Xoay quanh trục Z để căn A\u2013B theo phương ngang.',
   },
   {
     label: 'Z-axis (2)',
@@ -23,7 +23,7 @@ const STEPS = [
     stepNum: 'Step 1-2',
     stepAxis: 'Z-axis',
     description:
-      'Re-project onto X-Y after the first Z correction. The 3D rotation changed which points contribute to the hull boundary, revealing a residual angle. A second Z-axis pass corrects it.',
+      'Chiếu lại lên X-Y sau lần xoay Z đầu. Phép xoay 3D thay đổi các điểm trên hull boundary, lộ ra góc lệch dư. Lần xoay Z thứ hai hiệu chỉnh phần dư này.',
   },
   {
     label: 'X-axis',
@@ -31,7 +31,7 @@ const STEPS = [
     stepNum: 'Step 2',
     stepAxis: 'X-axis',
     description:
-      'Project onto the Y-Z plane after both Z corrections. Find A and B, then rotate around the X-axis to correct lateral tilt.',
+      'Chiếu lên mặt phẳng Y-Z sau cả hai lần xoay Z. Tìm A và B, xoay quanh trục X để chỉnh độ nghiêng ngang.',
   },
   {
     label: 'Y-axis',
@@ -39,7 +39,7 @@ const STEPS = [
     stepNum: 'Step 3',
     stepAxis: 'Y-axis',
     description:
-      'Project onto the X-Z plane after Z and X corrections. Find A and B, then rotate around the Y-axis to correct the remaining front-to-back tilt.',
+      'Chiếu lên mặt phẳng X-Z sau các hiệu chỉnh Z và X. Tìm A và B, xoay quanh trục Y để chỉnh độ nghiêng trước-sau còn lại.',
   },
 ] as const;
 
