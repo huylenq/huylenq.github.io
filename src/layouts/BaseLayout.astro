@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/thought.css';
 import '../styles/stacked-thoughts.css';
 import '../styles/essay.css';
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -23,6 +24,7 @@ const { title = 'huylenq.com' } = Astro.props;
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-sMigJhG3fVgjMxAdTRee8N+LXOTCWB3ksYFH/Bx5pbnE6XFP3c0LaRzwVSKTSIp" crossorigin="anonymous">
   <title>{title}</title>
+  <ViewTransitions />
   <script is:inline>
     // Apply theme before paint to prevent FOUC
     (function() {

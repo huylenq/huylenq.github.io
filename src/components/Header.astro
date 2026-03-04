@@ -7,7 +7,7 @@ const path = Astro.url.pathname;
 const sections = ['thoughts', 'essays', 'sketches', 'resume', 'about'] as const;
 const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 ---
-<header class="site-header">
+<header class="site-header" transition:persist>
   <div class="site-identity">
     <a href="/" class="site-title"><strong>Huy Le</strong></a>
     <button class="nickname" id="nickname-toggle" aria-label="Show contacts" aria-expanded="false">@huylenq <span class="reach-me">[reach me]</span></button>
@@ -75,6 +75,18 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     const el = e.currentTarget as HTMLAnchorElement;
     window.location.href = `mailto:${el.dataset.u}@${el.dataset.d}`;
   });
+
+  // Since the header is transition:persist, aria-current won't update on navigation — do it manually
+  function updateActiveNav() {
+    const path = window.location.pathname;
+    document.querySelectorAll<HTMLAnchorElement>('.site-nav a[href]').forEach(link => {
+      const href = link.getAttribute('href')!;
+      const isActive = href !== '/' && path.startsWith(href);
+      link.toggleAttribute('aria-current', isActive);
+    });
+  }
+
+  document.addEventListener('astro:after-swap', updateActiveNav);
 </script>
 
 <style>
@@ -193,16 +205,17 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink-medium);
-    text-decoration: none;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
   }
 
   .site-nav a:hover,
   .site-nav a[aria-current] {
     color: var(--ink-black);
-    text-decoration: underline;
     text-decoration-color: var(--ink-faint);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
   }
 
   .site-nav a[href="/thoughts"]:hover,
