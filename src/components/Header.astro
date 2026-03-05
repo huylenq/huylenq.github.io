@@ -539,6 +539,12 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
     position: relative;
   }
 
+  .nickname::before {
+    content: '';
+    position: absolute;
+    inset: -0.5rem -0.4rem;
+  }
+
   .reach-me {
     position: absolute;
     left: calc(100% + 0.6em);
@@ -575,7 +581,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
   }
 
   .contact-links a {
-    color: var(--ink-dark);
+    color: var(--ink-medium);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
