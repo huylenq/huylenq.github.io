@@ -87,8 +87,10 @@ export function CorrectionStepper() {
               {isPast || isActive ? (
                 <ProjectionCanvas projection={s.projection!} step={stepIdx} ghostStep={i} intense />
               ) : isNext ? (
-                <ProjectionCanvas projection={s.projection!} step={i} ghostStep={i} ghostOnly intense />
-              ) : null}
+                <ProjectionCanvas projection={s.projection!} step={step} refOnSettle />
+              ) : (
+                <ProjectionCanvas projection={s.projection!} step={step} showRef={false} />
+              )}
             </div>
           );
         })}

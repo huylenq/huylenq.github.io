@@ -149,6 +149,7 @@ export function ProjectionCanvas({
   ghostStep,
   showRef = true,
   ghostOnly = false,
+  refOnSettle = false,
 }: {
   projection: Projection;
   intense?: boolean;
@@ -156,6 +157,7 @@ export function ProjectionCanvas({
   ghostStep?: number;
   showRef?: boolean;
   ghostOnly?: boolean;
+  refOnSettle?: boolean;
 }) {
   const state = useEssayState();
   const isHydrated = Object.keys(state).length > 0;
@@ -182,8 +184,24 @@ export function ProjectionCanvas({
     basePts.current = pts;
   }
 
+  /** Build a stable toSvg mapping from the integer animation endpoints. */
+  const makeStableToSvg = useCallback((fromStep: number, toStep: number) => {
+    const pts = basePts.current;
+    const lo = Math.min(fromStep, toStep);
+    const hi = Math.max(fromStep, toStep);
+    const allProjected: Point2D[] = [
+      ...PROJECT_FN[projection](applyCorrections(pts, lo, method)),
+      ...PROJECT_FN[projection](applyCorrections(pts, hi, method)),
+    ];
+    if (ghostStep !== undefined) {
+      allProjected.push(...PROJECT_FN[projection](applyCorrections(pts, ghostStep, method)));
+      allProjected.push(...PROJECT_FN[projection](applyCorrections(pts, ghostStep + 1, method)));
+    }
+    return makeToSvg(allProjected);
+  }, [method, ghostStep, projection, basePtsKey]);
+
   /** Compute full CanvasData from a (possibly fractional) main step. */
-  const computeCanvas = useCallback((mainStep: number): CanvasData => {
+  const computeCanvas = useCallback((mainStep: number, toSvg: (p: Point2D) => Point2D): CanvasData => {
     if (!isHydrated) return { ...EMPTY_LAYER, ghost: null };
 
     const pts = basePts.current;
@@ -198,17 +216,6 @@ export function ProjectionCanvas({
       const ghostPts3D = applyCorrections(pts, ghostStep, method);
       ghostRaw = computeRawLayer(ghostPts3D, projection, method);
     }
-
-    // Unified scale: always include ghost + full correction to prevent
-    // scale jumps when toggling between active/ghostOnly modes
-    let allProjected = [...mainRaw.projected];
-    if (ghostRaw) allProjected.push(...ghostRaw.projected);
-    if (ghostStep !== undefined) {
-      const fullCorrPts3D = applyCorrections(pts, ghostStep + 1, method);
-      const fullCorrProjected = PROJECT_FN[projection](fullCorrPts3D);
-      allProjected.push(...fullCorrProjected);
-    }
-    const toSvg = makeToSvg(allProjected);
 
     // Main A-B: rotate ghost's A-B by the partial correction applied so far,
     // so A-B moves rigidly with the point cloud during animation.
@@ -267,7 +274,8 @@ export function ProjectionCanvas({
   }, [isHydrated, method, ghostStep, projection, basePtsKey]);
 
   // ── Animate via fractional step ──
-  const [display, setDisplay] = useState<CanvasData>(() => computeCanvas(step));
+  const [display, setDisplay] = useState<CanvasData>(() => computeCanvas(step, makeStableToSvg(step, step)));
+  const [isAnimating, setIsAnimating] = useState(false);
   const prevStepRef = useRef(step);
   const animRef = useRef<number>(0);
   const isFirstRender = useRef(true);
@@ -276,7 +284,7 @@ export function ProjectionCanvas({
     if (isFirstRender.current) {
       isFirstRender.current = false;
       prevStepRef.current = step;
-      setDisplay(computeCanvas(step));
+      setDisplay(computeCanvas(step, makeStableToSvg(step, step)));
       return;
     }
 
@@ -286,35 +294,36 @@ export function ProjectionCanvas({
 
     // Non-animated: snap when step doesn't change (other params changed)
     if (fromStep === toStep) {
-      setDisplay(computeCanvas(toStep));
+      setDisplay(computeCanvas(toStep, makeStableToSvg(toStep, toStep)));
       return;
     }
 
+    // Pre-compute stable scale for the whole animation segment
+    const stableToSvg = makeStableToSvg(fromStep, toStep);
+    setIsAnimating(true);
     const start = performance.now();
     const tick = (now: number) => {
       const t = easeOutCubic(Math.min((now - start) / ANIM_DURATION, 1));
       const fractionalStep = fromStep + (toStep - fromStep) * t;
-      setDisplay(computeCanvas(fractionalStep));
+      setDisplay(computeCanvas(fractionalStep, stableToSvg));
       if (t < 1) {
         animRef.current = requestAnimationFrame(tick);
+      } else {
+        setIsAnimating(false);
       }
     };
 
     cancelAnimationFrame(animRef.current);
     animRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animRef.current);
-  }, [step, computeCanvas]);
-
-  // Snap on non-step param changes
-  useEffect(() => {
-    setDisplay(computeCanvas(step));
-  }, [basePtsKey, method, ghostStep, projection]);
+  }, [step, computeCanvas, makeStableToSvg]);
 
   if (!isHydrated) {
     return <div className="tooth-canvas" style={{ width: SVG_SIZE, height: SVG_SIZE + 28 }} />;
   }
 
   const { scaledPoints, hull, refA, refB, angle, rect, ghost } = display;
+  const effectiveShowRef = showRef && (!refOnSettle || !isAnimating);
 
   const hullPath = hull.length > 0
     ? `M ${hull.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
@@ -362,7 +371,7 @@ export function ProjectionCanvas({
         )}
 
         {/* ── Ghost ref overlay (when ghostOnly, promote A-B/arc/labels from ghost) ── */}
-        {ghostOnly && ghost && ghost.refA && ghost.refB && (
+        {ghostOnly && showRef && ghost && ghost.refA && ghost.refB && (
           <>
             <line x1={ghost.refA.x} y1={ghost.refA.y} x2={ghost.refB.x} y2={ghost.refB.y}
               stroke={`var(--ink-${ink.ab})`} strokeWidth={1.5} />
@@ -386,30 +395,40 @@ export function ProjectionCanvas({
         {rectPath && (
           <path d={rectPath} fill="none" stroke={`var(--ink-${ink.rect})`} strokeWidth={ink.rectW} strokeDasharray="3 3" />
         )}
-        {showRef && refA && refB && (
-          <line x1={refA.x} y1={refA.y} x2={refB.x} y2={refB.y}
-            stroke={`var(--ink-${ink.ab})`} strokeWidth={1.5} />
-        )}
-        {showRef && refA && refB && Math.abs(angle) > 0.5 && (
-          <AngleArc a={refA} b={refB} angle={angle} projection={projection} intense={intense} />
-        )}
-        {showRef && refA && (
+        {effectiveShowRef && refA && (
           <>
-            <circle cx={refA.x} cy={refA.y} r={3.5} fill="var(--ink-black)" />
+            <circle cx={refA.x} cy={refA.y} r={3.5} fill="var(--ink-black)"
+              style={refOnSettle ? { opacity: 0, animation: 'ref-dot-in 150ms ease-out forwards' } : undefined} />
             <text x={refA.x + 6} y={refA.y - 6} fontSize={10}
-              fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}>A</text>
+              fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}
+              style={refOnSettle ? { opacity: 0, animation: 'ref-dot-in 150ms ease-out forwards' } : undefined}>A</text>
           </>
         )}
-        {showRef && refB && (
+        {effectiveShowRef && refB && (
           <>
-            <circle cx={refB.x} cy={refB.y} r={3.5} fill="var(--ink-black)" />
+            <circle cx={refB.x} cy={refB.y} r={3.5} fill="var(--ink-black)"
+              style={refOnSettle ? { opacity: 0, animation: 'ref-dot-in 150ms 100ms ease-out forwards' } : undefined} />
             <text x={refB.x + 6} y={refB.y - 6} fontSize={10}
-              fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}>B</text>
+              fill={`var(--ink-${ink.label})`} fontFamily="var(--font-sans)" fontWeight={ink.labelW}
+              style={refOnSettle ? { opacity: 0, animation: 'ref-dot-in 150ms 100ms ease-out forwards' } : undefined}>B</text>
           </>
+        )}
+        {effectiveShowRef && refA && refB && (() => {
+          const lineLen = Math.hypot(refB.x - refA.x, refB.y - refA.y);
+          return (
+            <line x1={refA.x} y1={refA.y} x2={refB.x} y2={refB.y}
+              stroke={`var(--ink-${ink.ab})`} strokeWidth={1.5}
+              strokeDasharray={refOnSettle ? lineLen : undefined}
+              strokeDashoffset={refOnSettle ? lineLen : undefined}
+              style={refOnSettle ? { animation: 'ref-line-in 150ms 150ms ease-out forwards' } : undefined} />
+          );
+        })()}
+        {effectiveShowRef && !refOnSettle && refA && refB && Math.abs(angle) > 0.5 && (
+          <AngleArc a={refA} b={refB} angle={angle} projection={projection} intense={intense} />
         )}
         </>}
       </svg>
-      <div className="tooth-canvas-label" style={showRef ? undefined : { visibility: 'hidden' }}>
+      <div className="tooth-canvas-label" style={effectiveShowRef && !refOnSettle ? undefined : { visibility: 'hidden' }}>
         <span className="tooth-canvas-angle">{(ghostOnly ? 0 : angle).toFixed(1)}°</span>
       </div>
     </div>
