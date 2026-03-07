@@ -125,9 +125,9 @@ function quadrantFarthest(hull: Point2D[], center: Point2D): Point2D[] {
 export function farthestHullPoints(
   hull: Point2D[],
   center: Point2D
-): { a: Point2D; b: Point2D } {
+): { a: Point2D; b: Point2D; candidates: Point2D[] } {
   const far = quadrantFarthest(hull, center);
-  if (far.length < 2) return { a: hull[0], b: hull[hull.length - 1] };
+  if (far.length < 2) return { a: hull[0], b: hull[hull.length - 1], candidates: far };
 
   let maxDist = 0;
   let best = { a: far[0], b: far[1] };
@@ -140,14 +140,14 @@ export function farthestHullPoints(
       }
     }
   }
-  return best;
+  return { ...best, candidates: far };
 }
 
 // Method 2: restricted edge hull points — dual-axis thresholds, axis-aligned selection
 export function restrictedEdgeHullPoints(
   hull: Point2D[],
   center: Point2D
-): { a: Point2D; b: Point2D } {
+): { a: Point2D; b: Point2D; candidates: Point2D[] } {
   // Per-quadrant max extent along each axis (D_X, D_Y)
   const maxDx = [0, 0, 0, 0];
   const maxDy = [0, 0, 0, 0];
@@ -192,7 +192,7 @@ export function restrictedEdgeHullPoints(
       }
     }
   }
-  return best;
+  return { ...best, candidates };
 }
 
 // Method 3: minimum bounding rectangle orientation

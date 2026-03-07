@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useEssayState } from '../EssayContext';
 import { getToothPoints } from './toothShapes';
 import {
@@ -49,15 +49,31 @@ function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3);
 }
 
-/** Compute a toSvg mapping from a set of 2D points (unified bounding box). */
+function mean3D(pts: Point3D[]): Point3D {
+  const n = pts.length;
+  if (n === 0) return { x: 0, y: 0, z: 0 };
+  let sx = 0, sy = 0, sz = 0;
+  for (const p of pts) { sx += p.x; sy += p.y; sz += p.z; }
+  return { x: sx / n, y: sy / n, z: sz / n };
+}
+
+function mean2D(pts: Point2D[]): Point2D {
+  const n = pts.length;
+  if (n === 0) return { x: 0, y: 0 };
+  let sx = 0, sy = 0;
+  for (const p of pts) { sx += p.x; sy += p.y; }
+  return { x: sx / n, y: sy / n };
+}
+
+/** Compute a toSvg mapping that centers the bounding box in the viewport. */
 function makeToSvg(allPoints: Point2D[]): (p: Point2D) => Point2D {
   if (allPoints.length === 0) return (p) => p;
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   for (const p of allPoints) {
-    if (p.x < minX) minX = p.x;
-    if (p.x > maxX) maxX = p.x;
-    if (p.y < minY) minY = p.y;
-    if (p.y > maxY) maxY = p.y;
+    minX = Math.min(minX, p.x);
+    maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y);
+    maxY = Math.max(maxY, p.y);
   }
   const scale = VIEW / (Math.max(maxX - minX, maxY - minY) || 1);
   const cx = (minX + maxX) / 2;
@@ -72,13 +88,13 @@ function refPointsForMethod(
   method: number,
   hull: Point2D[],
   center: Point2D
-): { a: Point2D; b: Point2D; rect: Point2D[] | null } {
+): { a: Point2D; b: Point2D; rect: Point2D[] | null; candidates: Point2D[] | null } {
   switch (method) {
     case 1:
       return { ...restrictedEdgeHullPoints(hull, center), rect: null };
     case 2: {
       const { a, b, rect } = minBoundingRectPoints(hull);
-      return { a, b, rect };
+      return { a, b, rect, candidates: null };
     }
     default:
       return { ...farthestHullPoints(hull, center), rect: null };
@@ -109,7 +125,11 @@ function applyCorrections(pts: Point3D[], n: number, method: number): Point3D[] 
     const { a, b } = refPointsForMethod(method, hull, centroid(hull));
     const fullAngle = correctionAngle(a, b, axis);
     const frac = Math.min(n - i, 1);
-    result = rotate(result, fullAngle * frac);
+    // Rotate around 3D centroid (mean of all points), not origin
+    const c3d = mean3D(result);
+    const centered = result.map(p => ({ x: p.x - c3d.x, y: p.y - c3d.y, z: p.z - c3d.z }));
+    const rotated = rotate(centered, fullAngle * frac);
+    result = rotated.map(p => ({ x: p.x + c3d.x, y: p.y + c3d.y, z: p.z + c3d.z }));
   }
   return result;
 }
@@ -118,9 +138,12 @@ function applyCorrections(pts: Point3D[], n: number, method: number): Point3D[] 
 function computeRawLayer(pts3D: Point3D[], projection: Projection, method: number) {
   const projected = PROJECT_FN[projection](pts3D);
   const hullPts = convexHull(projected);
-  const ref = refPointsForMethod(method, hullPts, centroid(hullPts));
+  const center = centroid(hullPts);
+  const ref = refPointsForMethod(method, hullPts, center);
   const angle = correctionAngle(ref.a, ref.b, CORRECTION_AXIS[projection]);
-  return { projected, hullPts, refA: ref.a, refB: ref.b, angle, rect: ref.rect };
+  // pivot = projected mean of all 3D points (= rotation pivot projected to 2D)
+  const pivot = mean2D(projected);
+  return { projected, hullPts, refA: ref.a, refB: ref.b, angle, rect: ref.rect, candidates: ref.candidates, center, pivot };
 }
 
 // ── Data types ───────────────────────────────────────
@@ -132,13 +155,16 @@ type LayerData = {
   refB: Point2D | null;
   angle: number;
   rect: Point2D[] | null;
+  candidates: Point2D[] | null;
+  center: Point2D | null;
+  pivot: Point2D | null;
 };
 
 type CanvasData = LayerData & {
   ghost: LayerData | null;
 };
 
-const EMPTY_LAYER: LayerData = { scaledPoints: [], hull: [], refA: null, refB: null, angle: 0, rect: null };
+const EMPTY_LAYER: LayerData = { scaledPoints: [], hull: [], refA: null, refB: null, angle: 0, rect: null, candidates: null, center: null, pivot: null };
 
 // ── Component ────────────────────────────────────────
 
@@ -184,21 +210,16 @@ export function ProjectionCanvas({
     basePts.current = pts;
   }
 
-  /** Build a stable toSvg mapping from the integer animation endpoints. */
-  const makeStableToSvg = useCallback((fromStep: number, toStep: number) => {
+  /** Build a stable toSvg mapping from ALL correction states (0..4).
+   *  This guarantees the scale never changes between animation segments. */
+  const stableToSvg = useMemo(() => {
     const pts = basePts.current;
-    const lo = Math.min(fromStep, toStep);
-    const hi = Math.max(fromStep, toStep);
-    const allProjected: Point2D[] = [
-      ...PROJECT_FN[projection](applyCorrections(pts, lo, method)),
-      ...PROJECT_FN[projection](applyCorrections(pts, hi, method)),
-    ];
-    if (ghostStep !== undefined) {
-      allProjected.push(...PROJECT_FN[projection](applyCorrections(pts, ghostStep, method)));
-      allProjected.push(...PROJECT_FN[projection](applyCorrections(pts, ghostStep + 1, method)));
+    const allProjected: Point2D[] = [];
+    for (let i = 0; i <= CORRECTION_STEPS.length; i++) {
+      allProjected.push(...PROJECT_FN[projection](applyCorrections(pts, i, method)));
     }
     return makeToSvg(allProjected);
-  }, [method, ghostStep, projection, basePtsKey]);
+  }, [method, projection, basePtsKey]);
 
   /** Compute full CanvasData from a (possibly fractional) main step. */
   const computeCanvas = useCallback((mainStep: number, toSvg: (p: Point2D) => Point2D): CanvasData => {
@@ -224,6 +245,9 @@ export function ProjectionCanvas({
     let mainRefB: Point2D | null = null;
     let mainAngle = mainRaw.angle;
     let mainRect = mainRaw.rect ? mainRaw.rect.map(toSvg) : null;
+    let mainCandidates = mainRaw.candidates ? mainRaw.candidates.map(toSvg) : null;
+    let mainCenter = toSvg(mainRaw.center);
+    let mainPivot = toSvg(mainRaw.pivot);
     if (ghostRaw) {
       const frac = Math.min(mainStep - (ghostStep ?? 0), 1);
       const appliedDeg = ghostRaw.angle * frac;
@@ -231,18 +255,25 @@ export function ProjectionCanvas({
       //   Z-axis (XY): rotateAroundZ rotates (x,y) → standard 2D rotation
       //   X-axis (YZ): rotateAroundX rotates (y,z) → projected (y,z) standard
       //   Y-axis (XZ): rotateAroundY has x'=xc+zs, z'=-xs+zc → projected (x,z) flipped sign
-      // Rotate around the origin (0,0) in projection space — same pivot as the 3D rotation.
+      // Rotate around the projected centroid (= rotation pivot), not origin.
       const sign = projection === 'xz' ? -1 : 1;
       const appliedRad = sign * (appliedDeg * Math.PI) / 180;
+      const gp = ghostRaw.pivot;
       const rotPt = (p: Point2D): Point2D => {
+        const dx = p.x - gp.x;
+        const dy = p.y - gp.y;
         const c = Math.cos(appliedRad);
         const s = Math.sin(appliedRad);
-        return { x: p.x * c - p.y * s, y: p.x * s + p.y * c };
+        return { x: gp.x + dx * c - dy * s, y: gp.y + dx * s + dy * c };
       };
       mainRefA = toSvg(rotPt(ghostRaw.refA));
       mainRefB = toSvg(rotPt(ghostRaw.refB));
       mainAngle = ghostRaw.angle * frac;
       mainRect = ghostRaw.rect ? ghostRaw.rect.map(p => toSvg(rotPt(p))) : null;
+      mainCandidates = ghostRaw.candidates ? ghostRaw.candidates.map(p => toSvg(rotPt(p))) : null;
+      mainCenter = toSvg(rotPt(ghostRaw.center));
+      // Pivot is stable during rotation (rotating the pivot around itself = identity)
+      mainPivot = toSvg(ghostRaw.pivot);
     } else {
       mainRefA = toSvg(mainRaw.refA);
       mainRefB = toSvg(mainRaw.refB);
@@ -254,6 +285,9 @@ export function ProjectionCanvas({
       refB: mainRefB,
       angle: mainAngle,
       rect: mainRect,
+      candidates: mainCandidates,
+      center: mainCenter,
+      pivot: mainPivot,
     };
 
     // Scale ghost
@@ -267,6 +301,9 @@ export function ProjectionCanvas({
         refB: toSvg(ghostRaw.refB),
         angle: ghostRaw.angle,
         rect: ghostRaw.rect ? ghostRaw.rect.map(toSvg) : null,
+        candidates: ghostRaw.candidates ? ghostRaw.candidates.map(toSvg) : null,
+        center: toSvg(ghostRaw.center),
+        pivot: toSvg(ghostRaw.pivot),
       };
     }
 
@@ -274,7 +311,7 @@ export function ProjectionCanvas({
   }, [isHydrated, method, ghostStep, projection, basePtsKey]);
 
   // ── Animate via fractional step ──
-  const [display, setDisplay] = useState<CanvasData>(() => computeCanvas(step, makeStableToSvg(step, step)));
+  const [display, setDisplay] = useState<CanvasData>(() => computeCanvas(step, stableToSvg));
   const [isAnimating, setIsAnimating] = useState(false);
   const prevStepRef = useRef(step);
   const animRef = useRef<number>(0);
@@ -284,7 +321,7 @@ export function ProjectionCanvas({
     if (isFirstRender.current) {
       isFirstRender.current = false;
       prevStepRef.current = step;
-      setDisplay(computeCanvas(step, makeStableToSvg(step, step)));
+      setDisplay(computeCanvas(step, stableToSvg));
       return;
     }
 
@@ -294,12 +331,10 @@ export function ProjectionCanvas({
 
     // Non-animated: snap when step doesn't change (other params changed)
     if (fromStep === toStep) {
-      setDisplay(computeCanvas(toStep, makeStableToSvg(toStep, toStep)));
+      setDisplay(computeCanvas(toStep, stableToSvg));
       return;
     }
 
-    // Pre-compute stable scale for the whole animation segment
-    const stableToSvg = makeStableToSvg(fromStep, toStep);
     setIsAnimating(true);
     const start = performance.now();
     const tick = (now: number) => {
@@ -316,14 +351,16 @@ export function ProjectionCanvas({
     cancelAnimationFrame(animRef.current);
     animRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animRef.current);
-  }, [step, computeCanvas, makeStableToSvg]);
+  }, [step, computeCanvas, stableToSvg]);
 
   if (!isHydrated) {
     return <div className="tooth-canvas" style={{ width: SVG_SIZE, height: SVG_SIZE + 28 }} />;
   }
 
-  const { scaledPoints, hull, refA, refB, angle, rect, ghost } = display;
+  const { scaledPoints, hull, refA, refB, angle, rect, candidates, center, pivot, ghost } = display;
   const effectiveShowRef = showRef && (!refOnSettle || !isAnimating);
+  // Use ghost pivot for crosshairs during animation (stable), else main pivot
+  const crosshairCenter = ghost?.pivot ?? pivot;
 
   const hullPath = hull.length > 0
     ? `M ${hull.map((p) => `${p.x},${p.y}`).join(' L ')} Z`
@@ -344,11 +381,13 @@ export function ProjectionCanvas({
   return (
     <div className="tooth-canvas">
       <svg viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`} width={SVG_SIZE} height={SVG_SIZE}>
-        {/* Axis crosshairs */}
-        <line x1={MARGIN} y1={SVG_SIZE / 2} x2={SVG_SIZE - MARGIN} y2={SVG_SIZE / 2}
-          stroke={`var(--ink-${ink.cross})`} strokeWidth={0.5} strokeDasharray="4 4" />
-        <line x1={SVG_SIZE / 2} y1={MARGIN} x2={SVG_SIZE / 2} y2={SVG_SIZE - MARGIN}
-          stroke={`var(--ink-${ink.cross})`} strokeWidth={0.5} strokeDasharray="4 4" />
+        {/* Axis crosshairs through rotation pivot (centroid) */}
+        {crosshairCenter && <>
+          <line x1={MARGIN} y1={crosshairCenter.y} x2={SVG_SIZE - MARGIN} y2={crosshairCenter.y}
+            stroke={`var(--ink-${ink.cross})`} strokeWidth={0.5} strokeDasharray="4 4" />
+          <line x1={crosshairCenter.x} y1={MARGIN} x2={crosshairCenter.x} y2={SVG_SIZE - MARGIN}
+            stroke={`var(--ink-${ink.cross})`} strokeWidth={0.5} strokeDasharray="4 4" />
+        </>}
 
         {/* ── Ghost layer (before correction) ── */}
         {ghost && (
@@ -363,6 +402,10 @@ export function ProjectionCanvas({
               <path d={`M ${ghost.rect.map((p) => `${p.x},${p.y}`).join(' L ')} Z`}
                 fill="none" stroke="var(--ink-faint)" strokeWidth={0.6} strokeDasharray="3 3" />
             )}
+            {ghost.candidates && ghost.candidates.map((p, i) => (
+              <circle key={`gc${i}`} cx={p.x} cy={p.y} r={2} fill="none"
+                stroke="var(--ink-faint)" strokeWidth={0.8} />
+            ))}
             {ghost.refA && ghost.refB && (
               <line x1={ghost.refA.x} y1={ghost.refA.y} x2={ghost.refB.x} y2={ghost.refB.y}
                 stroke="var(--ink-light)" strokeWidth={1} strokeDasharray="3 2" />
@@ -395,6 +438,25 @@ export function ProjectionCanvas({
         {rectPath && (
           <path d={rectPath} fill="none" stroke={`var(--ink-${ink.rect})`} strokeWidth={ink.rectW} strokeDasharray="3 3" />
         )}
+        {/* Pivot crosshair marker (rotation center) */}
+        {pivot && (
+          <g stroke={`var(--ink-${ink.hull})`} strokeWidth={0.8}>
+            <circle cx={pivot.x} cy={pivot.y} r={4} fill="none" />
+            <line x1={pivot.x - 6} y1={pivot.y} x2={pivot.x + 6} y2={pivot.y} />
+            <line x1={pivot.x} y1={pivot.y - 6} x2={pivot.x} y2={pivot.y + 6} />
+          </g>
+        )}
+        {/* Candidate dots (methods 0,1) */}
+        {effectiveShowRef && candidates && candidates.map((p, i) => {
+          const isSelected = refA && refB &&
+            ((Math.abs(p.x - refA.x) < 0.5 && Math.abs(p.y - refA.y) < 0.5) ||
+             (Math.abs(p.x - refB.x) < 0.5 && Math.abs(p.y - refB.y) < 0.5));
+          return !isSelected ? (
+            <circle key={i} cx={p.x} cy={p.y} r={3.5}
+              fill={`var(--ink-${ink.hull})`} fillOpacity={0.4}
+              stroke={`var(--ink-${ink.hull})`} strokeWidth={1} />
+          ) : null;
+        })}
         {effectiveShowRef && refA && (
           <>
             <circle cx={refA.x} cy={refA.y} r={3.5} fill="var(--ink-black)"
@@ -429,7 +491,7 @@ export function ProjectionCanvas({
         </>}
       </svg>
       <div className="tooth-canvas-label" style={effectiveShowRef && !refOnSettle ? undefined : { visibility: 'hidden' }}>
-        <span className="tooth-canvas-angle">{(ghostOnly ? 0 : angle).toFixed(1)}°</span>
+        <span className="tooth-canvas-angle">{(ghostOnly ? 0 : angle).toFixed(1)}° {CORRECTION_AXIS[projection]}</span>
       </div>
     </div>
   );
