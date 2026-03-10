@@ -90,6 +90,7 @@ export default function StackedThoughts({
   const firstPaneStartLeft = useRef<number | null>(null);
   const initialPaneSlugs = useRef(new Set([initialSlug]));
   const suppressNextClickRef = useRef(false);
+  const pendingSlugsRef = useRef(new Set<string>());
 
   // On mount: restore stacked panes from URL (desktop only)
   useEffect(() => {
@@ -238,6 +239,10 @@ export default function StackedThoughts({
         return;
       }
 
+      // Fix A: another click already started opening this slug
+      if (pendingSlugsRef.current.has(slug)) return;
+      pendingSlugsRef.current.add(slug);
+
       // Snapshot first pane position before re-render (for slide animation)
       if (panes.length === 1 && containerRef.current) {
         const firstPane = containerRef.current.querySelector('.thought-pane') as HTMLElement;
@@ -279,11 +284,15 @@ export default function StackedThoughts({
           scrollCompensationRef.current = paneWidth - ghostFootprint;
 
           setForwardGhost(null);
-          setPanes((prev) => [
-            ...prev.slice(0, fromPaneIndex + 1),
-            thought,
-            ...prev.slice(fromPaneIndex + 1),
-          ]);
+          // Fix B: dedup inside updater as safety net
+          setPanes((prev) => {
+            if (prev.some((p) => p.slug === slug)) return prev;
+            return [
+              ...prev.slice(0, fromPaneIndex + 1),
+              thought,
+              ...prev.slice(fromPaneIndex + 1),
+            ];
+          });
           return;
         }
 
@@ -291,14 +300,20 @@ export default function StackedThoughts({
         // the ~260px flex layout zigzag (ghost yanked → panes jump left
         // → new pane inserted → panes jump right).
         setForwardGhost(null);
-        setPanes((prev) => [
-          ...prev.slice(0, fromPaneIndex + 1),
-          thought,
-          ...prev.slice(fromPaneIndex + 1),
-        ]);
+        // Fix B: dedup inside updater as safety net
+        setPanes((prev) => {
+          if (prev.some((p) => p.slug === slug)) return prev;
+          return [
+            ...prev.slice(0, fromPaneIndex + 1),
+            thought,
+            ...prev.slice(fromPaneIndex + 1),
+          ];
+        });
         setScrollTarget({ index: fromPaneIndex + 1, mode: 'into-view' });
       } catch (err) {
         console.error('[StackedThoughts] Failed to open thought:', slug, err);
+      } finally {
+        pendingSlugsRef.current.delete(slug);
       }
     },
     [panes],
