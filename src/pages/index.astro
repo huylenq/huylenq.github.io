@@ -18,8 +18,8 @@ const thoughts = Object.values(graphFile.thoughts)
   .sort((a, b) => (maturityOrder[a.maturity] ?? 2) - (maturityOrder[b.maturity] ?? 2));
 const edges = graphFile.edges;
 
-const essayModules = import.meta.glob('../essays/*.mdx', { eager: true }) as Record<string, any>;
-const essays = Object.values(essayModules)
+const explorableModules = import.meta.glob('../explorables/*.mdx', { eager: true }) as Record<string, any>;
+const explorables = Object.values(explorableModules)
   .filter((e) => e.meta?.title)
   .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 ---
@@ -50,23 +50,23 @@ const essays = Object.values(essayModules)
   </section>
 
   <section class="thoughts-section" data-accent="blue">
-    <h2><a href="/essays">Essays</a></h2>
-    <p class="section-description">Interactive, play-able essays that I'm having fun making.</p>
-    {essays.length > 0 ? (
+    <h2><a href="/explorables">Explorables</a></h2>
+    <p class="section-description">Interactive, play-able explorations that I'm having fun making.</p>
+    {explorables.length > 0 ? (
       <ul class="thoughts-list">
-        {essays.map((essay) => (
+        {explorables.map((item) => (
           <li>
-            <a href={`/essays/${essay.meta.slug}`} class="essay-link">
-              <strong>{essay.meta.title}</strong>
-              {essay.meta.description && (
-                <span class="essay-description">— {essay.meta.description}</span>
+            <a href={`/explorables/${item.meta.slug}`} class="essay-link">
+              <strong>{item.meta.title}</strong>
+              {item.meta.description && (
+                <span class="essay-description">— {item.meta.description}</span>
               )}
             </a>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="empty">No essays published yet.</p>
+      <p class="empty">No explorables published yet.</p>
     )}
   </section>
 </PageLayout>

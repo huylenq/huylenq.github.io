@@ -1,4 +1,4 @@
-import { useEssayState } from './EssayContext';
+import { useEssayState } from '../mdx/EssayContext';
 import { simulate, type SimParams, type SprintSnapshot } from './simulate';
 
 const MINI_W = 280;

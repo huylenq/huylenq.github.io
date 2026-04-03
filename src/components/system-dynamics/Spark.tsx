@@ -1,4 +1,4 @@
-import { useEssayState } from './EssayContext';
+import { useEssayState } from '../mdx/EssayContext';
 import { simulate, type SprintSnapshot } from './simulate';
 
 type MetricKey = keyof Omit<SprintSnapshot, 'sprint'>;

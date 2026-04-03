@@ -1,4 +1,4 @@
-import { useEssayState } from './EssayContext';
+import { useEssayState } from '../mdx/EssayContext';
 import { simulate } from './simulate';
 
 const SERIES = [

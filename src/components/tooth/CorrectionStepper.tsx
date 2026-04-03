@@ -1,4 +1,4 @@
-import { useEssayVar } from '../EssayContext';
+import { useEssayVar } from '../mdx/EssayContext';
 import { ProjectionCanvas } from './ProjectionCanvas';
 
 const STEPS = [

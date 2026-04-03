@@ -4,7 +4,7 @@ interface Props {
 }
 const { section } = Astro.props;
 const path = Astro.url.pathname;
-const sections = ['thoughts', 'essays', 'sketches', 'resume', 'about'] as const;
+const sections = ['thoughts', 'explorables', 'sketches', 'resume', 'about'] as const;
 const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 ---
 <header class="site-header" transition:persist>
@@ -129,7 +129,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 
   const colorMap: Record<string, string> = {
     '/thoughts': 'var(--accent-yellow)',
-    '/essays': 'var(--accent-blue)',
+    '/explorables': 'var(--accent-blue)',
   };
 
   // --- Geometry: line and circle share identical M C C C C Z structure (26 values) ---

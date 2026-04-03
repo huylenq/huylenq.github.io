@@ -1,0 +1,48 @@
+import { Essay, Slider, RadioGroup } from "../components/mdx";
+import { ProjectionCanvas } from "../components/tooth/ProjectionCanvas";
+import { CorrectionStepper } from "../components/tooth/CorrectionStepper";
+
+export const meta = {
+  title: "Tooth Position Correction in CBCT Imaging",
+  slug: "tooth-correction",
+};
+
+<Essay initialState={{ tiltZ: 25, tiltX: 15, tiltY: 10, step: 0, method: 0, toothType: 0 }}>
+
+# Tooth Orientation Correction in CBCT Imaging
+
+<div className="tooth-initial-layout">
+  <div>
+    <ProjectionCanvas projection="xy" step={0} showRef={false} />
+    <RadioGroup name="toothType" options={["Shape 1", "Shape 2", "Shape 3"]} />
+  </div>
+  <div className="tooth-initial-controls">
+    <Slider name="tiltZ" min={-45} max={45} label="Tilt Z" />
+    <Slider name="tiltX" min={-45} max={45} label="Tilt X" />
+    <Slider name="tiltY" min={-45} max={45} label="Tilt Y" />
+  </div>
+</div>
+
+## Method
+
+Sequential rotation correction across 3 axes: project onto a plane, find reference point pair A–B on the convex hull, then rotate to align. Repeat for each axis.
+
+### Reference point selection
+
+**Farthest hull point** — partition the convex hull into 4 quadrants from the centroid, pick the farthest point in each quadrant, then select the pair with the greatest distance.
+
+**Restricted edge hull point** — filter points exceeding 50% of both D_X and D_Y in each quadrant, pick the point closest to the axis in each quadrant, then select the pair with the greatest distance.
+
+**Minimum bounding rectangle** — use rotating calipers to find the minimum bounding rectangle; the tooth orientation is determined by its long axis.
+
+## Correction steps
+
+Z-axis twice (Steps 1-1 and 1-2 on the X-Y projection), then X-axis (Y-Z projection), then Y-axis (X-Z projection). The second Z rotation refines residual error after the first rotation changes the convex hull shape.
+
+<RadioGroup name="method" options={["Farthest hull", "Restricted edge", "Bounding rect"]} />
+
+<CorrectionStepper />
+
+*Chen et al. project only the crown portion of the tooth. This illustration uses the full parametric tooth shape.*
+
+</Essay>

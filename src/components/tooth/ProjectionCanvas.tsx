@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
-import { useEssayState } from '../EssayContext';
+import { useEssayState } from '../mdx/EssayContext';
 import { getToothPoints } from './toothShapes';
 import {
   convexHull,

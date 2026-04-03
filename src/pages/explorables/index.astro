@@ -1,29 +1,29 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 
-const essayModules = import.meta.glob('../../essays/*.mdx', { eager: true }) as Record<string, any>;
-const sorted = Object.values(essayModules)
+const modules = import.meta.glob('../../explorables/*.mdx', { eager: true }) as Record<string, any>;
+const sorted = Object.values(modules)
   .filter((e) => e.meta?.title)
   .sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 ---
-<PageLayout title="Essays — huylenq.com" section="Essays">
+<PageLayout title="Explorables — huylenq.com" section="Explorables">
   <section class="listing-section">
-    <p class="section-description">Interactive, play-able essays that I'm having fun making.</p>
+    <p class="section-description">Interactive, play-able explorations that I'm having fun making.</p>
     {sorted.length > 0 ? (
       <ul class="listing">
-        {sorted.map((essay) => (
+        {sorted.map((item) => (
           <li>
-            <a href={`/essays/${essay.meta.slug}`}>
-              <strong>{essay.meta.title}</strong>
-              {essay.meta.description && (
-                <span class="description">— {essay.meta.description}</span>
+            <a href={`/explorables/${item.meta.slug}`}>
+              <strong>{item.meta.title}</strong>
+              {item.meta.description && (
+                <span class="description">— {item.meta.description}</span>
               )}
             </a>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="empty">No essays published yet.</p>
+      <p class="empty">No explorables published yet.</p>
     )}
   </section>
 </PageLayout>

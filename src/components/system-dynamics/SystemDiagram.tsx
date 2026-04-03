@@ -1,5 +1,5 @@
 import { useRef, type PointerEvent } from 'react';
-import { useEssayState, useEssayVar } from './EssayContext';
+import { useEssayState, useEssayVar } from '../mdx/EssayContext';
 
 const W = 680;
 const H = 300;
