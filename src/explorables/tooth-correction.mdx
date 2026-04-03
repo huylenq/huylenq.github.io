@@ -3,13 +3,16 @@ import { ProjectionCanvas } from "../components/tooth/ProjectionCanvas";
 import { CorrectionStepper } from "../components/tooth/CorrectionStepper";
 
 export const meta = {
-  title: "Tooth Position Correction in CBCT Imaging",
+  title: "Rectifying Tooth Orientation in CBCT Imaging",
+  description:
+    "A method I wanted to see in motion — replicating Chen et al.'s sequential axis rectification on 2D projections of tooth point clouds",
+  date: "2026-03-15",
   slug: "tooth-correction",
 };
 
 <Essay initialState={{ tiltZ: 25, tiltX: 15, tiltY: 10, step: 0, method: 0, toothType: 0 }}>
 
-# Tooth Orientation Correction in CBCT Imaging
+# Rectifying Tooth Orientation in CBCT Imaging
 
 <div className="tooth-initial-layout">
   <div>
