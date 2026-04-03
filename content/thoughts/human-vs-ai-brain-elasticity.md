@@ -3,7 +3,6 @@ title: "The fundamental advantages of human vs AI"
 slug: "human-vs-ai-brain-elasticity"
 maturity: "seed"
 ---
-
 One thing that AI models as software fall short of compared to the human brain is that this brain “wetware” is equipped with a biological advantage of **elasticity**.
 
 AI models do not learn continuously. There’s no resemblance to the “neurons that fire together, wire together” capability of the mind.

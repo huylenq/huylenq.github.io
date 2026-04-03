@@ -18,18 +18,6 @@
       "backlinks": [],
       "maturity": "seed"
     },
-    "aima": {
-      "slug": "aima",
-      "title": "AIMA",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "about": {
-      "slug": "about",
-      "title": "About these notes",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "anchoring-on-tool-capability-limits-the-mind": {
       "slug": "anchoring-on-tool-capability-limits-the-mind",
       "title": "Anchoring on tool capability limit the mind",
@@ -86,13 +74,7 @@
     "ben-thanh-market": {
       "slug": "ben-thanh-market",
       "title": "Ben Thanh market",
-      "backlinks": [
-        {
-          "slug": "voxel-art",
-          "title": "Voxel art",
-          "context": "<p><a href=\"/thoughts/ben-thanh-market\">Ben Thanh market</a></p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "d838d424-1c3f-4fb6-b094-0014eaa6bfcc": {
@@ -119,39 +101,10 @@
       "backlinks": [],
       "maturity": "seed"
     },
-    "constraint-satisfaction-problem": {
-      "slug": "constraint-satisfaction-problem",
-      "title": "Constraint Statisfaction Problem",
-      "backlinks": [
-        {
-          "slug": "aima",
-          "title": "AIMA",
-          "context": "<h1>5. <a href=\"/thoughts/constraint-satisfaction-problem\">Constraint Statisfaction Problem</a></h1>"
-        },
-        {
-          "slug": "min-conflicts-heuristic",
-          "title": "Min-conflicts heuristic",
-          "context": "<p>A specific <span class=\"private-link\">Local search</span> algorithm using in the context of <a href=\"/thoughts/constraint-satisfaction-problem\">Constraint Statisfaction Problem</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "damp": {
-      "slug": "damp",
-      "title": "DAMP",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "different-purposes-of-writing": {
       "slug": "different-purposes-of-writing",
       "title": "Different purposes of writing",
-      "backlinks": [
-        {
-          "slug": "writing",
-          "title": "§ Writing",
-          "context": "<p><a href=\"/thoughts/different-purposes-of-writing\">Different purposes of writing</a></p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "feel-the-sensation": {
@@ -216,42 +169,12 @@
     "how-to-take-smart-notes": {
       "slug": "how-to-take-smart-notes",
       "title": "How to Take Smart Notes - Ahren Sonke",
-      "backlinks": [
-        {
-          "slug": "writing",
-          "title": "§ Writing",
-          "context": "<ul>\n<li><a href=\"/thoughts/how-to-take-smart-notes\">How to Take Smart Notes - Ahren Sonke</a></li>\n</ul>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "hypervisor": {
-      "slug": "hypervisor",
-      "title": "Hypervisor",
-      "backlinks": [
-        {
-          "slug": "mit-6824-distributed-systems",
-          "title": "MIT OCW 6.824 - Distributed Computer Systems Engineering",
-          "context": "<p>Mentions: <a href=\"/thoughts/replication\">Replication</a>, <a href=\"/thoughts/hypervisor\">Hypervisor</a></p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "hyrums-law": {
-      "slug": "hyrums-law",
-      "title": "Hyrum's Law",
       "backlinks": [],
       "maturity": "seed"
     },
     "indecisiveness": {
       "slug": "indecisiveness",
       "title": "Indecisiveness",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "knowledge-based-agent": {
-      "slug": "knowledge-based-agent",
-      "title": "Knowledge-based Agent",
       "backlinks": [],
       "maturity": "seed"
     },
@@ -271,36 +194,6 @@
         }
       ],
       "maturity": "evergreen"
-    },
-    "logical-agents": {
-      "slug": "logical-agents",
-      "title": "Logical Agents",
-      "backlinks": [
-        {
-          "slug": "aima",
-          "title": "AIMA",
-          "context": "<p>\"Sometimes you can trade space for time\", know what this allures to?:: Precomputed tables for opening and endgame. <!--SR:!2022-03-11,89,248--> # 7. <a href=\"/thoughts/logical-agents\">Logical Agents</a></p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "mit-6824-distributed-systems": {
-      "slug": "mit-6824-distributed-systems",
-      "title": "MIT OCW 6.824 - Distributed Computer Systems Engineering",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "min-conflicts-heuristic": {
-      "slug": "min-conflicts-heuristic",
-      "title": "Min-conflicts heuristic",
-      "backlinks": [
-        {
-          "slug": "constraint-satisfaction-problem",
-          "title": "Constraint Statisfaction Problem",
-          "context": "<p>A popular local search being used in CSP is <a href=\"/thoughts/min-conflicts-heuristic\">Min-conflicts heuristic</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
     },
     "modal-thinking": {
       "slug": "modal-thinking",
@@ -357,25 +250,13 @@
     "programming-abstractions": {
       "slug": "programming-abstractions",
       "title": "Programming abstractions",
-      "backlinks": [
-        {
-          "slug": "programming",
-          "title": "§ Programming",
-          "context": "<ul>\n<li><a href=\"/thoughts/programming-abstractions\">Programming abstractions</a> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a></li>\n</ul>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "programming-beacons": {
       "slug": "programming-beacons",
       "title": "Programming beacons",
-      "backlinks": [
-        {
-          "slug": "programming",
-          "title": "§ Programming",
-          "context": "<ul>\n<li><a href=\"/thoughts/programming-abstractions\">Programming abstractions</a> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a></li>\n</ul>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "purpose-of-highlights": {
@@ -392,35 +273,6 @@
           "slug": "how-to-read-a-book",
           "title": "How to Read a Book - Adler & Doren",
           "context": "<p><a href=\"/thoughts/reading-is-catching-balls\">Reading is catching balls</a> ---</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "replication": {
-      "slug": "replication",
-      "title": "Replication",
-      "backlinks": [
-        {
-          "slug": "mit-6824-distributed-systems",
-          "title": "MIT OCW 6.824 - Distributed Computer Systems Engineering",
-          "context": "<p>Mentions: <a href=\"/thoughts/replication\">Replication</a>, <a href=\"/thoughts/hypervisor\">Hypervisor</a></p>"
-        },
-        {
-          "slug": "replication",
-          "title": "Replication",
-          "context": "<p>Q: What kind of failure that <a href=\"/thoughts/replication\">Replication</a> can recover? A: fail-stop</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "seneca": {
-      "slug": "seneca",
-      "title": "Seneca",
-      "backlinks": [
-        {
-          "slug": "time-heals-what-reason-cannot",
-          "title": "Time heals what reason cannot",
-          "context": "<p>A timeless (no pun intended) advice from <a href=\"/thoughts/seneca\">Seneca</a>.</p>"
         }
       ],
       "maturity": "seed"
@@ -445,13 +297,7 @@
     "software-engineering-advices": {
       "slug": "software-engineering-advices",
       "title": "Software engineering advices",
-      "backlinks": [
-        {
-          "slug": "on-top-of-mind",
-          "title": "§ On top of mind",
-          "context": "<p><strong><a href=\"/thoughts/software-engineering-advices\">Software engineering advices</a></strong></p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "software-engineering-fatigue": {
@@ -463,13 +309,7 @@
     "unofficial-project-manager": {
       "slug": "unofficial-project-manager",
       "title": "The Unofficial Project Manager",
-      "backlinks": [
-        {
-          "slug": "on-top-of-mind",
-          "title": "§ On top of mind",
-          "context": "<p>...project and leading people. My recent read on the subject are <a href=\"/thoughts/unofficial-project-manager\">The Unofficial Project Manager</a>, and <span class=\"private-link\">The Mythical Man-Month...</p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "the-cost-of-delayed-action": {
@@ -548,13 +388,7 @@
     "think-do-review": {
       "slug": "think-do-review",
       "title": "Think-Do-Review",
-      "backlinks": [
-        {
-          "slug": "about",
-          "title": "About these notes",
-          "context": "<ul>\n<li><a href=\"/thoughts/think-do-review\">Think-Do-Review</a></li>\n</ul>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "thinking-and-doing-rhythm": {
@@ -578,13 +412,7 @@
     "tools-for-thought": {
       "slug": "tools-for-thought",
       "title": "Tools for Thought",
-      "backlinks": [
-        {
-          "slug": "on-top-of-mind",
-          "title": "§ On top of mind",
-          "context": "<p><strong><a href=\"/thoughts/tools-for-thought\">Tools for Thought</a></strong></p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "trust": {
@@ -592,18 +420,6 @@
       "title": "Trust",
       "backlinks": [],
       "maturity": "evergreen"
-    },
-    "voxel-art": {
-      "slug": "voxel-art",
-      "title": "Voxel art",
-      "backlinks": [
-        {
-          "slug": "about",
-          "title": "About these notes",
-          "context": "<p>I like to <a href=\"/thoughts/sketches\">sketch</a> occasionally. Recent I'm fascinating with <a href=\"/thoughts/voxel-art\">Voxel art</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
     },
     "software-cognitive-aid": {
       "slug": "software-cognitive-aid",
@@ -632,13 +448,7 @@
     "letter-to-my-20s": {
       "slug": "letter-to-my-20s",
       "title": "What will I tell my 20s",
-      "backlinks": [
-        {
-          "slug": "on-top-of-mind",
-          "title": "§ On top of mind",
-          "context": "<p><strong><a href=\"/thoughts/letter-to-my-20s\">What will I tell my 20s</a></strong></p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "start-new-behaviors-in-boring-easy-mode": {
@@ -728,69 +538,9 @@
         }
       ],
       "maturity": "seed"
-    },
-    "on-top-of-mind": {
-      "slug": "on-top-of-mind",
-      "title": "§ On top of mind",
-      "backlinks": [
-        {
-          "slug": "about",
-          "title": "About these notes",
-          "context": "<p>...discovering through the connections would actually entertain you better. <a href=\"/thoughts/on-top-of-mind\">§ On top of mind</a> along with the above links can be looked at first as the panning out points.</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "programming": {
-      "slug": "programming",
-      "title": "§ Programming",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "sketches": {
-      "slug": "sketches",
-      "title": "§ Sketches",
-      "backlinks": [
-        {
-          "slug": "about",
-          "title": "About these notes",
-          "context": "<p>I like to <a href=\"/thoughts/sketches\">sketch</a> occasionally. Recent I'm fascinating with <a href=\"/thoughts/voxel-art\">Voxel art</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "writing": {
-      "slug": "writing",
-      "title": "§ Writing",
-      "backlinks": [],
-      "maturity": "seed"
     }
   },
   "edges": [
-    {
-      "source": "aima",
-      "target": "constraint-satisfaction-problem"
-    },
-    {
-      "source": "aima",
-      "target": "logical-agents"
-    },
-    {
-      "source": "about",
-      "target": "on-top-of-mind"
-    },
-    {
-      "source": "about",
-      "target": "sketches"
-    },
-    {
-      "source": "about",
-      "target": "voxel-art"
-    },
-    {
-      "source": "about",
-      "target": "think-do-review"
-    },
     {
       "source": "96524a51-8a13-4db4-950c-e365c69a017d",
       "target": "recognizable-patterns-of-valuable-thoughts"
@@ -802,10 +552,6 @@
     {
       "source": "be-mindful-of-what-you-put-into-your-bucket",
       "target": "sense"
-    },
-    {
-      "source": "constraint-satisfaction-problem",
-      "target": "min-conflicts-heuristic"
     },
     {
       "source": "different-purposes-of-writing",
@@ -844,18 +590,6 @@
       "target": "programmable-self"
     },
     {
-      "source": "mit-6824-distributed-systems",
-      "target": "replication"
-    },
-    {
-      "source": "mit-6824-distributed-systems",
-      "target": "hypervisor"
-    },
-    {
-      "source": "min-conflicts-heuristic",
-      "target": "constraint-satisfaction-problem"
-    },
-    {
       "source": "modal-thinking",
       "target": "programmable-self"
     },
@@ -886,10 +620,6 @@
     {
       "source": "reading-is-catching-balls",
       "target": "how-to-read-a-book"
-    },
-    {
-      "source": "replication",
-      "target": "replication"
     },
     {
       "source": "sense",
@@ -928,16 +658,8 @@
       "target": "thinking-excuses"
     },
     {
-      "source": "time-heals-what-reason-cannot",
-      "target": "seneca"
-    },
-    {
       "source": "trust",
       "target": "programmable-self"
-    },
-    {
-      "source": "voxel-art",
-      "target": "ben-thanh-market"
     },
     {
       "source": "5d29c52e-e127-40b4-9348-7229370a3fed",
@@ -966,38 +688,6 @@
     {
       "source": "vocabulary-as-api-for-second-brain",
       "target": "96524a51-8a13-4db4-950c-e365c69a017d"
-    },
-    {
-      "source": "on-top-of-mind",
-      "target": "letter-to-my-20s"
-    },
-    {
-      "source": "on-top-of-mind",
-      "target": "software-engineering-advices"
-    },
-    {
-      "source": "on-top-of-mind",
-      "target": "unofficial-project-manager"
-    },
-    {
-      "source": "on-top-of-mind",
-      "target": "tools-for-thought"
-    },
-    {
-      "source": "programming",
-      "target": "programming-abstractions"
-    },
-    {
-      "source": "programming",
-      "target": "programming-beacons"
-    },
-    {
-      "source": "writing",
-      "target": "different-purposes-of-writing"
-    },
-    {
-      "source": "writing",
-      "target": "how-to-take-smart-notes"
     }
   ]
 }

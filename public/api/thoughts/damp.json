@@ -1,7 +1,0 @@
-{
-  "slug": "damp",
-  "title": "DAMP",
-  "html": "<p><strong>\"Descriptive And Meaningful Phrases\"</strong></p>\n<p>A principle that somewhat constrasts to DRY (\"Don't Repeat Yourself\"). It trumps over DRY especially when－but not limited to－writing tests.</p>",
-  "backlinks": [],
-  "maturity": "seed"
-}
