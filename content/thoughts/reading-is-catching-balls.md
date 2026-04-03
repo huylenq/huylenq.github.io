@@ -4,7 +4,7 @@ slug: "reading-is-catching-balls"
 maturity: "seed"
 ---
 
-An analogy on book reading from [How to Read a Book - Adler & Doren](/thoughts/how-to-read-a-book).
+An analogy on book reading from <span class="private-link">How to Read a Book - Adler & Doren</span>.
 
 It greatly expresses the relation between **writer** and **reader** is remarkably similar to the relation betwen **pitcher** and **catcher** in baseball. 
 Both activities of *pitching-writing* and *catching-reading* are **active**, and **demanding efforts**. There is no such thing as *passive catching* or *passive reading*.

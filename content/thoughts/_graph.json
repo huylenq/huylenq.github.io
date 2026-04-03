@@ -71,12 +71,6 @@
       "backlinks": [],
       "maturity": "budding"
     },
-    "ben-thanh-market": {
-      "slug": "ben-thanh-market",
-      "title": "Ben Thanh market",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "d838d424-1c3f-4fb6-b094-0014eaa6bfcc": {
       "slug": "d838d424-1c3f-4fb6-b094-0014eaa6bfcc",
       "title": "Best practices coding with agents",
@@ -151,24 +145,6 @@
     "0bf3c4de-be91-4eeb-af9f-4683be9f8598": {
       "slug": "0bf3c4de-be91-4eeb-af9f-4683be9f8598",
       "title": "How I review Flashcards",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "how-to-read-a-book": {
-      "slug": "how-to-read-a-book",
-      "title": "How to Read a Book - Adler & Doren",
-      "backlinks": [
-        {
-          "slug": "reading-is-catching-balls",
-          "title": "Reading is catching balls",
-          "context": "<p>An analogy on book reading from <a href=\"/thoughts/how-to-read-a-book\">How to Read a Book - Adler &#x26; Doren</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
-    },
-    "how-to-take-smart-notes": {
-      "slug": "how-to-take-smart-notes",
-      "title": "How to Take Smart Notes - Ahren Sonke",
       "backlinks": [],
       "maturity": "seed"
     },
@@ -268,13 +244,7 @@
     "reading-is-catching-balls": {
       "slug": "reading-is-catching-balls",
       "title": "Reading is catching balls",
-      "backlinks": [
-        {
-          "slug": "how-to-read-a-book",
-          "title": "How to Read a Book - Adler & Doren",
-          "context": "<p><a href=\"/thoughts/reading-is-catching-balls\">Reading is catching balls</a> ---</p>"
-        }
-      ],
+      "backlinks": [],
       "maturity": "seed"
     },
     "sense": {
@@ -305,12 +275,6 @@
       "title": "Software engineering fatigue",
       "backlinks": [],
       "maturity": "evergreen"
-    },
-    "unofficial-project-manager": {
-      "slug": "unofficial-project-manager",
-      "title": "The Unofficial Project Manager",
-      "backlinks": [],
-      "maturity": "seed"
     },
     "the-cost-of-delayed-action": {
       "slug": "the-cost-of-delayed-action",
@@ -576,10 +540,6 @@
       "target": "96524a51-8a13-4db4-950c-e365c69a017d"
     },
     {
-      "source": "how-to-read-a-book",
-      "target": "reading-is-catching-balls"
-    },
-    {
       "source": "life-running-digital-engine",
       "target": "programmable-self"
     },
@@ -610,10 +570,6 @@
     {
       "source": "purpose-of-highlights",
       "target": "the-trap-of-information-consumption"
-    },
-    {
-      "source": "reading-is-catching-balls",
-      "target": "how-to-read-a-book"
     },
     {
       "source": "sense",
