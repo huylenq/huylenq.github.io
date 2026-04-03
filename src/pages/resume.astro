@@ -15,7 +15,7 @@ import Header from '../components/Header.astro';
   </Header>
   <div class="cv-page">
 
-    <object data="/assets/huy-cv.pdf" type="application/pdf" width="100%" height="1000px">
+    <object data="/assets/huy-cv.pdf" type="application/pdf" width="100%" height="100%">
       <div class="pdf-fallback">
         <svg class="warning-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F0AB46" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -37,6 +37,7 @@ import Header from '../components/Header.astro';
 
   .cv-page {
     padding: 0;
+    height: calc(100dvh - 52px);
   }
 
   .download-button {
