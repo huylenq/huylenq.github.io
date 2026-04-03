@@ -5,16 +5,12 @@ maturity: "seed"
 ---
  
 
-A great vocab API is **rich** and **consistent**.
+Your vault is a graph, but you navigate it through words. When I type `<span class="private-link">` in Obsidian, what comes to mind determines what gets linked. If I once called something "information overload" and later "consumption trap", those two notes never meet. The API is broken. Consistent vocabulary is consistent wiring. It is the human equivalent of a stable API contract: rename the endpoint and all clients break.
 
-It helps making your thoughts more expressive and having more colorful spectrum.
-
-## Impacts on information retrieval
-
-It is like a good indexing of your <span class="private-link">IMS</span> and <span class="private-link">IWE</span>.
-
-Semantic searching (RAG) can help remediate the problem of inconsistent vocab but not a replacement.
+A rich vocabulary does more than help retrieval. It shapes what you *can* think. If you have precise words for subtle distinctions, you can reason about those distinctions. A programmer with only "list" cannot think in "stack" vs "queue" vs "deque". The same principle applies to personal knowledge. The richer and more precise your naming, the more dimensions you can think in.
 
 ---
 
-- [Articulation is the validation of thinking](/thoughts/96524a51-8a13-4db4-950c-e365c69a017d)
+- [[§ Articulation skill</span>
+- [Programming beacons](/thoughts/programming-beacons)
+- [Does code still run on people?](/thoughts/code-run-on-people)

@@ -39,4 +39,4 @@ Writing in the vault is its own reward. The collection of **intermediate artifac
 ---
 
 - [Why taking notes?](/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331)
-- [Articulation is the validation of thinking](/thoughts/96524a51-8a13-4db4-950c-e365c69a017d)
+- [§ Articulation skill](/thoughts/96524a51-8a13-4db4-950c-e365c69a017d)

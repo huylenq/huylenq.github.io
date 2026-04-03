@@ -5,6 +5,11 @@
       "title": "A Reading System",
       "backlinks": [
         {
+          "slug": "completeness-learning-bias",
+          "title": "Completeness learning bias",
+          "context": "<ul>\n<li><a href=\"/thoughts/a-reading-system\">A Reading System</a></li>\n</ul>"
+        },
+        {
           "slug": "purpose-of-highlights",
           "title": "Purpose of of highlights",
           "context": "<ul>\n<li><a href=\"/thoughts/a-reading-system\">A Reading System</a> - <a href=\"/thoughts/the-trap-of-information-consumption\">The trap of information consumption without action</a></li>\n</ul>"
@@ -36,52 +41,17 @@
       "backlinks": [
         {
           "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
-          "title": "Articulation is the validation of thinking",
+          "title": "§ Articulation skill",
           "context": "<p>...ideas into LLM prompts</span> - <a href=\"/thoughts/recognizable-patterns-of-valuable-thoughts\">Are there recognizable patterns or signals of valuable thoughts</a> - [Your rich and consistent vocabulary...</p>"
         }
       ],
       "maturity": "budding"
-    },
-    "96524a51-8a13-4db4-950c-e365c69a017d": {
-      "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
-      "title": "Articulation is the validation of thinking",
-      "backlinks": [
-        {
-          "slug": "how-i-write-notes",
-          "title": "How I Write Notes",
-          "context": "<ul>\n<li><a href=\"/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331\">Why taking notes?</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">Articulation is the validation of thinking</a></li>\n</ul>"
-        },
-        {
-          "slug": "vocabulary-as-api-for-second-brain",
-          "title": "Your rich and consistent vocabulary is the best API for your second brain",
-          "context": "<ul>\n<li><a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">Articulation is the validation of thinking</a></li>\n</ul>"
-        }
-      ],
-      "maturity": "seed"
     },
     "be-mindful-of-what-you-put-into-your-bucket": {
       "slug": "be-mindful-of-what-you-put-into-your-bucket",
       "title": "Be mindful of what you put into your bucket",
       "backlinks": [],
       "maturity": "budding"
-    },
-    "d838d424-1c3f-4fb6-b094-0014eaa6bfcc": {
-      "slug": "d838d424-1c3f-4fb6-b094-0014eaa6bfcc",
-      "title": "Best practices coding with agents",
-      "backlinks": [],
-      "maturity": "seed"
-    },
-    "code-run-on-people": {
-      "slug": "code-run-on-people",
-      "title": "Code run on people",
-      "backlinks": [
-        {
-          "slug": "programming-beacons",
-          "title": "Programming beacons",
-          "context": "<p>Remember, <a href=\"/thoughts/code-run-on-people\">Code run on people</a>.</p>"
-        }
-      ],
-      "maturity": "seed"
     },
     "completeness-learning-bias": {
       "slug": "completeness-learning-bias",
@@ -92,7 +62,30 @@
     "different-purposes-of-writing": {
       "slug": "different-purposes-of-writing",
       "title": "Different purposes of writing",
-      "backlinks": [],
+      "backlinks": [
+        {
+          "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
+          "title": "§ Articulation skill",
+          "context": "<p>...API for your second brain](/thoughts/vocabulary-as-api-for-second-brain) - <a href=\"/thoughts/different-purposes-of-writing\">Different purposes of writing</a> - <a href=\"/thoughts/how-i-write-notes\">How I Write Notes</a></p>"
+        }
+      ],
+      "maturity": "seed"
+    },
+    "code-run-on-people": {
+      "slug": "code-run-on-people",
+      "title": "Does code still run on people?",
+      "backlinks": [
+        {
+          "slug": "programming-beacons",
+          "title": "Programming beacons",
+          "context": "<p>Remember, <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a>.</p>"
+        },
+        {
+          "slug": "vocabulary-as-api-for-second-brain",
+          "title": "Your rich and consistent vocabulary is the best API for your second brain",
+          "context": "<ul>\n<li>[[§ Articulation skill</span> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
+        }
+      ],
       "maturity": "seed"
     },
     "feel-the-sensation": {
@@ -112,12 +105,6 @@
       ],
       "maturity": "budding"
     },
-    "good-speaker": {
-      "slug": "good-speaker",
-      "title": "Good speaker",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "healthy-disagreement": {
       "slug": "healthy-disagreement",
       "title": "Healthy disagreement",
@@ -132,6 +119,11 @@
           "slug": "516f2efb-2e65-4809-81e6-ed40c245d331",
           "title": "Why taking notes?",
           "context": "<ul>\n<li><a href=\"/thoughts/how-i-write-notes\">How I Write Notes</a></li>\n</ul>"
+        },
+        {
+          "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
+          "title": "§ Articulation skill",
+          "context": "<p>...API for your second brain](/thoughts/vocabulary-as-api-for-second-brain) - <a href=\"/thoughts/different-purposes-of-writing\">Different purposes of writing</a> - <a href=\"/thoughts/how-i-write-notes\">How I Write Notes</a></p>"
         }
       ],
       "maturity": "evergreen"
@@ -162,7 +154,13 @@
     "modal-thinking": {
       "slug": "modal-thinking",
       "title": "Modal thinking - Separate decision making and execution",
-      "backlinks": [],
+      "backlinks": [
+        {
+          "slug": "thinking-and-doing-rhythm",
+          "title": "Thinking and Doing Rhythm",
+          "context": "<p>...becomes the excuse](/thoughts/thinking-excuses) - <a href=\"/thoughts/modal-thinking\">Modal thinking - Separate decision making and execution</a> - <span class=\"private-link\">Balancing optimization and...</p>"
+        }
+      ],
       "maturity": "budding"
     },
     "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e": {
@@ -214,7 +212,13 @@
     "programming-beacons": {
       "slug": "programming-beacons",
       "title": "Programming beacons",
-      "backlinks": [],
+      "backlinks": [
+        {
+          "slug": "vocabulary-as-api-for-second-brain",
+          "title": "Your rich and consistent vocabulary is the best API for your second brain",
+          "context": "<ul>\n<li>[[§ Articulation skill</span> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
+        }
+      ],
       "maturity": "seed"
     },
     "purpose-of-highlights": {
@@ -246,12 +250,6 @@
       ],
       "maturity": "seed"
     },
-    "software-engineering-advices": {
-      "slug": "software-engineering-advices",
-      "title": "Software engineering advices",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "software-engineering-fatigue": {
       "slug": "software-engineering-fatigue",
       "title": "Software engineering fatigue",
@@ -270,7 +268,7 @@
         {
           "slug": "e165fb3e-3ba1-4972-827f-b2a3220f39ac",
           "title": "The physics laws of life",
-          "context": "<ul>\n<li><a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a></li>\n</ul>"
+          "context": "<p>...is the first push. Once moving, the flywheel carries you. This is why <a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a> compounds, and why token actions matter more than grand plans.</p>"
         },
         {
           "slug": "start-new-behaviors-in-boring-easy-mode",
@@ -283,7 +281,13 @@
     "human-vs-ai-brain-elasticity": {
       "slug": "human-vs-ai-brain-elasticity",
       "title": "The fundamental advantages of human vs AI",
-      "backlinks": [],
+      "backlinks": [
+        {
+          "slug": "23cd8fda-6959-439f-800a-6d4eea5bd681",
+          "title": "AI reduces the information privilege",
+          "context": "<ul>\n<li><a href=\"/thoughts/human-vs-ai-brain-elasticity\">The fundamental advantages of human vs AI</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a></li>\n</ul>"
+        }
+      ],
       "maturity": "seed"
     },
     "the-heuristics-for-what-to-do-now": {
@@ -364,6 +368,11 @@
           "slug": "the-cost-of-delayed-action",
           "title": "The cost of delayed action",
           "context": "<ul>\n<li><a href=\"/thoughts/start-new-behaviors-in-boring-easy-mode\">When forming a new behavior, start in boring easy mode</a> - <a href=\"/thoughts/e165fb3e-3ba1-4972-827f-b2a3220f39ac\">The physics laws of life</a></li>\n</ul>"
+        },
+        {
+          "slug": "e165fb3e-3ba1-4972-827f-b2a3220f39ac",
+          "title": "The physics laws of life",
+          "context": "<ul>\n<li><a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a> - <a href=\"/thoughts/start-new-behaviors-in-boring-easy-mode\">When forming a new behavior, start in boring easy mode</a></li>\n</ul>"
         }
       ],
       "maturity": "seed"
@@ -385,7 +394,7 @@
         {
           "slug": "thinking-and-doing-rhythm",
           "title": "Thinking and Doing Rhythm",
-          "context": "<ul>\n<li><a href=\"/thoughts/thinking-excuses\">When thinking becomes the excuse</a></li>\n</ul>"
+          "context": "<ul>\n<li><a href=\"/thoughts/thinking-excuses\">When thinking becomes the excuse</a> - <a href=\"/thoughts/modal-thinking\">Modal thinking - Separate decision making and execution</a> - <span class=\"private-link\">Balancing...</li>\n</ul>"
         }
       ],
       "maturity": "evergreen"
@@ -397,7 +406,7 @@
         {
           "slug": "how-i-write-notes",
           "title": "How I Write Notes",
-          "context": "<ul>\n<li><a href=\"/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331\">Why taking notes?</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">Articulation is the validation of thinking</a></li>\n</ul>"
+          "context": "<ul>\n<li><a href=\"/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331\">Why taking notes?</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a></li>\n</ul>"
         }
       ],
       "maturity": "seed"
@@ -438,8 +447,25 @@
       "backlinks": [
         {
           "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
-          "title": "Articulation is the validation of thinking",
-          "context": "<p>...valuable thoughts](/thoughts/recognizable-patterns-of-valuable-thoughts) - <a href=\"/thoughts/vocabulary-as-api-for-second-brain\">Your rich and consistent vocabulary is the best API for your second brain</a></p>"
+          "title": "§ Articulation skill",
+          "context": "<p>...- <a href=\"/thoughts/vocabulary-as-api-for-second-brain\">Your rich and consistent vocabulary is the best API for your second brain</a> - [Different purposes of...</p>"
+        }
+      ],
+      "maturity": "seed"
+    },
+    "96524a51-8a13-4db4-950c-e365c69a017d": {
+      "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "title": "§ Articulation skill",
+      "backlinks": [
+        {
+          "slug": "23cd8fda-6959-439f-800a-6d4eea5bd681",
+          "title": "AI reduces the information privilege",
+          "context": "<ul>\n<li><a href=\"/thoughts/human-vs-ai-brain-elasticity\">The fundamental advantages of human vs AI</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a></li>\n</ul>"
+        },
+        {
+          "slug": "how-i-write-notes",
+          "title": "How I Write Notes",
+          "context": "<ul>\n<li><a href=\"/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331\">Why taking notes?</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a></li>\n</ul>"
         }
       ],
       "maturity": "seed"
@@ -447,16 +473,20 @@
   },
   "edges": [
     {
-      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
-      "target": "recognizable-patterns-of-valuable-thoughts"
+      "source": "23cd8fda-6959-439f-800a-6d4eea5bd681",
+      "target": "human-vs-ai-brain-elasticity"
     },
     {
-      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
-      "target": "vocabulary-as-api-for-second-brain"
+      "source": "23cd8fda-6959-439f-800a-6d4eea5bd681",
+      "target": "96524a51-8a13-4db4-950c-e365c69a017d"
     },
     {
       "source": "be-mindful-of-what-you-put-into-your-bucket",
       "target": "sense"
+    },
+    {
+      "source": "completeness-learning-bias",
+      "target": "a-reading-system"
     },
     {
       "source": "different-purposes-of-writing",
@@ -543,12 +573,20 @@
       "target": "the-cost-of-delayed-action"
     },
     {
+      "source": "e165fb3e-3ba1-4972-827f-b2a3220f39ac",
+      "target": "start-new-behaviors-in-boring-easy-mode"
+    },
+    {
       "source": "the-trap-of-information-consumption",
       "target": "thinking-excuses"
     },
     {
       "source": "thinking-and-doing-rhythm",
       "target": "thinking-excuses"
+    },
+    {
+      "source": "thinking-and-doing-rhythm",
+      "target": "modal-thinking"
     },
     {
       "source": "trust",
@@ -576,7 +614,27 @@
     },
     {
       "source": "vocabulary-as-api-for-second-brain",
-      "target": "96524a51-8a13-4db4-950c-e365c69a017d"
+      "target": "programming-beacons"
+    },
+    {
+      "source": "vocabulary-as-api-for-second-brain",
+      "target": "code-run-on-people"
+    },
+    {
+      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "target": "recognizable-patterns-of-valuable-thoughts"
+    },
+    {
+      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "target": "vocabulary-as-api-for-second-brain"
+    },
+    {
+      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "target": "different-purposes-of-writing"
+    },
+    {
+      "source": "96524a51-8a13-4db4-950c-e365c69a017d",
+      "target": "how-i-write-notes"
     }
   ]
 }

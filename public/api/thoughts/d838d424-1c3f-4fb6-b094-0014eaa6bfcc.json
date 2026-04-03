@@ -1,7 +1,0 @@
-{
-  "slug": "d838d424-1c3f-4fb6-b094-0014eaa6bfcc",
-  "title": "Best practices coding with agents",
-  "html": "<ul>\n<li><strong>Understand the problem and solution</strong> first. Blindspots of understanding and planning in autonomous workflow multiplies compare to implement yourself.</li>\n<li>Prefer <strong>direct symbol name</strong> in your chat mention and logging.</li>\n</ul>\n<hr>\n<ul>\n<li><span class=\"private-link\">§ Claude Code</span></li>\n<li><span class=\"private-link\">Agentic Coding</span></li>\n<li><span class=\"private-link\">AI subscription evaluation</span></li>\n</ul>",
-  "backlinks": [],
-  "maturity": "seed"
-}
