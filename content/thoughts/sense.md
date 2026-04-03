@@ -1,7 +1,7 @@
 ---
 title: "Sense"
 slug: "sense"
-maturity: "seed"
+maturity: "budding"
 ---
 
 Beyond our five senses, there is an internal signal when the brain *feels* itself. A non-verbal, concrete flash to the conscious mind, fired up in a color unique to the moment. You don’t summon it. It arrives on its own terms.

@@ -1,7 +1,7 @@
 ---
 title: "Play the game"
 slug: "play-the-game"
-maturity: "budding"
+maturity: "seed"
 ---
  
 

@@ -1,7 +1,7 @@
 ---
 title: "Thinking and Doing Rhythm"
 slug: "thinking-and-doing-rhythm"
-maturity: "seed"
+maturity: "budding"
 ---
 
 

@@ -1,7 +1,7 @@
 ---
 title: "Your rich and consistent vocabulary is the best API for your second brain"
 slug: "vocabulary-as-api-for-second-brain"
-maturity: "seed"
+maturity: "budding"
 ---
  
 

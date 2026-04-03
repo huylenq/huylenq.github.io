@@ -1,7 +1,7 @@
 ---
 title: "Completeness learning bias"
 slug: "completeness-learning-bias"
-maturity: "seed"
+maturity: "budding"
 ---
 
 Courses and books are pathways that converge to the same truths. Missing a lecture or skipping a chapter does not mean a piece of knowledge is lost forever. It means you will arrive at the same truth through another path, eventually.

@@ -1,7 +1,7 @@
 ---
 title: "Does code still run on people?"
 slug: "code-run-on-people"
-maturity: "seed"
+maturity: "budding"
 ---
 
 > “Programs must be written for people to read, and only incidentally for machines to execute.”

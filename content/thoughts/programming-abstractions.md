@@ -1,7 +1,7 @@
 ---
 title: "Programming abstractions"
 slug: "programming-abstractions"
-maturity: "seed"
+maturity: "evergreen"
 ---
 
 A cliché saying: “Everything is a trade-off”, abstraction is not an exception. The most common way in OOP design is abstracting things that could be named: “I’m gonna need to send a message, let’s introduce a _message service_; oh also a _message factory_; oh also a _message_ _dispatcher;_ oh how about …; on and on…_“_. Sometimes it works, sometimes it brings more of downsides than what it is worths.

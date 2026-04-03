@@ -21,7 +21,7 @@
       "slug": "23cd8fda-6959-439f-800a-6d4eea5bd681",
       "title": "AI reduces the information privilege",
       "backlinks": [],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "anchoring-on-tool-capability-limits-the-mind": {
       "slug": "anchoring-on-tool-capability-limits-the-mind",
@@ -33,7 +33,7 @@
           "context": "<p><a href=\"/thoughts/anchoring-on-tool-capability-limits-the-mind\">Anchoring on tool capability limit the mind</a></p>"
         }
       ],
-      "maturity": "budding"
+      "maturity": "seed"
     },
     "recognizable-patterns-of-valuable-thoughts": {
       "slug": "recognizable-patterns-of-valuable-thoughts",
@@ -51,13 +51,13 @@
       "slug": "be-mindful-of-what-you-put-into-your-bucket",
       "title": "Be mindful of what you put into your bucket",
       "backlinks": [],
-      "maturity": "budding"
+      "maturity": "seed"
     },
     "completeness-learning-bias": {
       "slug": "completeness-learning-bias",
       "title": "Completeness learning bias",
       "backlinks": [],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "different-purposes-of-writing": {
       "slug": "different-purposes-of-writing",
@@ -86,7 +86,7 @@
           "context": "<ul>\n<li>[[§ Articulation skill</span> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
         }
       ],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "feel-the-sensation": {
       "slug": "feel-the-sensation",
@@ -173,13 +173,13 @@
           "context": "<ul>\n<li><a href=\"/thoughts/6e9a5e59-4c26-4d67-bc3a-c8d404445b2e\">Perfect-tools syndrome</a></li>\n</ul>"
         }
       ],
-      "maturity": "budding"
+      "maturity": "seed"
     },
     "play-the-game": {
       "slug": "play-the-game",
       "title": "Play the game",
       "backlinks": [],
-      "maturity": "budding"
+      "maturity": "seed"
     },
     "programmable-self": {
       "slug": "programmable-self",
@@ -207,7 +207,7 @@
       "slug": "programming-abstractions",
       "title": "Programming abstractions",
       "backlinks": [],
-      "maturity": "seed"
+      "maturity": "evergreen"
     },
     "programming-beacons": {
       "slug": "programming-beacons",
@@ -248,13 +248,13 @@
           "context": "<ul>\n<li><a href=\"/thoughts/sense\">Sense</a></li>\n</ul>"
         }
       ],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "software-engineering-fatigue": {
       "slug": "software-engineering-fatigue",
       "title": "Software engineering fatigue",
       "backlinks": [],
-      "maturity": "evergreen"
+      "maturity": "budding"
     },
     "the-cost-of-delayed-action": {
       "slug": "the-cost-of-delayed-action",
@@ -294,7 +294,7 @@
       "slug": "the-heuristics-for-what-to-do-now",
       "title": "The heuristics for what to do now",
       "backlinks": [],
-      "maturity": "budding"
+      "maturity": "seed"
     },
     "e165fb3e-3ba1-4972-827f-b2a3220f39ac": {
       "slug": "e165fb3e-3ba1-4972-827f-b2a3220f39ac",
@@ -311,7 +311,7 @@
           "context": "<ul>\n<li><a href=\"/thoughts/the-cost-of-delayed-action\">The cost of delayed action</a> - <a href=\"/thoughts/e165fb3e-3ba1-4972-827f-b2a3220f39ac\">The physics laws of life</a></li>\n</ul>"
         }
       ],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "the-trap-of-information-consumption": {
       "slug": "the-trap-of-information-consumption",
@@ -340,7 +340,7 @@
           "context": "<ul>\n<li><a href=\"/thoughts/thinking-and-doing-rhythm\">Thinking and Doing Rhythm</a> - <a href=\"/thoughts/the-trap-of-information-consumption\">The trap of information consumption without action</a></li>\n</ul>"
         }
       ],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "trust": {
       "slug": "trust",
@@ -451,7 +451,7 @@
           "context": "<p>...- <a href=\"/thoughts/vocabulary-as-api-for-second-brain\">Your rich and consistent vocabulary is the best API for your second brain</a> - [Different purposes of...</p>"
         }
       ],
-      "maturity": "seed"
+      "maturity": "budding"
     },
     "96524a51-8a13-4db4-950c-e365c69a017d": {
       "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
@@ -468,7 +468,7 @@
           "context": "<ul>\n<li><a href=\"/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331\">Why taking notes?</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a></li>\n</ul>"
         }
       ],
-      "maturity": "seed"
+      "maturity": "budding"
     }
   },
   "edges": [

@@ -1,7 +1,7 @@
 ---
 title: "Software engineering fatigue"
 slug: "software-engineering-fatigue"
-maturity: "evergreen"
+maturity: "budding"
 ---
 
 

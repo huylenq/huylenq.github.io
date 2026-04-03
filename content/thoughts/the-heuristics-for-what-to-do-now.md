@@ -1,7 +1,7 @@
 ---
 title: "The heuristics for what to do now"
 slug: "the-heuristics-for-what-to-do-now"
-maturity: "budding"
+maturity: "seed"
 ---
  
 
