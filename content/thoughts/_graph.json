@@ -42,12 +42,6 @@
       ],
       "maturity": "budding"
     },
-    "aristocracy-vs-democracy": {
-      "slug": "aristocracy-vs-democracy",
-      "title": "Aristocracy vs. Democracy",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "96524a51-8a13-4db4-950c-e365c69a017d": {
       "slug": "96524a51-8a13-4db4-950c-e365c69a017d",
       "title": "Articulation is the validation of thinking",
@@ -142,12 +136,6 @@
       ],
       "maturity": "evergreen"
     },
-    "0bf3c4de-be91-4eeb-af9f-4683be9f8598": {
-      "slug": "0bf3c4de-be91-4eeb-af9f-4683be9f8598",
-      "title": "How I review Flashcards",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "indecisiveness": {
       "slug": "indecisiveness",
       "title": "Indecisiveness",
@@ -176,12 +164,6 @@
       "title": "Modal thinking - Separate decision making and execution",
       "backlinks": [],
       "maturity": "budding"
-    },
-    "0bfe2610-f643-4eb6-acf4-e13ce8179826": {
-      "slug": "0bfe2610-f643-4eb6-acf4-e13ce8179826",
-      "title": "Narrating while doing increase focus",
-      "backlinks": [],
-      "maturity": "seed"
     },
     "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e": {
       "slug": "6e9a5e59-4c26-4d67-bc3a-c8d404445b2e",
@@ -337,23 +319,12 @@
           "context": "<ul>\n<li><a href=\"/thoughts/a-reading-system\">A Reading System</a> - <a href=\"/thoughts/the-trap-of-information-consumption\">The trap of information consumption without action</a></li>\n</ul>"
         },
         {
-          "slug": "5d29c52e-e127-40b4-9348-7229370a3fed",
-          "title": "What is the line between Knowledge and Skill?",
-          "context": "<ul>\n<li><a href=\"/thoughts/the-trap-of-information-consumption\">The trap of information consumption without action</a></li>\n</ul>"
-        },
-        {
           "slug": "thinking-excuses",
           "title": "When thinking becomes the excuse",
           "context": "<ul>\n<li><a href=\"/thoughts/thinking-and-doing-rhythm\">Thinking and Doing Rhythm</a> - <a href=\"/thoughts/the-trap-of-information-consumption\">The trap of information consumption without action</a></li>\n</ul>"
         }
       ],
       "maturity": "evergreen"
-    },
-    "think-do-review": {
-      "slug": "think-do-review",
-      "title": "Think-Do-Review",
-      "backlinks": [],
-      "maturity": "seed"
     },
     "thinking-and-doing-rhythm": {
       "slug": "thinking-and-doing-rhythm",
@@ -367,41 +338,17 @@
       ],
       "maturity": "seed"
     },
-    "tools-for-thought": {
-      "slug": "tools-for-thought",
-      "title": "Tools for Thought",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "trust": {
       "slug": "trust",
       "title": "Trust",
       "backlinks": [],
       "maturity": "evergreen"
     },
-    "software-cognitive-aid": {
-      "slug": "software-cognitive-aid",
-      "title": "What can softwares help with your cognitive",
-      "backlinks": [],
-      "maturity": "seed"
-    },
     "what-if-i-found-a-startup": {
       "slug": "what-if-i-found-a-startup",
       "title": "What if I found a startup",
       "backlinks": [],
       "maturity": "evergreen"
-    },
-    "5d29c52e-e127-40b4-9348-7229370a3fed": {
-      "slug": "5d29c52e-e127-40b4-9348-7229370a3fed",
-      "title": "What is the line between Knowledge and Skill?",
-      "backlinks": [
-        {
-          "slug": "the-trap-of-information-consumption",
-          "title": "The trap of information consumption without action",
-          "context": "<ul>\n<li><a href=\"/thoughts/thinking-excuses\">When thinking becomes the excuse</a> - <a href=\"/thoughts/5d29c52e-e127-40b4-9348-7229370a3fed\">What is the line between Knowledge and Skill?</a></li>\n</ul>"
-        }
-      ],
-      "maturity": "seed"
     },
     "letter-to-my-20s": {
       "slug": "letter-to-my-20s",
@@ -433,7 +380,7 @@
         {
           "slug": "the-trap-of-information-consumption",
           "title": "The trap of information consumption without action",
-          "context": "<ul>\n<li><a href=\"/thoughts/thinking-excuses\">When thinking becomes the excuse</a> - <a href=\"/thoughts/5d29c52e-e127-40b4-9348-7229370a3fed\">What is the line between Knowledge and Skill?</a></li>\n</ul>"
+          "context": "<ul>\n<li><a href=\"/thoughts/thinking-excuses\">When thinking becomes the excuse</a> - <span class=\"private-link\">What is the line between Knowledge and Skill?</span></li>\n</ul>"
         },
         {
           "slug": "thinking-and-doing-rhythm",
@@ -600,20 +547,12 @@
       "target": "thinking-excuses"
     },
     {
-      "source": "the-trap-of-information-consumption",
-      "target": "5d29c52e-e127-40b4-9348-7229370a3fed"
-    },
-    {
       "source": "thinking-and-doing-rhythm",
       "target": "thinking-excuses"
     },
     {
       "source": "trust",
       "target": "programmable-self"
-    },
-    {
-      "source": "5d29c52e-e127-40b4-9348-7229370a3fed",
-      "target": "the-trap-of-information-consumption"
     },
     {
       "source": "start-new-behaviors-in-boring-easy-mode",

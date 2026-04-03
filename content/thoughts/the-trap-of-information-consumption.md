@@ -31,4 +31,4 @@ A common failure mode in learning where we accumulate knowledge without progress
 ---
 
 - [When thinking becomes the excuse](/thoughts/thinking-excuses)
-- [What is the line between Knowledge and Skill?](/thoughts/5d29c52e-e127-40b4-9348-7229370a3fed)
+- <span class="private-link">What is the line between Knowledge and Skill?</span>
