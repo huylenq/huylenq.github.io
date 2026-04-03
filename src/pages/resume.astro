@@ -79,4 +79,41 @@ import Header from '../components/Header.astro';
   .warning-icon {
     flex-shrink: 0;
   }
+  /* On ≤1024px the header-section-group (with download button) is hidden.
+     Show a ⤓ hint on the Resume nav link instead. */
+  @media (max-width: 1024px) {
+    :global(.site-nav a[href="/resume"]::after) {
+      content: " ⤓";
+      font-size: 0.85em;
+    }
+  }
 </style>
+
+<script>
+  let cleanup: (() => void) | undefined;
+
+  function setupResumeDownload() {
+    if (!location.pathname.startsWith('/resume')) return;
+    cleanup?.();
+
+    const link = document.querySelector<HTMLAnchorElement>('.site-nav a[href="/resume"]');
+    if (!link) return;
+
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const apply = () => {
+      if (mq.matches) {
+        link.setAttribute('download', 'Huy CV.pdf');
+        link.setAttribute('href', '/assets/huy-cv.pdf');
+      } else {
+        link.removeAttribute('download');
+        link.setAttribute('href', '/resume');
+      }
+    };
+    apply();
+    mq.addEventListener('change', apply);
+    cleanup = () => mq.removeEventListener('change', apply);
+  }
+
+  setupResumeDownload();
+  document.addEventListener('astro:after-swap', setupResumeDownload);
+</script>
