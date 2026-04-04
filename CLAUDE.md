@@ -62,7 +62,7 @@ Deploy workflow: `npm run publish && git add content/ public/api/ public/thought
 │   ├── api/thoughts/*.json      # GENERATED — per-thought JSON for client-side fetch
 │   ├── thought-assets/          # GENERATED — images copied from vault
 │   ├── CNAME                    # huylenq.com
-│   ├── assets/huy-cv.pdf
+│   ├── assets/huy-resume.pdf
 │   └── sketches/*.mp4
 └── .github/workflows/deploy.yml
 ```
