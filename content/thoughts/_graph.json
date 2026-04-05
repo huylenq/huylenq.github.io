@@ -78,12 +78,12 @@
         {
           "slug": "programming-beacons",
           "title": "Programming beacons",
-          "context": "<p>Remember, <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a>.</p>"
+          "context": "<p>Though, <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a>.</p>"
         },
         {
           "slug": "vocabulary-as-api-for-second-brain",
           "title": "Your rich and consistent vocabulary is the best API for your second brain",
-          "context": "<ul>\n<li>[[§ Articulation skill</span> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
+          "context": "<ul>\n<li><a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
         }
       ],
       "maturity": "budding"
@@ -216,7 +216,7 @@
         {
           "slug": "vocabulary-as-api-for-second-brain",
           "title": "Your rich and consistent vocabulary is the best API for your second brain",
-          "context": "<ul>\n<li>[[§ Articulation skill</span> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
+          "context": "<ul>\n<li><a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
         }
       ],
       "maturity": "seed"
@@ -466,6 +466,11 @@
           "slug": "how-i-write-notes",
           "title": "How I Write Notes",
           "context": "<ul>\n<li><a href=\"/thoughts/516f2efb-2e65-4809-81e6-ed40c245d331\">Why taking notes?</a> - <a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a></li>\n</ul>"
+        },
+        {
+          "slug": "vocabulary-as-api-for-second-brain",
+          "title": "Your rich and consistent vocabulary is the best API for your second brain",
+          "context": "<ul>\n<li><a href=\"/thoughts/96524a51-8a13-4db4-950c-e365c69a017d\">§ Articulation skill</a> - <a href=\"/thoughts/programming-beacons\">Programming beacons</a> - <a href=\"/thoughts/code-run-on-people\">Does code still run on people?</a></li>\n</ul>"
         }
       ],
       "maturity": "budding"
@@ -611,6 +616,10 @@
     {
       "source": "516f2efb-2e65-4809-81e6-ed40c245d331",
       "target": "how-i-write-notes"
+    },
+    {
+      "source": "vocabulary-as-api-for-second-brain",
+      "target": "96524a51-8a13-4db4-950c-e365c69a017d"
     },
     {
       "source": "vocabulary-as-api-for-second-brain",

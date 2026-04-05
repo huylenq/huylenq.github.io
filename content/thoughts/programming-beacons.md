@@ -10,4 +10,4 @@ Beacons could be a common naming. For example if a variable is named "node", odd
 
 You can enrich you code by glittering beacons in comments if they are difficult to implant them in the statements.
 
-Remember, [Does code still run on people?](/thoughts/code-run-on-people).
+Though, [Does code still run on people?](/thoughts/code-run-on-people).

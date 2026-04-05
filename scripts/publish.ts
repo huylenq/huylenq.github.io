@@ -257,13 +257,13 @@ function transformThought(
 
   // Convert ![[embed]] transclusion → [[embed]] (remove the !)
   // But NOT image embeds like ![[image.png]] — those are handled separately
-  md = md.replace(/!\[\[([^\]]+)\]\]/g, (match, inner: string) => {
+  md = md.replace(/!\[\[([^\]\n]+)\]\]/g, (match, inner: string) => {
     if (isImageFile(inner)) return match; // keep image embeds for later processing
     return `[[${inner}]]`;
   });
 
   // Resolve image/attachment references: ![[image.png]]
-  md = md.replace(/!\[\[([^\]|]+?)(\|[^\]]*)?\]\]/g, (_match, filename: string) => {
+  md = md.replace(/!\[\[([^\]\n|]+?)(\|[^\]\n]*)?\]\]/g, (_match, filename: string) => {
     const resolved = resolveAttachment(filename.trim(), thought.vaultPath, publishId);
     if (resolved) return `![${filename}](${resolved})`;
     return `![${filename}](${filename})`; // leave broken
@@ -284,7 +284,8 @@ function transformThought(
   );
 
   // Resolve [[wikilinks]]
-  md = md.replace(/\[\[([^\]]+)\]\]/g, (_match, inner: string) => {
+  // [^\]\n]+ — no newlines: wikilinks are single-line, and bare `[[` in code spans would otherwise match across paragraphs
+  md = md.replace(/\[\[([^\]\n]+)\]\]/g, (_match, inner: string) => {
     const pipeIdx = inner.indexOf("|");
     const target = pipeIdx >= 0 ? inner.slice(0, pipeIdx).trim() : inner.trim();
     const alias = pipeIdx >= 0 ? inner.slice(pipeIdx + 1).trim() : undefined;
