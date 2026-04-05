@@ -19,18 +19,18 @@ dist/ → GitHub Pages (huylenq.com)
 ## Key Commands
 
 ```bash
-npm run publish    # vault → content/ + public/api/ (run locally, vault not in CI)
+npm run sync-thoughts    # vault → content/ + public/api/ (run locally, vault not in CI)
 npm run dev        # astro dev server at localhost:4321
 npm run build      # astro build → dist/
 npm run preview    # serve dist/ locally
 ```
 
-Deploy workflow: `npm run publish && git add content/ public/api/ public/thought-assets/ && git commit && git push`
+Deploy workflow: `npm run sync-thoughts && git add content/ public/api/ public/thought-assets/ && git commit && git push`
 
 ## Project Structure
 
 ```
-├── scripts/publish.ts          # Vault scanner + markdown transformer + backlink graph builder
+├── scripts/sync-thoughts.ts    # Vault scanner + markdown transformer + backlink graph builder
 ├── astro.config.mjs            # Static output, React integration, legacy redirects
 ├── src/
 │   ├── content.config.ts       # Astro content collection (thoughts)
@@ -83,7 +83,7 @@ Monochromatic, editorial aesthetic adapted from Hexos Lab. No accent colors — 
 
 When adding new styles, use the `--ink-*` / `--paper-*` / `--space-*` variables. Do not introduce new colors.
 
-## Publish Pipeline (scripts/publish.ts)
+## Sync Pipeline (scripts/sync-thoughts.ts)
 
 The pipeline reads from the vault at `VAULT_PATH` env var (defaults to Huy's iCloud vault path).
 

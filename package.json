@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "publish": "tsx scripts/publish.ts"
+    "sync-thoughts": "tsx scripts/sync-thoughts.ts"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
