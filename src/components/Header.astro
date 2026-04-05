@@ -510,7 +510,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
 
   .site-identity {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 0;
   }
 
@@ -722,6 +722,7 @@ const activeSection = sections.find((s) => path.startsWith(`/${s}`)) ?? null;
       position: relative;
       width: 100%;
       justify-content: center;
+      align-items: center;
     }
 
     .site-identity::before {
